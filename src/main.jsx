@@ -6,6 +6,7 @@ import './index.css'
 import { CartProvider } from './context/CartContext.jsx'
 import { OrderProvider } from './context/OrderContext.jsx'
 import { AIAssistantProvider } from './context/AIAssistantContext.jsx'
+import { ReviewProvider } from './context/ReviewContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -13,7 +14,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <CartProvider>
         <OrderProvider>
           <AIAssistantProvider>
-            <App />
+            <ReviewProvider>
+              <App />
+            </ReviewProvider>
           </AIAssistantProvider>
         </OrderProvider>
       </CartProvider>
