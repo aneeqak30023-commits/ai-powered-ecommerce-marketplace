@@ -1,0 +1,1136 @@
+[
+  {
+    "id": 1,
+    "name": "Wireless Bluetooth Headphones",
+    "price": 79.99,
+    "originalPrice": 129.99,
+    "categoryId": "electronics",
+    "categoryName": "Electronics",
+    "rating": 4.5,
+    "reviewCount": 234,
+    "image": "/img/products/1.svg",
+    "images": [
+      "/img/products/1.svg",
+      "/img/products/1.svg"
+    ],
+    "description": "Premium wireless headphones with active noise cancellation, 30-hour battery life.",
+    "tags": [
+      "audio",
+      "wireless",
+      "bluetooth"
+    ],
+    "specifications": {
+      "Battery Life": "30 hours",
+      "Bluetooth": "5.2",
+      "Weight": "250g"
+    },
+    "stock": 15
+  },
+  {
+    "id": 2,
+    "name": "Smart Watch Pro",
+    "price": 199.99,
+    "originalPrice": 249.99,
+    "categoryId": "electronics",
+    "categoryName": "Electronics",
+    "rating": 4.7,
+    "reviewCount": 512,
+    "image": "/img/products/2.svg",
+    "images": [
+      "/img/products/2.svg",
+      "/img/products/2.svg"
+    ],
+    "description": "Advanced smartwatch with health monitoring, GPS tracking, AMOLED display.",
+    "tags": [
+      "wearable",
+      "fitness",
+      "smartwatch"
+    ],
+    "specifications": {
+      "Display": "1.4 AMOLED",
+      "Battery": "7 days",
+      "Water Resistance": "5ATM"
+    },
+    "stock": 8
+  },
+  {
+    "id": 3,
+    "name": "Portable Power Bank 20000mAh",
+    "price": 34.99,
+    "originalPrice": 49.99,
+    "categoryId": "electronics",
+    "categoryName": "Electronics",
+    "rating": 4.3,
+    "reviewCount": 189,
+    "image": "/img/products/3.svg",
+    "images": [
+      "/img/products/3.svg",
+      "/img/products/3.svg"
+    ],
+    "description": "High-capacity power bank with fast charging support.",
+    "tags": [
+      "charging",
+      "portable",
+      "power"
+    ],
+    "specifications": {
+      "Capacity": "20000mAh",
+      "Output": "USB-C PD 65W",
+      "Weight": "350g"
+    },
+    "stock": 25
+  },
+  {
+    "id": 4,
+    "name": "4K Webcam with Ring Light",
+    "price": 89.99,
+    "originalPrice": 119.99,
+    "categoryId": "electronics",
+    "categoryName": "Electronics",
+    "rating": 4.6,
+    "reviewCount": 98,
+    "image": "/img/products/4.svg",
+    "images": [
+      "/img/products/4.svg",
+      "/img/products/4.svg"
+    ],
+    "description": "Professional 4K webcam with built-in adjustable ring light.",
+    "tags": [
+      "webcam",
+      "streaming",
+      "4k"
+    ],
+    "specifications": {
+      "Resolution": "4K UHD",
+      "Frame Rate": "30fps",
+      "Field of View": "90 degrees"
+    },
+    "stock": 12
+  },
+  {
+    "id": 5,
+    "name": "Mechanical Gaming Keyboard",
+    "price": 129.99,
+    "originalPrice": 159.99,
+    "categoryId": "electronics",
+    "categoryName": "Electronics",
+    "rating": 4.8,
+    "reviewCount": 345,
+    "image": "/img/products/5.svg",
+    "images": [
+      "/img/products/5.svg",
+      "/img/products/5.svg"
+    ],
+    "description": "RGB mechanical keyboard with Cherry MX switches.",
+    "tags": [
+      "keyboard",
+      "gaming",
+      "mechanical"
+    ],
+    "specifications": {
+      "Switch": "Cherry MX Red",
+      "Backlighting": "Per-key RGB",
+      "Polling Rate": "1000Hz"
+    },
+    "stock": 20
+  },
+  {
+    "id": 6,
+    "name": "Wireless Earbuds Elite",
+    "price": 149.99,
+    "originalPrice": 179.99,
+    "categoryId": "electronics",
+    "categoryName": "Electronics",
+    "rating": 4.4,
+    "reviewCount": 278,
+    "image": "/img/products/6.svg",
+    "images": [
+      "/img/products/6.svg",
+      "/img/products/6.svg"
+    ],
+    "description": "True wireless earbuds with spatial audio and adaptive transparency.",
+    "tags": [
+      "earbuds",
+      "wireless",
+      "audio"
+    ],
+    "specifications": {
+      "Driver": "11mm",
+      "Battery": "6 hours (24 with case)",
+      "ANC": "Adaptive"
+    },
+    "stock": 30
+  },
+  {
+    "id": 7,
+    "name": "Smart Home Speaker",
+    "price": 99.99,
+    "originalPrice": 139.99,
+    "categoryId": "electronics",
+    "categoryName": "Electronics",
+    "rating": 4.2,
+    "reviewCount": 156,
+    "image": "/img/products/7.svg",
+    "images": [
+      "/img/products/7.svg",
+      "/img/products/7.svg"
+    ],
+    "description": "360-degree smart speaker with room-filling sound.",
+    "tags": [
+      "speaker",
+      "smart-home",
+      "voice"
+    ],
+    "specifications": {
+      "Output": "20W",
+      "Connectivity": "WiFi, Bluetooth",
+      "Voice Assistant": "Built-in"
+    },
+    "stock": 18
+  },
+  {
+    "id": 8,
+    "name": "Classic Fit Cotton T-Shirt",
+    "price": 29.99,
+    "originalPrice": 39.99,
+    "categoryId": "fashion",
+    "categoryName": "Fashion",
+    "rating": 4.4,
+    "reviewCount": 890,
+    "image": "/img/products/8.svg",
+    "images": [
+      "/img/products/8.svg",
+      "/img/products/8.svg"
+    ],
+    "description": "Premium cotton t-shirt with a relaxed fit.",
+    "tags": [
+      "casual",
+      "cotton",
+      "everyday"
+    ],
+    "specifications": {
+      "Material": "100% Organic Cotton",
+      "Fit": "Classic",
+      "Care": "Machine washable"
+    },
+    "stock": 100
+  },
+  {
+    "id": 9,
+    "name": "Slim Fit Denim Jeans",
+    "price": 69.99,
+    "originalPrice": 89.99,
+    "categoryId": "fashion",
+    "categoryName": "Fashion",
+    "rating": 4.3,
+    "reviewCount": 445,
+    "image": "/img/products/9.svg",
+    "images": [
+      "/img/products/9.svg",
+      "/img/products/9.svg"
+    ],
+    "description": "Modern slim-fit jeans crafted from stretch denim.",
+    "tags": [
+      "denim",
+      "slim-fit",
+      "casual"
+    ],
+    "specifications": {
+      "Material": "98% Cotton, 2% Elastane",
+      "Fit": "Slim",
+      "Rise": "Mid-rise"
+    },
+    "stock": 60
+  },
+  {
+    "id": 10,
+    "name": "Leather Crossbody Bag",
+    "price": 89.99,
+    "originalPrice": 119.99,
+    "categoryId": "fashion",
+    "categoryName": "Fashion",
+    "rating": 4.6,
+    "reviewCount": 234,
+    "image": "/img/products/10.svg",
+    "images": [
+      "/img/products/10.svg",
+      "/img/products/10.svg"
+    ],
+    "description": "Handcrafted genuine leather crossbody bag.",
+    "tags": [
+      "leather",
+      "bag",
+      "crossbody"
+    ],
+    "specifications": {
+      "Material": "Full-grain leather",
+      "Dimensions": "10 x 7 x 3",
+      "Strap": "Adjustable"
+    },
+    "stock": 20
+  },
+  {
+    "id": 11,
+    "name": "Running Shoes Ultra Boost",
+    "price": 139.99,
+    "originalPrice": 169.99,
+    "categoryId": "fashion",
+    "categoryName": "Fashion",
+    "rating": 4.7,
+    "reviewCount": 678,
+    "image": "/img/products/11.svg",
+    "images": [
+      "/img/products/11.svg",
+      "/img/products/11.svg"
+    ],
+    "description": "Responsive running shoes with energy-returning cushioning.",
+    "tags": [
+      "running",
+      "shoes",
+      "athletic"
+    ],
+    "specifications": {
+      "Drop": "10mm",
+      "Weight": "310g",
+      "Upper": "Primeknit"
+    },
+    "stock": 40
+  },
+  {
+    "id": 12,
+    "name": "Classic Aviator Sunglasses",
+    "price": 54.99,
+    "originalPrice": 74.99,
+    "categoryId": "fashion",
+    "categoryName": "Fashion",
+    "rating": 4.2,
+    "reviewCount": 312,
+    "image": "/img/products/12.svg",
+    "images": [
+      "/img/products/12.svg",
+      "/img/products/12.svg"
+    ],
+    "description": "Timeless aviator sunglasses with UV400 protection.",
+    "tags": [
+      "sunglasses",
+      "aviator",
+      "uv"
+    ],
+    "specifications": {
+      "Lens": "UV400 polarized",
+      "Frame": "Stainless steel",
+      "Lens Width": "58mm"
+    },
+    "stock": 75
+  },
+  {
+    "id": 13,
+    "name": "Wool Blend Winter Coat",
+    "price": 189.99,
+    "originalPrice": 249.99,
+    "categoryId": "fashion",
+    "categoryName": "Fashion",
+    "rating": 4.5,
+    "reviewCount": 167,
+    "image": "/img/products/13.svg",
+    "images": [
+      "/img/products/13.svg",
+      "/img/products/13.svg"
+    ],
+    "description": "Elegant wool blend coat with satin lining.",
+    "tags": [
+      "coat",
+      "winter",
+      "wool"
+    ],
+    "specifications": {
+      "Material": "80% Wool, 20% Polyester",
+      "Lining": "Satin",
+      "Closure": "Double-breasted"
+    },
+    "stock": 15
+  },
+  {
+    "id": 14,
+    "name": "Stainless Steel French Press",
+    "price": 44.99,
+    "originalPrice": 59.99,
+    "categoryId": "home-kitchen",
+    "categoryName": "Home & Kitchen",
+    "rating": 4.6,
+    "reviewCount": 423,
+    "image": "/img/products/14.svg",
+    "images": [
+      "/img/products/14.svg",
+      "/img/products/14.svg"
+    ],
+    "description": "Double-walled stainless steel French press.",
+    "tags": [
+      "coffee",
+      "french-press",
+      "stainless"
+    ],
+    "specifications": {
+      "Capacity": "34oz",
+      "Material": "18/8 Stainless Steel",
+      "Filter": "Mesh"
+    },
+    "stock": 35
+  },
+  {
+    "id": 15,
+    "name": "Non-Stick Cookware Set",
+    "price": 149.99,
+    "originalPrice": 199.99,
+    "categoryId": "home-kitchen",
+    "categoryName": "Home & Kitchen",
+    "rating": 4.4,
+    "reviewCount": 289,
+    "image": "/img/products/15.svg",
+    "images": [
+      "/img/products/15.svg",
+      "/img/products/15.svg"
+    ],
+    "description": "10-piece non-stick cookware set with PFOA-free coating.",
+    "tags": [
+      "cookware",
+      "non-stick",
+      "kitchen"
+    ],
+    "specifications": {
+      "Pieces": "10",
+      "Material": "Aluminum ceramic",
+      "PFOA Free": "Yes"
+    },
+    "stock": 18
+  },
+  {
+    "id": 16,
+    "name": "Robot Vacuum Cleaner",
+    "price": 299.99,
+    "originalPrice": 399.99,
+    "categoryId": "home-kitchen",
+    "categoryName": "Home & Kitchen",
+    "rating": 4.7,
+    "reviewCount": 567,
+    "image": "/img/products/16.svg",
+    "images": [
+      "/img/products/16.svg",
+      "/img/products/16.svg"
+    ],
+    "description": "Smart robot vacuum with LiDAR navigation.",
+    "tags": [
+      "vacuum",
+      "robot",
+      "smart-home"
+    ],
+    "specifications": {
+      "Suction": "2500Pa",
+      "Navigation": "LiDAR",
+      "Battery": "180 minutes"
+    },
+    "stock": 10
+  },
+  {
+    "id": 17,
+    "name": "Memory Foam Pillow Set",
+    "price": 59.99,
+    "originalPrice": 79.99,
+    "categoryId": "home-kitchen",
+    "categoryName": "Home & Kitchen",
+    "rating": 4.3,
+    "reviewCount": 198,
+    "image": "/img/products/17.svg",
+    "images": [
+      "/img/products/17.svg",
+      "/img/products/17.svg"
+    ],
+    "description": "Set of 2 premium memory foam pillows with cooling gel.",
+    "tags": [
+      "pillow",
+      "memory-foam",
+      "bedding"
+    ],
+    "specifications": {
+      "Material": "Memory foam with gel",
+      "Loft": "Adjustable 4-6 inches",
+      "Set": "2 pillows"
+    },
+    "stock": 45
+  },
+  {
+    "id": 18,
+    "name": "Digital Kitchen Scale",
+    "price": 24.99,
+    "originalPrice": 34.99,
+    "categoryId": "home-kitchen",
+    "categoryName": "Home & Kitchen",
+    "rating": 4.5,
+    "reviewCount": 356,
+    "image": "/img/products/18.svg",
+    "images": [
+      "/img/products/18.svg",
+      "/img/products/18.svg"
+    ],
+    "description": "Precision digital kitchen scale with tare function.",
+    "tags": [
+      "kitchen",
+      "scale",
+      "baking"
+    ],
+    "specifications": {
+      "Capacity": "11lbs / 5kg",
+      "Accuracy": "1g",
+      "Display": "LCD"
+    },
+    "stock": 80
+  },
+  {
+    "id": 19,
+    "name": "Aromatherapy Diffuser",
+    "price": 39.99,
+    "originalPrice": 54.99,
+    "categoryId": "home-kitchen",
+    "categoryName": "Home & Kitchen",
+    "rating": 4.4,
+    "reviewCount": 245,
+    "image": "/img/products/19.svg",
+    "images": [
+      "/img/products/19.svg",
+      "/img/products/19.svg"
+    ],
+    "description": "Ultrasonic aromatherapy diffuser with LED mood lighting.",
+    "tags": [
+      "diffuser",
+      "aromatherapy",
+      "wellness"
+    ],
+    "specifications": {
+      "Capacity": "300ml",
+      "Run Time": "Up to 10 hours",
+      "LED": "7 colors"
+    },
+    "stock": 55
+  },
+  {
+    "id": 20,
+    "name": "Ceramic Plant Pot Set",
+    "price": 34.99,
+    "originalPrice": 49.99,
+    "categoryId": "home-kitchen",
+    "categoryName": "Home & Kitchen",
+    "rating": 4.5,
+    "reviewCount": 189,
+    "image": "/img/products/20.svg",
+    "images": [
+      "/img/products/20.svg",
+      "/img/products/20.svg"
+    ],
+    "description": "Set of 3 modern ceramic plant pots with drainage holes.",
+    "tags": [
+      "plants",
+      "pots",
+      "ceramic"
+    ],
+    "specifications": {
+      "Pieces": "3",
+      "Sizes": "6, 5, 4 inches",
+      "Material": "Ceramic"
+    },
+    "stock": 40
+  },
+  {
+    "id": 21,
+    "name": "Yoga Mat Premium",
+    "price": 49.99,
+    "originalPrice": 69.99,
+    "categoryId": "sports",
+    "categoryName": "Sports",
+    "rating": 4.6,
+    "reviewCount": 534,
+    "image": "/img/products/21.svg",
+    "images": [
+      "/img/products/21.svg",
+      "/img/products/21.svg"
+    ],
+    "description": "Extra-thick 6mm eco-friendly TPE yoga mat.",
+    "tags": [
+      "yoga",
+      "mat",
+      "fitness"
+    ],
+    "specifications": {
+      "Thickness": "6mm",
+      "Material": "TPE Eco-friendly",
+      "Size": "72 x 24 inches"
+    },
+    "stock": 60
+  },
+  {
+    "id": 22,
+    "name": "Adjustable Dumbbell Set",
+    "price": 199.99,
+    "originalPrice": 279.99,
+    "categoryId": "sports",
+    "categoryName": "Sports",
+    "rating": 4.8,
+    "reviewCount": 312,
+    "image": "/img/products/22.svg",
+    "images": [
+      "/img/products/22.svg",
+      "/img/products/22.svg"
+    ],
+    "description": "Space-saving adjustable dumbbell set 5-52.5 lbs.",
+    "tags": [
+      "weights",
+      "dumbbell",
+      "strength"
+    ],
+    "specifications": {
+      "Weight Range": "5-52.5 lbs",
+      "Increments": "2.5 lbs",
+      "Material": "Steel"
+    },
+    "stock": 15
+  },
+  {
+    "id": 23,
+    "name": "Insulated Water Bottle",
+    "price": 29.99,
+    "originalPrice": 39.99,
+    "categoryId": "sports",
+    "categoryName": "Sports",
+    "rating": 4.5,
+    "reviewCount": 890,
+    "image": "/img/products/23.svg",
+    "images": [
+      "/img/products/23.svg",
+      "/img/products/23.svg"
+    ],
+    "description": "Triple-insulated stainless steel water bottle.",
+    "tags": [
+      "bottle",
+      "hydration",
+      "insulated"
+    ],
+    "specifications": {
+      "Capacity": "32oz",
+      "Insulation": "Triple-layer",
+      "BPA Free": "Yes"
+    },
+    "stock": 120
+  },
+  {
+    "id": 24,
+    "name": "Resistance Bands Kit",
+    "price": 19.99,
+    "originalPrice": 29.99,
+    "categoryId": "sports",
+    "categoryName": "Sports",
+    "rating": 4.3,
+    "reviewCount": 445,
+    "image": "/img/products/24.svg",
+    "images": [
+      "/img/products/24.svg",
+      "/img/products/24.svg"
+    ],
+    "description": "Complete resistance bands kit with 5 levels.",
+    "tags": [
+      "resistance",
+      "bands",
+      "workout"
+    ],
+    "specifications": {
+      "Levels": "5 resistance levels",
+      "Includes": "Door anchor, handles",
+      "Material": "Natural latex"
+    },
+    "stock": 90
+  },
+  {
+    "id": 25,
+    "name": "Cycling Jersey Pro",
+    "price": 74.99,
+    "originalPrice": 99.99,
+    "categoryId": "sports",
+    "categoryName": "Sports",
+    "rating": 4.4,
+    "reviewCount": 178,
+    "image": "/img/products/25.svg",
+    "images": [
+      "/img/products/25.svg",
+      "/img/products/25.svg"
+    ],
+    "description": "Professional cycling jersey with moisture-wicking fabric.",
+    "tags": [
+      "cycling",
+      "jersey",
+      "breathable"
+    ],
+    "specifications": {
+      "Material": "Polyester/spandex",
+      "Features": "Moisture-wicking",
+      "Pockets": "3 rear zip"
+    },
+    "stock": 35
+  },
+  {
+    "id": 26,
+    "name": "Jump Rope Speed",
+    "price": 14.99,
+    "originalPrice": 19.99,
+    "categoryId": "sports",
+    "categoryName": "Sports",
+    "rating": 4.2,
+    "reviewCount": 267,
+    "image": "/img/products/26.svg",
+    "images": [
+      "/img/products/26.svg",
+      "/img/products/26.svg"
+    ],
+    "description": "Professional speed jump rope with ball-bearing rotation.",
+    "tags": [
+      "jump-rope",
+      "cardio",
+      "training"
+    ],
+    "specifications": {
+      "Cable": "PVC coated steel",
+      "Handles": "Aluminum with bearings",
+      "Length": "Adjustable 9ft"
+    },
+    "stock": 70
+  },
+  {
+    "id": 27,
+    "name": "Hiking Backpack 40L",
+    "price": 89.99,
+    "originalPrice": 119.99,
+    "categoryId": "sports",
+    "categoryName": "Sports",
+    "rating": 4.5,
+    "reviewCount": 234,
+    "image": "/img/products/27.svg",
+    "images": [
+      "/img/products/27.svg",
+      "/img/products/27.svg"
+    ],
+    "description": "Durable 40L hiking backpack with rain cover.",
+    "tags": [
+      "backpack",
+      "hiking",
+      "outdoor"
+    ],
+    "specifications": {
+      "Capacity": "40L",
+      "Material": "Ripstop nylon",
+      "Rain Cover": "Included"
+    },
+    "stock": 22
+  },
+  {
+    "id": 28,
+    "name": "The Art of Programming",
+    "price": 39.99,
+    "originalPrice": 54.99,
+    "categoryId": "books",
+    "categoryName": "Books",
+    "rating": 4.8,
+    "reviewCount": 1205,
+    "image": "/img/products/28.svg",
+    "images": [
+      "/img/products/28.svg",
+      "/img/products/28.svg"
+    ],
+    "description": "Comprehensive guide to modern programming practices.",
+    "tags": [
+      "programming",
+      "software",
+      "education"
+    ],
+    "specifications": {
+      "Pages": "480",
+      "Format": "Hardcover",
+      "Language": "English"
+    },
+    "stock": 50
+  },
+  {
+    "id": 29,
+    "name": "Mindful Living Guide",
+    "price": 19.99,
+    "originalPrice": 27.99,
+    "categoryId": "books",
+    "categoryName": "Books",
+    "rating": 4.5,
+    "reviewCount": 678,
+    "image": "/img/products/29.svg",
+    "images": [
+      "/img/products/29.svg",
+      "/img/products/29.svg"
+    ],
+    "description": "Practical guide to mindfulness and balanced living.",
+    "tags": [
+      "mindfulness",
+      "self-help",
+      "wellness"
+    ],
+    "specifications": {
+      "Pages": "256",
+      "Format": "Paperback",
+      "Language": "English"
+    },
+    "stock": 80
+  },
+  {
+    "id": 30,
+    "name": "Mystery at Midnight Manor",
+    "price": 14.99,
+    "originalPrice": 21.99,
+    "categoryId": "books",
+    "categoryName": "Books",
+    "rating": 4.3,
+    "reviewCount": 445,
+    "image": "/img/products/30.svg",
+    "images": [
+      "/img/products/30.svg",
+      "/img/products/30.svg"
+    ],
+    "description": "A gripping mystery novel with twists and turns.",
+    "tags": [
+      "mystery",
+      "fiction",
+      "thriller"
+    ],
+    "specifications": {
+      "Pages": "384",
+      "Format": "Paperback",
+      "Publisher": "Fiction House"
+    },
+    "stock": 65
+  },
+  {
+    "id": 31,
+    "name": "Healthy Meal Prep Cookbook",
+    "price": 24.99,
+    "originalPrice": 34.99,
+    "categoryId": "books",
+    "categoryName": "Books",
+    "rating": 4.6,
+    "reviewCount": 332,
+    "image": "/img/products/31.svg",
+    "images": [
+      "/img/products/31.svg",
+      "/img/products/31.svg"
+    ],
+    "description": "50+ easy and delicious meal prep recipes.",
+    "tags": [
+      "cooking",
+      "meal-prep",
+      "healthy"
+    ],
+    "specifications": {
+      "Pages": "200",
+      "Format": "Paperback",
+      "Publisher": "Kitchen Press"
+    },
+    "stock": 40
+  },
+  {
+    "id": 32,
+    "name": "Science Fiction Anthology",
+    "price": 16.99,
+    "originalPrice": 24.99,
+    "categoryId": "books",
+    "categoryName": "Books",
+    "rating": 4.4,
+    "reviewCount": 289,
+    "image": "/img/products/32.svg",
+    "images": [
+      "/img/products/32.svg",
+      "/img/products/32.svg"
+    ],
+    "description": "Collection of award-winning science fiction short stories.",
+    "tags": [
+      "science-fiction",
+      "anthology",
+      "future"
+    ],
+    "specifications": {
+      "Pages": "320",
+      "Format": "Paperback",
+      "Publisher": "Sci-Fi Publications"
+    },
+    "stock": 55
+  },
+  {
+    "id": 33,
+    "name": "The History of Art",
+    "price": 49.99,
+    "originalPrice": 69.99,
+    "categoryId": "books",
+    "categoryName": "Books",
+    "rating": 4.7,
+    "reviewCount": 198,
+    "image": "/img/products/33.svg",
+    "images": [
+      "/img/products/33.svg",
+      "/img/products/33.svg"
+    ],
+    "description": "Beautifully illustrated journey through art history.",
+    "tags": [
+      "art",
+      "history",
+      "illustrated"
+    ],
+    "specifications": {
+      "Pages": "512",
+      "Format": "Hardcover",
+      "Publisher": "Art House"
+    },
+    "stock": 25
+  },
+  {
+    "id": 34,
+    "name": "Children's Illustrated Treasury",
+    "price": 22.99,
+    "originalPrice": 32.99,
+    "categoryId": "books",
+    "categoryName": "Books",
+    "rating": 4.9,
+    "reviewCount": 567,
+    "image": "/img/products/34.svg",
+    "images": [
+      "/img/products/34.svg",
+      "/img/products/34.svg"
+    ],
+    "description": "Magical collection of classic children's stories.",
+    "tags": [
+      "children",
+      "illustrated",
+      "classics"
+    ],
+    "specifications": {
+      "Pages": "160",
+      "Format": "Hardcover",
+      "Publisher": "Kids World"
+    },
+    "stock": 35
+  },
+  {
+    "id": 35,
+    "name": "Vitamin C Brightening Serum",
+    "price": 34.99,
+    "originalPrice": 49.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.6,
+    "reviewCount": 923,
+    "image": "/img/products/35.svg",
+    "images": [
+      "/img/products/35.svg",
+      "/img/products/35.svg"
+    ],
+    "description": "Potent vitamin C serum with hyaluronic acid.",
+    "tags": [
+      "serum",
+      "vitamin-c",
+      "skincare"
+    ],
+    "specifications": {
+      "Volume": "30ml",
+      "Key Ingredients": "Vitamin C, HA",
+      "Skin Type": "All types"
+    },
+    "stock": 85
+  },
+  {
+    "id": 36,
+    "name": "Matte Liquid Lipstick",
+    "price": 18.99,
+    "originalPrice": 24.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.4,
+    "reviewCount": 756,
+    "image": "/img/products/36.svg",
+    "images": [
+      "/img/products/36.svg",
+      "/img/products/36.svg"
+    ],
+    "description": "Long-wearing matte liquid lipstick with creamy application.",
+    "tags": [
+      "lipstick",
+      "matte",
+      "vegan"
+    ],
+    "specifications": {
+      "Volume": "5ml",
+      "Finish": "Matte",
+      "Vegan": "Yes"
+    },
+    "stock": 150
+  },
+  {
+    "id": 37,
+    "name": "Retinol Night Cream",
+    "price": 42.99,
+    "originalPrice": 59.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.5,
+    "reviewCount": 534,
+    "image": "/img/products/37.svg",
+    "images": [
+      "/img/products/37.svg",
+      "/img/products/37.svg"
+    ],
+    "description": "Advanced retinol night cream with peptides and ceramides.",
+    "tags": [
+      "retinol",
+      "night-cream",
+      "anti-aging"
+    ],
+    "specifications": {
+      "Volume": "50ml",
+      "Key Ingredients": "Retinol, Peptides",
+      "Skin Type": "Normal to dry"
+    },
+    "stock": 60
+  },
+  {
+    "id": 38,
+    "name": "Natural Hair Care Set",
+    "price": 54.99,
+    "originalPrice": 74.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.3,
+    "reviewCount": 412,
+    "image": "/img/products/38.svg",
+    "images": [
+      "/img/products/38.svg",
+      "/img/products/38.svg"
+    ],
+    "description": "Complete natural hair care set with sulfate-free shampoo.",
+    "tags": [
+      "hair",
+      "natural",
+      "shampoo"
+    ],
+    "specifications": {
+      "Includes": "Shampoo, Conditioner, Oil",
+      "Volume": "3 x 250ml",
+      "Sulfate Free": "Yes"
+    },
+    "stock": 40
+  },
+  {
+    "id": 39,
+    "name": "Eyeshadow Palette Pro",
+    "price": 38.99,
+    "originalPrice": 54.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.7,
+    "reviewCount": 689,
+    "image": "/img/products/39.svg",
+    "images": [
+      "/img/products/39.svg",
+      "/img/products/39.svg"
+    ],
+    "description": "Professional 24-color eyeshadow palette.",
+    "tags": [
+      "eyeshadow",
+      "palette",
+      "makeup"
+    ],
+    "specifications": {
+      "Colors": "24",
+      "Finish": "Matte, shimmer, metallic",
+      "Weight": "35g"
+    },
+    "stock": 55
+  },
+  {
+    "id": 40,
+    "name": "Face Cleansing Brush",
+    "price": 49.99,
+    "originalPrice": 69.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.4,
+    "reviewCount": 345,
+    "image": "/img/products/40.svg",
+    "images": [
+      "/img/products/40.svg",
+      "/img/products/40.svg"
+    ],
+    "description": "Sonic facial cleansing brush with 3 speed settings.",
+    "tags": [
+      "cleansing",
+      "brush",
+      "skincare"
+    ],
+    "specifications": {
+      "Speed Settings": "3",
+      "Brush Heads": "4 included",
+      "Battery": "2 hours"
+    },
+    "stock": 45
+  },
+  {
+    "id": 41,
+    "name": "Luxury Perfume Collection",
+    "price": 89.99,
+    "originalPrice": 129.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.8,
+    "reviewCount": 256,
+    "image": "/img/products/41.svg",
+    "images": [
+      "/img/products/41.svg",
+      "/img/products/41.svg"
+    ],
+    "description": "Set of 3 luxury perfume samples with long-lasting fragrance.",
+    "tags": [
+      "perfume",
+      "luxury",
+      "fragrance"
+    ],
+    "specifications": {
+      "Volume": "3 x 30ml",
+      "Longevity": "8-10 hours",
+      "Notes": "Floral, woody, fresh"
+    },
+    "stock": 30
+  },
+  {
+    "id": 42,
+    "name": "Makeup Brush Set",
+    "price": 34.99,
+    "originalPrice": 49.99,
+    "categoryId": "beauty",
+    "categoryName": "Beauty",
+    "rating": 4.5,
+    "reviewCount": 534,
+    "image": "/img/products/42.svg",
+    "images": [
+      "/img/products/42.svg",
+      "/img/products/42.svg"
+    ],
+    "description": "Professional 12-piece makeup brush set with synthetic bristles.",
+    "tags": [
+      "brushes",
+      "makeup",
+      "professional"
+    ],
+    "specifications": {
+      "Pieces": "12",
+      "Bristles": "Synthetic",
+      "Includes": "Storage case"
+    },
+    "stock": 65
+  }
+]

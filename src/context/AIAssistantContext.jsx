@@ -1,0 +1,83 @@
+import { useState, useCallback, useEffect, createContext, useContext } from 'react'
+
+const STORAGE_KEY = 'nexmart-ai-chat'
+
+function loadMessages() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+function saveMessages(messages) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+}
+
+const AIAssistantContext = createContext(null)
+
+export function AIAssistantProvider({ children }) {
+  const [messages, setMessages] = useState(() => loadMessages())
+  const [isTyping, setIsTyping] = useState(false)
+
+  useEffect(() => {
+    saveMessages(messages)
+  }, [messages])
+
+  const sendMessage = useCallback(async (text) => {
+    if (!text || !text.trim()) return
+
+    const userMessage = {
+      id: Date.now().toString(),
+      sender: 'user',
+      text: text.trim(),
+      timestamp: Date.now()
+    }
+
+    setMessages(prev => [...prev, userMessage])
+    setIsTyping(true)
+
+    try {
+      const { processMessage } = await import('../services/aiService.js')
+      const { products } = await import('../data/products.json')
+      const result = await processMessage(text, products)
+      
+      const assistantMessage = {
+        id: (Date.now() + 1).toString(),
+        sender: 'assistant',
+        text: result.text,
+        timestamp: Date.now(),
+        products: result.products || []
+      }
+
+      setMessages(prev => [...prev, assistantMessage])
+    } catch (error) {
+      const errorMessage = {
+        id: (Date.now() + 1).toString(),
+        sender: 'assistant',
+        text: "I'm sorry, I'm having trouble right now. Please try again in a moment.",
+        timestamp: Date.now()
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsTyping(false)
+    }
+  }, [])
+
+  const clearHistory = useCallback(() => {
+    setMessages([])
+  }, [])
+
+  return (
+    <AIAssistantContext.Provider value={{ messages, sendMessage, clearHistory, isTyping }}>
+      {children}
+    </AIAssistantContext.Provider>
+  )
+}
+
+export function useAIAssistant() {
+  const context = useContext(AIAssistantContext)
+  if (!context) throw new Error('useAIAssistant must be used within an AIAssistantProvider')
+  return context
+}

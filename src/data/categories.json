@@ -1,0 +1,44 @@
+[
+  {
+    "id": "electronics",
+    "name": "Electronics",
+    "icon": "💻",
+    "description": "Latest gadgets and devices",
+    "productCount": 7
+  },
+  {
+    "id": "fashion",
+    "name": "Fashion",
+    "icon": "👗",
+    "description": "Trendy clothing and accessories",
+    "productCount": 7
+  },
+  {
+    "id": "home-kitchen",
+    "name": "Home & Kitchen",
+    "icon": "🏠",
+    "description": "Everything for your home",
+    "productCount": 7
+  },
+  {
+    "id": "sports",
+    "name": "Sports",
+    "icon": "⚽",
+    "description": "Gear for every sport",
+    "productCount": 7
+  },
+  {
+    "id": "books",
+    "name": "Books",
+    "icon": "📚",
+    "description": "Bestsellers and more",
+    "productCount": 7
+  },
+  {
+    "id": "beauty",
+    "name": "Beauty",
+    "icon": "✨",
+    "description": "Skincare and cosmetics",
+    "productCount": 7
+  }
+]
