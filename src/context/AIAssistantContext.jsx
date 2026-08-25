@@ -40,8 +40,12 @@ export function AIAssistantProvider({ children }) {
 
     try {
       let result
+      const apiBase = import.meta.env.DEV
+        ? '/api/chat'
+        : 'https://ai-powered-ecommerce-marketplace.vercel.app/api/chat'
+
       try {
-        const response = await fetch('/api/chat', {
+        const response = await fetch(apiBase, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
