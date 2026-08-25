@@ -39,10 +39,30 @@ export function AIAssistantProvider({ children }) {
     setIsTyping(true)
 
     try {
-      const { processMessage } = await import('../services/aiService.js')
-      const { products } = await import('../data/products.json')
-      const result = await processMessage(text, products)
-      
+      let result
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text.trim(),
+            products: await import('../data/products.json').then(m => m.default || m),
+            categories: await import('../data/categories.json').then(m => m.default || m)
+          })
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          result = { text: data.text, products: data.products || [] }
+        } else {
+          throw new Error('API not available')
+        }
+      } catch {
+        const { processMessage } = await import('../services/aiService.js')
+        const { products } = await import('../data/products.json')
+        result = await processMessage(text, products)
+      }
+
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
         sender: 'assistant',
