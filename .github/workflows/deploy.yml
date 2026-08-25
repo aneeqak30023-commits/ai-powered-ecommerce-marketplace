@@ -11,6 +11,7 @@ on:
       - 'package-lock.json'
       - 'vite.config.js'
       - 'index.html'
+      - '.github/**'
 
 permissions:
   contents: read
