@@ -98,6 +98,14 @@ export const aiService = {
       return { text: "Stock availability is shown on each product page. Items marked 'In Stock' are ready to ship. If an item is out of stock, you can check back later or browse similar products in the same category." }
     }
 
+    const searchResults = findProducts(text, products)
+    if (searchResults.length > 0) {
+      return {
+        text: `I found ${searchResults.length} product${searchResults.length > 1 ? 's' : ''} that might interest you:`,
+        products: searchResults
+      }
+    }
+
     const categoryNames = categories.map(c => c.name).join(', ')
     return {
       text: `I'm not sure I understand. I can help you with:\n• Finding products (e.g., "find wireless headphones")\n• Recommendations (e.g., "recommend best laptops")\n• Comparing products (e.g., "compare iPhone vs Samsung")\n• Browsing categories: ${categoryNames}\n• Shopping questions (shipping, returns, payment)\n\nWhat would you like to know?`
