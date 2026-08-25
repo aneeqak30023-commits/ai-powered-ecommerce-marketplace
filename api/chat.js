@@ -12,7 +12,8 @@ export default async function handler(request, response) {
   }
 
   try {
-    const { message, products = [], categories = [] } = request.body || {}
+    const body = request.body || {}
+    const { message, products = [], categories = [] } = body
 
     if (!message || typeof message !== 'string') {
       return response.status(400).json({ error: 'Message is required' })
@@ -20,6 +21,7 @@ export default async function handler(request, response) {
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
+      console.error('GEMINI_API_KEY is not configured')
       return response.status(500).json({ error: 'AI service not configured' })
     }
 
@@ -32,7 +34,7 @@ Keep responses concise and helpful.`
 
     const catalogContext = JSON.stringify({ products: products.slice(0, 20), categories }, null, 2)
 
-    const body = {
+    const geminiBody = {
       contents: [
         { role: 'user', parts: [{ text: `${systemPrompt}\n\nCatalog:\n${catalogContext}\n\nUser: ${message}` }] }
       ],
@@ -42,19 +44,32 @@ Keep responses concise and helpful.`
       }
     }
 
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
+    let geminiResponse
+    try {
+      geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(geminiBody)
+      })
+    } catch (fetchError) {
+      console.error('Gemini fetch error:', fetchError)
+      return response.status(500).json({ error: 'AI service temporarily unavailable' })
+    }
 
     if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text()
+      const errorText = await geminiResponse.text().catch(() => 'Unknown error')
       console.error('Gemini API error:', geminiResponse.status, errorText)
       return response.status(500).json({ error: 'AI service temporarily unavailable' })
     }
 
-    const data = await geminiResponse.json()
+    let data
+    try {
+      data = await geminiResponse.json()
+    } catch (parseError) {
+      console.error('Gemini response parse error:', parseError)
+      return response.status(500).json({ error: 'AI service temporarily unavailable' })
+    }
+
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that right now. Please try again."
 
     return response.status(200).json({ text })
