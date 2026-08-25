@@ -4,14 +4,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'vite.config.js'
-      - 'index.html'
-      - '.github/**'
 
 permissions:
   contents: read
