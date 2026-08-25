@@ -2,7 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig({
-  base: '/ai-powered-ecommerce-marketplace/',
-  plugins: [react(), tailwindcss()],
+export default defineConfig(({ mode }) => {
+  const isDev = mode === 'development'
+  return {
+    base: isDev ? '/' : '/ai-powered-ecommerce-marketplace/',
+    plugins: [react(), tailwindcss()],
+  }
 })
