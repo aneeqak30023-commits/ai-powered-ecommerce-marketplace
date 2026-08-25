@@ -8,10 +8,10 @@
     "categoryName": "Electronics",
     "rating": 4.5,
     "reviewCount": 234,
-    "image": "/img/products/1.svg",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/1.svg",
-      "/img/products/1.svg"
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop"
     ],
     "description": "Premium wireless headphones with active noise cancellation, 30-hour battery life.",
     "tags": [
@@ -35,10 +35,10 @@
     "categoryName": "Electronics",
     "rating": 4.7,
     "reviewCount": 512,
-    "image": "/img/products/2.svg",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/2.svg",
-      "/img/products/2.svg"
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop"
     ],
     "description": "Advanced smartwatch with health monitoring, GPS tracking, AMOLED display.",
     "tags": [
@@ -62,10 +62,10 @@
     "categoryName": "Electronics",
     "rating": 4.3,
     "reviewCount": 189,
-    "image": "/img/products/3.svg",
+    "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/3.svg",
-      "/img/products/3.svg"
+      "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&h=400&fit=crop"
     ],
     "description": "High-capacity power bank with fast charging support.",
     "tags": [
@@ -89,10 +89,10 @@
     "categoryName": "Electronics",
     "rating": 4.6,
     "reviewCount": 98,
-    "image": "/img/products/4.svg",
+    "image": "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/4.svg",
-      "/img/products/4.svg"
+      "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=400&h=400&fit=crop"
     ],
     "description": "Professional 4K webcam with built-in adjustable ring light.",
     "tags": [
@@ -116,10 +116,10 @@
     "categoryName": "Electronics",
     "rating": 4.8,
     "reviewCount": 345,
-    "image": "/img/products/5.svg",
+    "image": "https://images.unsplash.com/photo-1618384880359-05b151f29e58?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/5.svg",
-      "/img/products/5.svg"
+      "https://images.unsplash.com/photo-1618384880359-05b151f29e58?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1618384880359-05b151f29e58?w=400&h=400&fit=crop"
     ],
     "description": "RGB mechanical keyboard with Cherry MX switches.",
     "tags": [
@@ -143,10 +143,10 @@
     "categoryName": "Electronics",
     "rating": 4.4,
     "reviewCount": 278,
-    "image": "/img/products/6.svg",
+    "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/6.svg",
-      "/img/products/6.svg"
+      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&h=400&fit=crop"
     ],
     "description": "True wireless earbuds with spatial audio and adaptive transparency.",
     "tags": [
@@ -170,10 +170,10 @@
     "categoryName": "Electronics",
     "rating": 4.2,
     "reviewCount": 156,
-    "image": "/img/products/7.svg",
+    "image": "https://images.unsplash.com/photo-1558089687-f282ffcbc126?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/7.svg",
-      "/img/products/7.svg"
+      "https://images.unsplash.com/photo-1558089687-f282ffcbc126?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1558089687-f282ffcbc126?w=400&h=400&fit=crop"
     ],
     "description": "360-degree smart speaker with room-filling sound.",
     "tags": [
@@ -197,10 +197,10 @@
     "categoryName": "Fashion",
     "rating": 4.4,
     "reviewCount": 890,
-    "image": "/img/products/8.svg",
+    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/8.svg",
-      "/img/products/8.svg"
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop"
     ],
     "description": "Premium cotton t-shirt with a relaxed fit.",
     "tags": [
@@ -224,10 +224,10 @@
     "categoryName": "Fashion",
     "rating": 4.3,
     "reviewCount": 445,
-    "image": "/img/products/9.svg",
+    "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/9.svg",
-      "/img/products/9.svg"
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop"
     ],
     "description": "Modern slim-fit jeans crafted from stretch denim.",
     "tags": [
@@ -251,10 +251,10 @@
     "categoryName": "Fashion",
     "rating": 4.6,
     "reviewCount": 234,
-    "image": "/img/products/10.svg",
+    "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/10.svg",
-      "/img/products/10.svg"
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop"
     ],
     "description": "Handcrafted genuine leather crossbody bag.",
     "tags": [
@@ -278,10 +278,10 @@
     "categoryName": "Fashion",
     "rating": 4.7,
     "reviewCount": 678,
-    "image": "/img/products/11.svg",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/11.svg",
-      "/img/products/11.svg"
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
     ],
     "description": "Responsive running shoes with energy-returning cushioning.",
     "tags": [
@@ -305,10 +305,10 @@
     "categoryName": "Fashion",
     "rating": 4.2,
     "reviewCount": 312,
-    "image": "/img/products/12.svg",
+    "image": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/12.svg",
-      "/img/products/12.svg"
+      "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop"
     ],
     "description": "Timeless aviator sunglasses with UV400 protection.",
     "tags": [
@@ -332,10 +332,10 @@
     "categoryName": "Fashion",
     "rating": 4.5,
     "reviewCount": 167,
-    "image": "/img/products/13.svg",
+    "image": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/13.svg",
-      "/img/products/13.svg"
+      "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=400&fit=crop"
     ],
     "description": "Elegant wool blend coat with satin lining.",
     "tags": [
@@ -359,10 +359,10 @@
     "categoryName": "Home & Kitchen",
     "rating": 4.6,
     "reviewCount": 423,
-    "image": "/img/products/14.svg",
+    "image": "https://images.unsplash.com/photo-1708127368781-cd5f069a90a5?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/14.svg",
-      "/img/products/14.svg"
+      "https://images.unsplash.com/photo-1708127368781-cd5f069a90a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1708127368781-cd5f069a90a5?w=400&h=400&fit=crop"
     ],
     "description": "Double-walled stainless steel French press.",
     "tags": [
@@ -386,10 +386,10 @@
     "categoryName": "Home & Kitchen",
     "rating": 4.4,
     "reviewCount": 289,
-    "image": "/img/products/15.svg",
+    "image": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/15.svg",
-      "/img/products/15.svg"
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop"
     ],
     "description": "10-piece non-stick cookware set with PFOA-free coating.",
     "tags": [
@@ -413,10 +413,10 @@
     "categoryName": "Home & Kitchen",
     "rating": 4.7,
     "reviewCount": 567,
-    "image": "/img/products/16.svg",
+    "image": "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/16.svg",
-      "/img/products/16.svg"
+      "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=400&fit=crop"
     ],
     "description": "Smart robot vacuum with LiDAR navigation.",
     "tags": [
@@ -440,10 +440,10 @@
     "categoryName": "Home & Kitchen",
     "rating": 4.3,
     "reviewCount": 198,
-    "image": "/img/products/17.svg",
+    "image": "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/17.svg",
-      "/img/products/17.svg"
+      "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=400&h=400&fit=crop"
     ],
     "description": "Set of 2 premium memory foam pillows with cooling gel.",
     "tags": [
@@ -467,10 +467,10 @@
     "categoryName": "Home & Kitchen",
     "rating": 4.5,
     "reviewCount": 356,
-    "image": "/img/products/18.svg",
+    "image": "https://images.unsplash.com/photo-1584990347441-a2d273c3e2f5?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/18.svg",
-      "/img/products/18.svg"
+      "https://images.unsplash.com/photo-1584990347441-a2d273c3e2f5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1584990347441-a2d273c3e2f5?w=400&h=400&fit=crop"
     ],
     "description": "Precision digital kitchen scale with tare function.",
     "tags": [
@@ -494,10 +494,10 @@
     "categoryName": "Home & Kitchen",
     "rating": 4.4,
     "reviewCount": 245,
-    "image": "/img/products/19.svg",
+    "image": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/19.svg",
-      "/img/products/19.svg"
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=400&fit=crop"
     ],
     "description": "Ultrasonic aromatherapy diffuser with LED mood lighting.",
     "tags": [
@@ -521,10 +521,10 @@
     "categoryName": "Home & Kitchen",
     "rating": 4.5,
     "reviewCount": 189,
-    "image": "/img/products/20.svg",
+    "image": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/20.svg",
-      "/img/products/20.svg"
+      "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=400&fit=crop"
     ],
     "description": "Set of 3 modern ceramic plant pots with drainage holes.",
     "tags": [
@@ -548,10 +548,10 @@
     "categoryName": "Sports",
     "rating": 4.6,
     "reviewCount": 534,
-    "image": "/img/products/21.svg",
+    "image": "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/21.svg",
-      "/img/products/21.svg"
+      "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop"
     ],
     "description": "Extra-thick 6mm eco-friendly TPE yoga mat.",
     "tags": [
@@ -575,10 +575,10 @@
     "categoryName": "Sports",
     "rating": 4.8,
     "reviewCount": 312,
-    "image": "/img/products/22.svg",
+    "image": "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/22.svg",
-      "/img/products/22.svg"
+      "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=400&h=400&fit=crop"
     ],
     "description": "Space-saving adjustable dumbbell set 5-52.5 lbs.",
     "tags": [
@@ -602,10 +602,10 @@
     "categoryName": "Sports",
     "rating": 4.5,
     "reviewCount": 890,
-    "image": "/img/products/23.svg",
+    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e7?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/23.svg",
-      "/img/products/23.svg"
+      "https://images.unsplash.com/photo-1602143407151-7111542de6e7?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1602143407151-7111542de6e7?w=400&h=400&fit=crop"
     ],
     "description": "Triple-insulated stainless steel water bottle.",
     "tags": [
@@ -629,10 +629,10 @@
     "categoryName": "Sports",
     "rating": 4.3,
     "reviewCount": 445,
-    "image": "/img/products/24.svg",
+    "image": "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/24.svg",
-      "/img/products/24.svg"
+      "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=400&h=400&fit=crop"
     ],
     "description": "Complete resistance bands kit with 5 levels.",
     "tags": [
@@ -656,10 +656,10 @@
     "categoryName": "Sports",
     "rating": 4.4,
     "reviewCount": 178,
-    "image": "/img/products/25.svg",
+    "image": "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/25.svg",
-      "/img/products/25.svg"
+      "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=400&fit=crop"
     ],
     "description": "Professional cycling jersey with moisture-wicking fabric.",
     "tags": [
@@ -683,10 +683,10 @@
     "categoryName": "Sports",
     "rating": 4.2,
     "reviewCount": 267,
-    "image": "/img/products/26.svg",
+    "image": "https://images.unsplash.com/photo-1434672835026-23938b5bda52?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/26.svg",
-      "/img/products/26.svg"
+      "https://images.unsplash.com/photo-1434672835026-23938b5bda52?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1434672835026-23938b5bda52?w=400&h=400&fit=crop"
     ],
     "description": "Professional speed jump rope with ball-bearing rotation.",
     "tags": [
@@ -710,10 +710,10 @@
     "categoryName": "Sports",
     "rating": 4.5,
     "reviewCount": 234,
-    "image": "/img/products/27.svg",
+    "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/27.svg",
-      "/img/products/27.svg"
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
     ],
     "description": "Durable 40L hiking backpack with rain cover.",
     "tags": [
@@ -737,10 +737,10 @@
     "categoryName": "Books",
     "rating": 4.8,
     "reviewCount": 1205,
-    "image": "/img/products/28.svg",
+    "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/28.svg",
-      "/img/products/28.svg"
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop"
     ],
     "description": "Comprehensive guide to modern programming practices.",
     "tags": [
@@ -764,10 +764,10 @@
     "categoryName": "Books",
     "rating": 4.5,
     "reviewCount": 678,
-    "image": "/img/products/29.svg",
+    "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/29.svg",
-      "/img/products/29.svg"
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop"
     ],
     "description": "Practical guide to mindfulness and balanced living.",
     "tags": [
@@ -791,10 +791,10 @@
     "categoryName": "Books",
     "rating": 4.3,
     "reviewCount": 445,
-    "image": "/img/products/30.svg",
+    "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/30.svg",
-      "/img/products/30.svg"
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop"
     ],
     "description": "A gripping mystery novel with twists and turns.",
     "tags": [
@@ -818,10 +818,10 @@
     "categoryName": "Books",
     "rating": 4.6,
     "reviewCount": 332,
-    "image": "/img/products/31.svg",
+    "image": "https://images.unsplash.com/photo-1466637574441-749b8f18750f?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/31.svg",
-      "/img/products/31.svg"
+      "https://images.unsplash.com/photo-1466637574441-749b8f18750f?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1466637574441-749b8f18750f?w=400&h=400&fit=crop"
     ],
     "description": "50+ easy and delicious meal prep recipes.",
     "tags": [
@@ -845,10 +845,10 @@
     "categoryName": "Books",
     "rating": 4.4,
     "reviewCount": 289,
-    "image": "/img/products/32.svg",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0a0?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/32.svg",
-      "/img/products/32.svg"
+      "https://images.unsplash.com/photo-1451187580459-43490279c0a0?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0a0?w=400&h=400&fit=crop"
     ],
     "description": "Collection of award-winning science fiction short stories.",
     "tags": [
@@ -872,10 +872,10 @@
     "categoryName": "Books",
     "rating": 4.7,
     "reviewCount": 198,
-    "image": "/img/products/33.svg",
+    "image": "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/33.svg",
-      "/img/products/33.svg"
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=400&fit=crop"
     ],
     "description": "Beautifully illustrated journey through art history.",
     "tags": [
@@ -899,10 +899,10 @@
     "categoryName": "Books",
     "rating": 4.9,
     "reviewCount": 567,
-    "image": "/img/products/34.svg",
+    "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/34.svg",
-      "/img/products/34.svg"
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop"
     ],
     "description": "Magical collection of classic children's stories.",
     "tags": [
@@ -926,10 +926,10 @@
     "categoryName": "Beauty",
     "rating": 4.6,
     "reviewCount": 923,
-    "image": "/img/products/35.svg",
+    "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7de?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/35.svg",
-      "/img/products/35.svg"
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7de?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7de?w=400&h=400&fit=crop"
     ],
     "description": "Potent vitamin C serum with hyaluronic acid.",
     "tags": [
@@ -953,10 +953,10 @@
     "categoryName": "Beauty",
     "rating": 4.4,
     "reviewCount": 756,
-    "image": "/img/products/36.svg",
+    "image": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/36.svg",
-      "/img/products/36.svg"
+      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop"
     ],
     "description": "Long-wearing matte liquid lipstick with creamy application.",
     "tags": [
@@ -980,10 +980,10 @@
     "categoryName": "Beauty",
     "rating": 4.5,
     "reviewCount": 534,
-    "image": "/img/products/37.svg",
+    "image": "https://images.unsplash.com/photo-1570194065650-d99fb4b38a18?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/37.svg",
-      "/img/products/37.svg"
+      "https://images.unsplash.com/photo-1570194065650-d99fb4b38a18?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1570194065650-d99fb4b38a18?w=400&h=400&fit=crop"
     ],
     "description": "Advanced retinol night cream with peptides and ceramides.",
     "tags": [
@@ -1007,10 +1007,10 @@
     "categoryName": "Beauty",
     "rating": 4.3,
     "reviewCount": 412,
-    "image": "/img/products/38.svg",
+    "image": "https://images.unsplash.com/photo-1526947425960-7359b4115a23?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/38.svg",
-      "/img/products/38.svg"
+      "https://images.unsplash.com/photo-1526947425960-7359b4115a23?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1526947425960-7359b4115a23?w=400&h=400&fit=crop"
     ],
     "description": "Complete natural hair care set with sulfate-free shampoo.",
     "tags": [
@@ -1034,10 +1034,10 @@
     "categoryName": "Beauty",
     "rating": 4.7,
     "reviewCount": 689,
-    "image": "/img/products/39.svg",
+    "image": "https://images.unsplash.com/photo-1512496015851-a90fb6ba6e2c?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/39.svg",
-      "/img/products/39.svg"
+      "https://images.unsplash.com/photo-1512496015851-a90fb6ba6e2c?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1512496015851-a90fb6ba6e2c?w=400&h=400&fit=crop"
     ],
     "description": "Professional 24-color eyeshadow palette.",
     "tags": [
@@ -1061,10 +1061,10 @@
     "categoryName": "Beauty",
     "rating": 4.4,
     "reviewCount": 345,
-    "image": "/img/products/40.svg",
+    "image": "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/40.svg",
-      "/img/products/40.svg"
+      "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop"
     ],
     "description": "Sonic facial cleansing brush with 3 speed settings.",
     "tags": [
@@ -1088,10 +1088,10 @@
     "categoryName": "Beauty",
     "rating": 4.8,
     "reviewCount": 256,
-    "image": "/img/products/41.svg",
+    "image": "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/41.svg",
-      "/img/products/41.svg"
+      "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop"
     ],
     "description": "Set of 3 luxury perfume samples with long-lasting fragrance.",
     "tags": [
@@ -1115,10 +1115,10 @@
     "categoryName": "Beauty",
     "rating": 4.5,
     "reviewCount": 534,
-    "image": "/img/products/42.svg",
+    "image": "https://images.unsplash.com/photo-1522337660859-02fbefca4706?w=400&h=400&fit=crop",
     "images": [
-      "/img/products/42.svg",
-      "/img/products/42.svg"
+      "https://images.unsplash.com/photo-1522337660859-02fbefca4706?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1522337660859-02fbefca4706?w=400&h=400&fit=crop"
     ],
     "description": "Professional 12-piece makeup brush set with synthetic bristles.",
     "tags": [

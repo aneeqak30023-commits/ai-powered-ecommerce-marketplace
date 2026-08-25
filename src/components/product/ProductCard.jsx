@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const C = {
   primary: '#4F46E5',
@@ -67,97 +68,105 @@ export default function ProductCard({ product, onAddToCart }) {
         transform: hovered ? 'translateY(-2px)' : 'none'
       }}
     >
-      <div style={{ position: 'relative', aspectRatio: '1 / 1', overflow: 'hidden', background: C.surface }}>
-        {categoryName && (
-          <span
-            style={{
-              position: 'absolute',
-              top: 10,
-              left: 10,
-              zIndex: 2,
-              background: C.primary,
-              color: '#fff',
-              fontSize: 11,
-              fontWeight: 600,
-              padding: '3px 8px',
-              borderRadius: 9999,
-              textTransform: 'uppercase',
-              letterSpacing: '.03em'
-            }}
-          >
-            {categoryName}
-          </span>
-        )}
-        {hasDiscount && (
-          <span
-            style={{
-              position: 'absolute',
-              top: 10,
-              right: 10,
-              zIndex: 2,
-              background: C.accent,
-              color: '#fff',
-              fontSize: 11,
-              fontWeight: 700,
-              padding: '3px 8px',
-              borderRadius: 9999
-            }}
-          >
-            -{discountPct}%
-          </span>
-        )}
-        <img
-          src={image}
-          alt={name}
-          loading="lazy"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            transition: 'transform .3s ease',
-            transform: hovered ? 'scale(1.05)' : 'scale(1)'
-          }}
-        />
-      </div>
-
-      <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8, flexGrow: 1 }}>
-        <h3
-          style={{
-            margin: 0,
-            fontSize: 15,
-            fontWeight: 600,
-            color: C.text,
-            lineHeight: 1.3,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            minHeight: 39
-          }}
-        >
-          {name}
-        </h3>
-
-        <StarRating rating={rating} count={reviewCount} />
-
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 2 }}>
-          <span style={{ fontSize: 18, fontWeight: 700, color: C.primary }}>{formatPrice(price)}</span>
+      <Link to={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <div style={{ position: 'relative', aspectRatio: '1 / 1', overflow: 'hidden', background: C.surface }}>
+          {categoryName && (
+            <span
+              style={{
+                position: 'absolute',
+                top: 10,
+                left: 10,
+                zIndex: 2,
+                background: C.primary,
+                color: '#fff',
+                fontSize: 11,
+                fontWeight: 600,
+                padding: '3px 8px',
+                borderRadius: 9999,
+                textTransform: 'uppercase',
+                letterSpacing: '.03em'
+              }}
+            >
+              {categoryName}
+            </span>
+          )}
           {hasDiscount && (
             <span
               style={{
-                fontSize: 13,
-                color: C.textSecondary,
-                textDecoration: 'line-through'
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                zIndex: 2,
+                background: C.accent,
+                color: '#fff',
+                fontSize: 11,
+                fontWeight: 700,
+                padding: '3px 8px',
+                borderRadius: 9999
               }}
             >
-              {formatPrice(originalPrice)}
+              -{discountPct}%
             </span>
           )}
+          <img
+            src={image}
+            alt={name}
+            loading="lazy"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transition: 'transform .3s ease',
+              transform: hovered ? 'scale(1.05)' : 'scale(1)'
+            }}
+          />
         </div>
 
+        <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8, flexGrow: 1 }}>
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 15,
+              fontWeight: 600,
+              color: C.text,
+              lineHeight: 1.3,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              minHeight: 39
+            }}
+          >
+            {name}
+          </h3>
+
+          <StarRating rating={rating} count={reviewCount} />
+
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 2 }}>
+            <span style={{ fontSize: 18, fontWeight: 700, color: C.primary }}>{formatPrice(price)}</span>
+            {hasDiscount && (
+              <span
+                style={{
+                  fontSize: 13,
+                  color: C.textSecondary,
+                  textDecoration: 'line-through'
+                }}
+              >
+                {formatPrice(originalPrice)}
+              </span>
+            )}
+          </div>
+        </div>
+      </Link>
+
+      <div style={{ padding: '0 16px 16px' }}>
         <button
           type="button"
-          onClick={() => !outOfStock && onAddToCart && onAddToCart(product)}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            !outOfStock && onAddToCart && onAddToCart(product)
+          }}
           disabled={outOfStock}
           style={{
             marginTop: 'auto',
