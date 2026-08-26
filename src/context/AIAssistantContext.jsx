@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
+import { aiService } from '../services/aiService.js'
 
 const STORAGE_KEY = 'nexmart-ai-chat'
 
@@ -13,6 +14,20 @@ function loadMessages() {
 
 function saveMessages(messages) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+}
+
+function reduceProducts(products) {
+  return (products || [])
+    .slice(0, 20)
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      categoryId: p.categoryId,
+      categoryName: p.categoryName,
+      rating: p.rating,
+      tags: p.tags
+    }))
 }
 
 const AIAssistantContext = createContext(null)
@@ -50,7 +65,7 @@ export function AIAssistantProvider({ children }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: text.trim(),
-            products: await import('../data/products.json').then(m => m.default || m),
+            products: reduceProducts(await import('../data/products.json').then(m => m.default || m)),
             categories: await import('../data/categories.json').then(m => m.default || m)
           })
         })
@@ -62,9 +77,7 @@ export function AIAssistantProvider({ children }) {
           throw new Error('API not available')
         }
       } catch {
-        const { processMessage } = await import('../services/aiService.js')
-        const { products } = await import('../data/products.json')
-        result = await processMessage(text, products)
+        result = await aiService.processMessage(text)
       }
 
       const assistantMessage = {

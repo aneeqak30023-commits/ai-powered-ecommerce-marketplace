@@ -26,8 +26,8 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' }
 ]
 
-export default function ProductFilters({ categories = [], onFilterChange }) {
-  const [selectedCategory, setSelectedCategory] = useState('all')
+export default function ProductFilters({ categories = [], onFilterChange, initialCategory }) {
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'all')
   const [priceRange, setPriceRange] = useState('all')
   const [sortBy, setSortBy] = useState('featured')
 

@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import ProductGrid from '../components/product/ProductGrid'
 import ProductFilters from '../components/product/ProductFilters'
 import allProducts from '../data/products.json'
@@ -6,11 +7,21 @@ import allCategories from '../data/categories.json'
 import { useCart } from '../context/CartContext'
 
 export default function ProductsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
+  const [searchParams] = useSearchParams()
+  const searchFromUrl = (searchParams.get('search') || '').trim()
+  const categoryFromUrl = searchParams.get('category') || ''
+
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl)
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [sortBy, setSortBy] = useState('id')
   const { addToCart } = useCart()
+
+  // Keep filters in sync with URL params when navigating (e.g. header search or category links)
+  useEffect(() => {
+    setSearchQuery(searchFromUrl)
+    setSelectedCategory(categoryFromUrl)
+  }, [searchFromUrl, categoryFromUrl])
 
   const filteredProducts = useMemo(() => {
     let result = [...allProducts]
@@ -85,6 +96,7 @@ export default function ProductsPage() {
             <ProductFilters
               categories={allCategories}
               onFilterChange={handleFilterChange}
+              initialCategory={categoryFromUrl}
             />
           </aside>
           <div className="flex-1">
