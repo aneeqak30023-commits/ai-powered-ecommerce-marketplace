@@ -6,16 +6,34 @@ function delay(ms = 600) {
 }
 
 function findProducts(query, products) {
-  const q = query.toLowerCase().replace(/[^\w\s]/g, '')
+  const q = query
+    .toLowerCase()
+    .replace(/^((find|search|looking for|do you have|show me|i need|i want|looking to buy|i'm searching)\s*)+/i, '')
+    .replace(/[^\w\s]/g, '')
+    .trim()
+
   if (!q) return []
+
+  const words = q.split(/\s+/).filter(w => w.length > 2)
+
   return products.filter(p => {
     const category = categoriesData.find(c => c.id === p.categoryId)
-    return (
-      p.name.toLowerCase().includes(q) ||
-      p.description?.toLowerCase().includes(q) ||
-      p.tags?.some(t => t.toLowerCase().includes(q)) ||
-      category?.name.toLowerCase().includes(q)
-    )
+    const name = p.name.toLowerCase()
+    const description = p.description?.toLowerCase() || ''
+    const catName = category?.name.toLowerCase() || ''
+
+    return words.some(w => {
+      const variants = [w]
+      if (w.endsWith('s')) variants.push(w.slice(0, -1))
+      if (w.endsWith('es')) variants.push(w.slice(0, -2))
+
+      return variants.some(v =>
+        name.includes(v) ||
+        description.includes(v) ||
+        p.tags?.some(t => t.toLowerCase().includes(v)) ||
+        catName.includes(v)
+      )
+    })
   }).slice(0, 5)
 }
 

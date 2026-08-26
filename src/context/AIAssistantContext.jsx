@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
-import { aiService } from '../services/aiService.js'
 
 const STORAGE_KEY = 'nexmart-ai-chat'
 
@@ -77,7 +76,9 @@ export function AIAssistantProvider({ children }) {
           throw new Error('API not available')
         }
       } catch {
-        result = await aiService.processMessage(text)
+        const { processMessage } = await import('../services/aiService.js')
+        const { products } = await import('../data/products.json')
+        result = await processMessage(text, products)
       }
 
       const assistantMessage = {

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ProductGrid from '../components/product/ProductGrid'
 import ProductFilters from '../components/product/ProductFilters'
@@ -8,7 +8,7 @@ import { useCart } from '../context/CartContext'
 
 export default function ProductsPage() {
   const [searchParams] = useSearchParams()
-  const searchFromUrl = (searchParams.get('search') || '').trim()
+  const searchFromUrl = searchParams.get('search') || ''
   const categoryFromUrl = searchParams.get('category') || ''
 
   const [searchQuery, setSearchQuery] = useState(searchFromUrl)
@@ -16,12 +16,6 @@ export default function ProductsPage() {
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [sortBy, setSortBy] = useState('id')
   const { addToCart } = useCart()
-
-  // Keep filters in sync with URL params when navigating (e.g. header search or category links)
-  useEffect(() => {
-    setSearchQuery(searchFromUrl)
-    setSelectedCategory(categoryFromUrl)
-  }, [searchFromUrl, categoryFromUrl])
 
   const filteredProducts = useMemo(() => {
     let result = [...allProducts]
