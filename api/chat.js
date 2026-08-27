@@ -1,3 +1,6 @@
+import { detectIntent, INTENTS } from '../src/services/intentDetector.js'
+import { searchKnowledgeBase } from '../src/services/knowledgeBase.js'
+
 export default async function handler(request, response) {
   response.setHeader('Access-Control-Allow-Origin', '*')
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -23,6 +26,24 @@ export default async function handler(request, response) {
     if (!apiKey) {
       console.error('GEMINI_API_KEY is not configured')
       return response.status(500).json({ error: 'AI service not configured' })
+    }
+
+    const intent = detectIntent(message)
+
+    const faqIntents = new Set([
+      INTENTS.FAQ,
+      INTENTS.SHIPPING_INQUIRY,
+      INTENTS.PAYMENT_INQUIRY,
+      INTENTS.RETURN_REQUEST,
+      INTENTS.REFUND_REQUEST,
+      INTENTS.ORDER_CANCELLATION
+    ])
+
+    if (faqIntents.has(intent.intent)) {
+      const kbMatch = searchKnowledgeBase(message)
+      if (kbMatch) {
+        return response.status(200).json({ text: kbMatch.answer, intent: intent.intent, source: 'knowledge-base', knowledgeBaseId: kbMatch.id })
+      }
     }
 
     const systemPrompt = `You are a helpful shopping assistant for NexMart, an AI-powered e-commerce marketplace. 
@@ -72,7 +93,7 @@ Keep responses concise and helpful.`
 
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that right now. Please try again."
 
-    return response.status(200).json({ text })
+    return response.status(200).json({ text, intent })
   } catch (error) {
     console.error('Chat API error:', error)
     return response.status(500).json({ error: 'Internal server error' })

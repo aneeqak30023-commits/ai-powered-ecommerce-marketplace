@@ -71,7 +71,7 @@ export function AIAssistantProvider({ children }) {
 
         if (response.ok) {
           const data = await response.json()
-          result = { text: data.text, products: data.products || [] }
+          result = { text: data.text, products: data.products || [], intent: data.intent || null, intentConfidence: data.intentConfidence || null, entities: data.entities || null }
         } else {
           throw new Error('API not available')
         }
@@ -86,7 +86,10 @@ export function AIAssistantProvider({ children }) {
         sender: 'assistant',
         text: result.text,
         timestamp: Date.now(),
-        products: result.products || []
+        products: result.products || [],
+        intent: result.intent || null,
+        intentConfidence: result.intentConfidence || null,
+        entities: result.entities || null
       }
 
       setMessages(prev => [...prev, assistantMessage])
