@@ -1,3 +1,6 @@
+import fs from 'fs'
+import path from 'path'
+
 export default async function handler(request, response) {
   response.setHeader('Access-Control-Allow-Origin', '*')
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -30,14 +33,112 @@ export default async function handler(request, response) {
     const intent = detectIntent(normalizedMessage)
 
     if (intent.intent === 'PRODUCT_COMPARISON') {
-      const { handleComparisonRequest } = await import('../src/services/productComparison.js')
-      const fullProducts = (await import('../src/data/products.json')).default
-      const comparisonResult = handleComparisonRequest(message, fullProducts)
+      const productsPath = path.join(process.cwd(), 'src/data/products.json')
+      const fullProducts = JSON.parse(fs.readFileSync(productsPath, 'utf8'))
+
+      const lower = message.toLowerCase()
+      const exactMatches = fullProducts.filter(p => lower.includes(p.name.toLowerCase())).slice(0, 2)
+
+      let productA = exactMatches[0]
+      let productB = exactMatches[1]
+
+      if (exactMatches.length < 2) {
+        const words = lower
+          .replace(/compare|comparison|vs|versus|difference between|which is better|better than|pros and cons|compare the|compare a|compare an/gi, ' ')
+          .replace(/\b(i want|show me|find|search|looking for|do you have|i need|looking to buy|i'm searching|where can i find|looking for a|looking for an|the|a|an|some|me|to|and|or|with|under|over|above|below|less than|more than|between|from)\b/gi, ' ')
+          .split(/[\s,]+/)
+          .filter(w => w.length > 2)
+
+        const matched = []
+        for (const word of words) {
+          for (const product of fullProducts) {
+            if (matched.includes(product)) continue
+            const searchText = `${product.name} ${product.description || ''} ${(product.tags || []).join(' ')}`.toLowerCase()
+            if (searchText.includes(word)) {
+              matched.push(product)
+              if (matched.length >= 2) break
+            }
+          }
+          if (matched.length >= 2) break
+        }
+        productA = matched[0] || productA
+        productB = matched[1] || productB
+      }
+
+      if (!productA || !productB) {
+        return response.status(200).json({
+          text: "I need at least 2 products to compare. Could you mention specific products or categories? For example: 'compare wireless headphones'",
+          products: [productA, productB].filter(Boolean),
+          intent: intent.intent,
+          comparison: null
+        })
+      }
+
+      const specsA = productA.specifications || {}
+      const specsB = productB.specifications || {}
+      const allKeys = new Set([...Object.keys(specsA), ...Object.keys(specsB)])
+      const common = []
+      const uniqueA = []
+      const uniqueB = []
+      for (const key of allKeys) {
+        const valA = specsA[key]
+        const valB = specsB[key]
+        if (valA && valB) common.push({ key, valueA: valA, valueB: valB })
+        else if (valA) uniqueA.push({ key, value: valA })
+        else if (valB) uniqueB.push({ key, value: valB })
+      }
+
+      const priceDiff = productA.price - productB.price
+      const ratingDiff = productA.rating - productB.rating
+      const verdict = ratingDiff >= 0 ? 'A' : 'B'
+
+      const lines = [
+        `Here is a comparison between ${productA.name} and ${productB.name}:\n`,
+        `**${productA.name}** (${productA.categoryName || productA.categoryId})`,
+        `Price: $${productA.price.toFixed(2)} | Rating: ${productA.rating}★ (${productA.reviewCount} reviews)`,
+        '',
+        `**${productB.name}** (${productB.categoryName || productB.categoryId})`,
+        `Price: $${productB.price.toFixed(2)} | Rating: ${productB.rating}★ (${productB.reviewCount} reviews)`,
+        ''
+      ]
+
+      if (common.length) {
+        lines.push('**Common Specifications:**')
+        for (const attr of common) {
+          lines.push(`• ${attr.key}: ${productA.name} = ${attr.valueA}, ${productB.name} = ${attr.valueB}`)
+        }
+        lines.push('')
+      }
+      if (uniqueA.length) {
+        lines.push(`**Features only in ${productA.name}:**`)
+        for (const attr of uniqueA) lines.push(`• ${attr.key}: ${attr.value}`)
+        lines.push('')
+      }
+      if (uniqueB.length) {
+        lines.push(`**Features only in ${productB.name}:**`)
+        for (const attr of uniqueB) lines.push(`• ${attr.key}: ${attr.value}`)
+        lines.push('')
+      }
+
+      lines.push('**Summary based on your priorities:**')
+      if (ratingDiff > 0) lines.push(`${productA.name} has a higher rating (${productA.rating}★ vs ${productB.rating}★)`)
+      else if (ratingDiff < 0) lines.push(`${productB.name} has a higher rating (${productB.rating}★ vs ${productA.rating}★)`)
+      else lines.push('Both have the same rating')
+
+      if (priceDiff < 0) lines.push(`${productA.name} is $${Math.abs(priceDiff).toFixed(2)} cheaper`)
+      else if (priceDiff > 0) lines.push(`${productB.name} is $${Math.abs(priceDiff).toFixed(2)} cheaper`)
+
       return response.status(200).json({
-        text: comparisonResult.text,
-        products: comparisonResult.products,
+        text: lines.join('\n'),
+        products: [productA, productB],
         intent: intent.intent,
-        comparison: comparisonResult.comparison
+        comparison: {
+          productA: { ...productA },
+          productB: { ...productB },
+          attributes: { common, uniqueA, uniqueB },
+          priority: ['rating', 'price'],
+          verdict
+        }
       })
     }
 
