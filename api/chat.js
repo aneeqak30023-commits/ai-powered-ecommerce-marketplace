@@ -29,6 +29,18 @@ export default async function handler(request, response) {
 
     const intent = detectIntent(normalizedMessage)
 
+    if (intent.intent === 'PRODUCT_COMPARISON') {
+      const { handleComparisonRequest } = await import('./src/services/productComparison.js')
+      const fullProducts = (await import('./src/data/products.json')).default
+      const comparisonResult = handleComparisonRequest(message, fullProducts)
+      return response.status(200).json({
+        text: comparisonResult.text,
+        products: comparisonResult.products,
+        intent: intent.intent,
+        comparison: comparisonResult.comparison
+      })
+    }
+
     const faqIntents = new Set([
       'FAQ',
       'SHIPPING_INQUIRY',
@@ -60,7 +72,7 @@ Keep responses concise and helpful.`
       ],
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 512
+        maxOutputTokens: 1024
       }
     }
 
