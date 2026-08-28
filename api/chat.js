@@ -1,6 +1,34 @@
 import fs from 'fs'
 import path from 'path'
 
+const PRODUCT_TYPE_MAP = {
+  watch: { en: 'watch', ur: 'گھڑی', roman: ['waṭch', 'watch', 'gari'] },
+  phone: { en: 'phone', ur: 'فون', roman: ['phone', 'fon'] },
+  laptop: { en: 'laptop', ur: 'لیپ ٹاپ', roman: ['laptop', 'leptop'] },
+  headphones: { en: 'headphones', ur: 'ہیڈفون', roman: ['headphones', 'headphone', 'hedfon'] },
+  earbuds: { en: 'earbuds', ur: 'ایربڈز', roman: ['earbuds', 'earbud'] },
+  keyboard: { en: 'keyboard', ur: 'کی بورڈ', roman: ['keyboard', 'keybord'] },
+  speaker: { en: 'speaker', ur: 'سپیکر', roman: ['speaker', 'spiker'] },
+  camera: { en: 'camera', ur: 'کیمرہ', roman: ['camera', 'kamra'] },
+  webcam: { en: 'webcam', ur: 'ویب کیم', roman: ['webcam', 'webcam'] },
+  'power bank': { en: 'power bank', ur: 'پاور بینک', roman: ['power bank', 'powerbank'] },
+  't-shirt': { en: 't-shirt', ur: 'ٹی شرٹ', roman: ['t-shirt', 'tshirt', 't shirt'] },
+  shirt: { en: 'shirt', ur: 'شرٹ', roman: ['shirt', 'shert'] },
+  shoes: { en: 'shoes', ur: 'جوتے', roman: ['shoes', 'shoe', 'jootay'] },
+  book: { en: 'book', ur: 'کتاب', roman: ['book', 'kitab'] },
+  cream: { en: 'cream', ur: 'کریم', roman: ['cream', 'kream'] },
+  makeup: { en: 'makeup', ur: 'میک اپ', roman: ['makeup', 'make up', 'meikup'] }
+}
+
+const CATEGORY_MAP = {
+  electronics: { en: 'electronics', ur: 'الیکٹرانکس', roman: ['electronics', 'electronic'] },
+  fashion: { en: 'fashion', ur: 'فیشن', roman: ['fashion', 'fashn'] },
+  'home-kitchen': { en: 'home kitchen', ur: 'گھر/کچن', roman: ['home', 'kitchen', 'home kitchen'] },
+  sports: { en: 'sports', ur: 'کھیل', roman: ['sports', 'sport'] },
+  books: { en: 'books', ur: 'کتابیں', roman: ['books', 'book'] },
+  beauty: { en: 'beauty', ur: 'بیوٹی', roman: ['beauty', 'beuty'] }
+}
+
 export default async function handler(request, response) {
   response.setHeader('Access-Control-Allow-Origin', '*')
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -139,6 +167,181 @@ export default async function handler(request, response) {
           priority: ['rating', 'price'],
           verdict
         }
+      })
+    }
+
+    if (intent.intent === 'PRODUCT_RECOMMENDATION') {
+      const productsPath = path.join(process.cwd(), 'src/data/products.json')
+      const fullProducts = JSON.parse(fs.readFileSync(productsPath, 'utf8'))
+
+      const lower = message.toLowerCase()
+      const normalized = normalizeToEnglish(message).toLowerCase()
+
+      // Extract product type using longest-match-first to avoid substring conflicts
+      const productTypeKeys = Object.entries(PRODUCT_TYPE_MAP).sort((a, b) => b[0].length - a[0].length)
+      let productType = null
+      for (const [key, values] of productTypeKeys) {
+        const allNames = [values.en, values.ur, ...(values.roman || [])].filter(Boolean).join(' ')
+        const variantWords = allNames.replace(/[^\w\s]/g, '').split(/\s+/)
+        if (variantWords.some(vw => lower.includes(vw))) {
+          productType = key
+          break
+        }
+      }
+
+      // Extract category
+      let category = null
+      for (const [key, values] of Object.entries(CATEGORY_MAP)) {
+        const allNames = [values.en, values.ur, ...(values.roman || [])].join(' ')
+        if (normalized.includes(key) || allNames.split(' ').some(w => normalized.includes(w))) {
+          category = key
+          break
+        }
+      }
+
+      // Extract max price
+      const priceMatch = normalized.match(/(?:under|below|less than|max|up to|cheaper than|between)\s+\$?(\d+(?:\.\d+)?)/i)
+      const maxPrice = priceMatch ? Number(priceMatch[1]) : null
+
+      // Extract min rating
+      const ratingMatch = normalized.match(/(?:rating|rated|stars?|score)\s+(?:above|over|at least|minimum|min)\s+(\d+(?:\.\d+)?)/i)
+      const minRating = ratingMatch ? Number(ratingMatch[1]) : null
+
+      // Extract use cases
+      const useCases = []
+      if (/studying|study|student|college|university|class|lecture/i.test(normalized)) useCases.push('studying')
+      if (/gaming|game|gamer|fps|mmo|streaming/i.test(normalized)) useCases.push('gaming')
+      if (/work|office|business|professional|meeting|calls/i.test(normalized)) useCases.push('work')
+      if (/travel|commute|portable|lightweight|flight/i.test(normalized)) useCases.push('travel')
+      if (/home|kitchen|indoor|daily use|everyday/i.test(normalized)) useCases.push('home')
+      if (/outdoor|sports|running|gym|exercise|workout/i.test(normalized)) useCases.push('outdoor')
+
+      // Hard filters
+      let candidates = [...fullProducts]
+      if (productType) {
+        const typeVariants = PRODUCT_TYPE_MAP[productType] || { en: productType }
+        const searchTerms = [productType, typeVariants.en, typeVariants.ur, ...(typeVariants.roman || [])].filter(Boolean).map(t => t.toLowerCase())
+        candidates = candidates.filter(p => {
+          const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+          return searchTerms.some(term => searchText.includes(term))
+        })
+      }
+      if (category) {
+        candidates = candidates.filter(p => p.categoryId === category)
+      }
+      if (maxPrice !== null) {
+        candidates = candidates.filter(p => p.price <= maxPrice)
+      }
+      if (minRating !== null) {
+        candidates = candidates.filter(p => p.rating >= minRating)
+      }
+
+      if (candidates.length === 0) {
+        const genericKeywords = ['recommend', 'suggestion', 'suggest', 'best', 'top', 'popular', 'recommendation', 'advice', 'products', 'product']
+        const keywords = normalized.replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 2)
+        const hasSpecificKeywords = keywords.some(kw => !genericKeywords.includes(kw))
+        
+        if (!productType && !category && maxPrice === null && !hasSpecificKeywords) {
+          const fallback = [...fullProducts]
+            .sort((a, b) => b.rating - a.rating)
+            .slice(0, 4)
+          
+          const lines = ['Here are some popular products from our catalog:\n']
+          for (const p of fallback) {
+            lines.push(`• **${p.name}** — $${p.price.toFixed(2)} (${p.rating}★, ${p.reviewCount} reviews)`)
+          }
+
+          return response.status(200).json({
+            text: lines.join('\n'),
+            products: fallback,
+            intent: intent.intent,
+            recommendations: fallback.map(p => ({ product: p, score: p.rating * 20, reasons: ['popular choice'] }))
+          })
+        }
+
+        return response.status(200).json({
+          text: "I couldn't find any products matching your requirements. Try adjusting your budget or preferences.",
+          products: [],
+          intent: intent.intent,
+          recommendations: null
+        })
+      }
+
+      // Score candidates
+      const useCaseKeywords = {
+        studying: ['noise cancelling', 'quiet', 'comfortable', 'wireless', 'bluetooth', 'battery', 'lightweight'],
+        gaming: ['gaming', 'rgb', 'mechanical', 'low latency', 'surround', 'high precision'],
+        work: ['professional', 'noise cancelling', 'comfortable', 'bluetooth', 'wireless', 'calls', 'microphone'],
+        travel: ['portable', 'compact', 'lightweight', 'wireless', 'long battery', 'travel'],
+        home: ['smart', 'voice', 'bluetooth', 'wifi', 'easy to use', 'connected'],
+        outdoor: ['waterproof', 'durable', 'wireless', 'portable', 'long battery', 'rugged']
+      }
+
+      const scored = candidates.map(product => {
+        let score = 0
+        const reasons = []
+        const productText = `${product.name} ${product.description || ''} ${(product.tags || []).join(' ')}`.toLowerCase()
+
+        score += product.rating * 20
+        if (product.rating >= 4.5) {
+          score += 15
+          reasons.push(`highly rated (${product.rating}★)`)
+        } else if (product.rating >= 4.0) {
+          score += 5
+        }
+
+        if (product.reviewCount >= 200) {
+          score += 10
+          reasons.push(`popular with ${product.reviewCount} reviews`)
+        }
+
+        if (maxPrice !== null) {
+          const budgetRatio = product.price / maxPrice
+          if (budgetRatio <= 0.5) {
+            score += 20
+            reasons.push(`well under your $${maxPrice} budget`)
+          } else if (budgetRatio <= 0.8) {
+            score += 10
+            reasons.push(`within your $${maxPrice} budget`)
+          }
+        }
+
+        for (const useCase of useCases) {
+          const keywords = useCaseKeywords[useCase] || []
+          if (keywords.some(kw => productText.includes(kw))) {
+            score += 15
+            reasons.push(`suitable for ${useCase}`)
+          }
+        }
+
+        return { product, score, reasons }
+      })
+
+      scored.sort((a, b) => b.score - a.score)
+      const top = scored.slice(0, 4)
+
+      const lines = productType
+        ? [`Here are my top recommendations for ${productType}${maxPrice ? ` under $${maxPrice}` : ''}:\n`]
+        : ['Here are some products I think you might like:\n']
+
+      for (const item of top) {
+        const reasonText = item.reasons.length > 0 ? ` because it's ${item.reasons.join(' and ')}` : ''
+        lines.push(`• **${item.product.name}** — $${item.product.price.toFixed(2)} (${item.product.rating}★, ${item.product.reviewCount} reviews)${reasonText}`)
+      }
+
+      if (top.length > 0 && top[0].reasons.length === 0) {
+        lines.push(`\nThese are the best matches from our catalog based on your requirements.`)
+      }
+
+      return response.status(200).json({
+        text: lines.join('\n'),
+        products: top.map(item => item.product),
+        intent: intent.intent,
+        recommendations: top.map(item => ({
+          product: item.product,
+          score: item.score,
+          reasons: item.reasons
+        }))
       })
     }
 
