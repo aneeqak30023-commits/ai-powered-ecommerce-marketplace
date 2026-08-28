@@ -345,6 +345,93 @@ export default async function handler(request, response) {
       })
     }
 
+    if (intent.intent === 'PRODUCT_SEARCH') {
+      const productsPath = path.join(process.cwd(), 'src/data/products.json')
+      const fullProducts = JSON.parse(fs.readFileSync(productsPath, 'utf8'))
+      const lower = message.toLowerCase()
+      const normalized = normalizeToEnglish(message).toLowerCase()
+
+      // Extract product type using longest-match-first to avoid substring conflicts
+      const productTypeKeys = Object.entries(PRODUCT_TYPE_MAP).sort((a, b) => b[0].length - a[0].length)
+      let productType = null
+      for (const [key, values] of productTypeKeys) {
+        const allNames = [values.en, values.ur, ...(values.roman || [])].filter(Boolean).join(' ')
+        const variantWords = allNames.replace(/[^\w\s]/g, '').split(/\s+/)
+        if (variantWords.some(vw => lower.includes(vw))) {
+          productType = key
+          break
+        }
+      }
+
+      // Extract category
+      let category = null
+      for (const [key, values] of Object.entries(CATEGORY_MAP)) {
+        const allNames = [values.en, values.ur, ...(values.roman || [])].join(' ')
+        if (normalized.includes(key) || allNames.split(' ').some(w => normalized.includes(w))) {
+          category = key
+          break
+        }
+      }
+
+      // Extract max price
+      const priceMatch = normalized.match(/(?:under|below|less than|max|up to|cheaper than|between)\s+\$?(\d+(?:\.\d+)?)/i)
+      const maxPrice = priceMatch ? Number(priceMatch[1]) : null
+
+      // Extract min rating
+      const ratingMatch = normalized.match(/(?:rating|rated|stars?|score)\s+(?:above|over|at least|minimum|min)\s+(\d+(?:\.\d+)?)/i)
+      const minRating = ratingMatch ? Number(ratingMatch[1]) : null
+
+      // Extract keywords
+      const keywords = normalized.replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 2)
+
+      // Filter products
+      let results = [...fullProducts]
+      if (productType) {
+        const typeVariants = PRODUCT_TYPE_MAP[productType] || { en: productType }
+        const searchTerms = [productType, typeVariants.en, typeVariants.ur, ...(typeVariants.roman || [])].filter(Boolean).map(t => t.toLowerCase())
+        results = results.filter(p => {
+          const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+          return searchTerms.some(term => searchText.includes(term))
+        })
+      }
+      if (category) {
+        results = results.filter(p => p.categoryId === category)
+      }
+      if (maxPrice !== null) {
+        results = results.filter(p => p.price <= maxPrice)
+      }
+      if (minRating !== null) {
+        results = results.filter(p => p.rating >= minRating)
+      }
+      if (keywords.length > 0) {
+        results = results.filter(p => {
+          const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+          return keywords.some(w => searchText.includes(w))
+        })
+      }
+
+      results.sort((a, b) => b.rating - a.rating)
+      const topResults = results.slice(0, 5)
+
+      if (topResults.length > 0) {
+        const lines = [`I found ${topResults.length} product${topResults.length > 1 ? 's' : ''} that match your search:\n`]
+        for (const p of topResults) {
+          lines.push(`• **${p.name}** — $${p.price.toFixed(2)} (${p.rating}★, ${p.reviewCount} reviews)`)
+        }
+        return response.status(200).json({
+          text: lines.join('\n'),
+          products: topResults,
+          intent: intent.intent
+        })
+      }
+
+      return response.status(200).json({
+        text: "I couldn't find any products matching that. Try different keywords like 'wireless headphones', 'running shoes', or 'coffee maker', or ask me to recommend products!",
+        products: [],
+        intent: intent.intent
+      })
+    }
+
     const faqIntents = new Set([
       'FAQ',
       'SHIPPING_INQUIRY',
