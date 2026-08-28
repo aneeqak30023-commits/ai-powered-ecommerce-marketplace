@@ -30,8 +30,8 @@ export default async function handler(request, response) {
     const intent = detectIntent(normalizedMessage)
 
     if (intent.intent === 'PRODUCT_COMPARISON') {
-      const { handleComparisonRequest } = await import('./src/services/productComparison.js')
-      const fullProducts = (await import('./src/data/products.json')).default
+      const { handleComparisonRequest } = await import('../src/services/productComparison.js')
+      const fullProducts = (await import('../src/data/products.json')).default
       const comparisonResult = handleComparisonRequest(message, fullProducts)
       return response.status(200).json({
         text: comparisonResult.text,
