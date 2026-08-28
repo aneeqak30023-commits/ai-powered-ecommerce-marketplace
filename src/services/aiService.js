@@ -4,6 +4,7 @@ import { detectIntent } from './intentDetector.js'
 import { searchKnowledgeBase } from './knowledgeBase.js'
 import { searchProductsMultilingual } from './multilingualSearch.js'
 import { handleComparisonRequest } from './productComparison.js'
+import { generateRecommendations } from './productRecommendations.js'
 
 function delay(ms = 600) {
   return new Promise(resolve => setTimeout(resolve, ms + Math.random() * 400))
@@ -69,15 +70,14 @@ export const aiService = {
     }
 
     if (/^(recommend|suggest|best|top|popular|what should i buy|what do you suggest|recommendation|advice)/i.test(text)) {
-      const recommended = [...products]
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 4)
+      const recommendationResult = generateRecommendations(message, products)
       return {
-        text: "Based on customer ratings and popularity, here are some top picks from our catalog:",
-        products: recommended,
+        text: recommendationResult.text,
+        products: recommendationResult.products,
         intent: intentResult.intent,
         intentConfidence: intentResult.confidence,
-        entities: intentResult.entities
+        entities: intentResult.entities,
+        recommendations: recommendationResult.recommendations
       }
     }
 
