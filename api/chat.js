@@ -19,13 +19,15 @@ export default async function handler(request, response) {
       return response.status(400).json({ error: 'Message is required' })
     }
 
+    const normalizedMessage = normalizeToEnglish(message)
+
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
       console.error('GEMINI_API_KEY is not configured')
       return response.status(500).json({ error: 'AI service not configured' })
     }
 
-    const intent = detectIntent(message)
+    const intent = detectIntent(normalizedMessage)
 
     const faqIntents = new Set([
       'FAQ',
@@ -37,7 +39,7 @@ export default async function handler(request, response) {
     ])
 
     if (faqIntents.has(intent.intent)) {
-      const kbMatch = searchKnowledgeBase(message)
+      const kbMatch = searchKnowledgeBase(normalizedMessage)
       if (kbMatch) {
         return response.status(200).json({ text: kbMatch.answer, intent: intent.intent, source: 'knowledge-base', knowledgeBaseId: kbMatch.id })
       }
@@ -50,11 +52,11 @@ Do not invent products, prices, or policies.
 If you don't know the answer, say so and offer to help with something else. 
 Keep responses concise and helpful.`
 
-    const catalogContext = JSON.stringify({ products: products.slice(0, 20), categories }, null, 2)
+    const catalogContext = JSON.stringify({ products, categories }, null, 2)
 
     const geminiBody = {
       contents: [
-        { role: 'user', parts: [{ text: `${systemPrompt}\n\nCatalog:\n${catalogContext}\n\nUser: ${message}` }] }
+        { role: 'user', parts: [{ text: `${systemPrompt}\n\nCatalog:\n${catalogContext}\n\nUser: ${normalizedMessage}` }] }
       ],
       generationConfig: {
         temperature: 0.7,
@@ -95,6 +97,47 @@ Keep responses concise and helpful.`
     console.error('Chat API error:', error)
     return response.status(500).json({ error: 'Internal server error' })
   }
+}
+
+function normalizeToEnglish(text) {
+  return text
+    .replace(/مجھے/gi, 'i want')
+    .replace(/چاہیے/gi, 'want')
+    .replace(/دکھائیں/gi, 'show me')
+    .replace(/دکھادو/gi, 'show me')
+    .replace(/سے کم/gi, 'under')
+    .replace(/سے زیادہ/gi, 'above')
+    .replace(/سے زائد/gi, 'above')
+    .replace(/والی/gi, 'with')
+    .replace(/کا/gi, 'of')
+    .replace(/کی/gi, 'of')
+    .replace(/کے/gi, 'of')
+    .replace(/میں/gi, 'in')
+    .replace(/ہے/gi, 'is')
+    .replace(/بہت/gi, 'very')
+    .replace(/اچھا/gi, 'good')
+    .replace(/اچھی/gi, 'good')
+    .replace(/\bmujhe\b/gi, 'i want')
+    .replace(/\bchahiye\b/gi, 'want')
+    .replace(/\bdikhao\b/gi, 'show me')
+    .replace(/\bdikhado\b/gi, 'show me')
+    .replace(/\bdikhaen\b/gi, 'show me')
+    .replace(/\bse kam\b/gi, 'under')
+    .replace(/\bse zyada\b/gi, 'above')
+    .replace(/\bse ziyada\b/gi, 'above')
+    .replace(/\bkam se\b/gi, 'under')
+    .replace(/\bzyada se\b/gi, 'above')
+    .replace(/\bwali\b/gi, 'with')
+    .replace(/\bki\b/gi, 'of')
+    .replace(/\bka\b/gi, 'of')
+    .replace(/\bke\b/gi, 'of')
+    .replace(/\bhai\b/gi, 'is')
+    .replace(/\bmein\b/gi, 'in')
+    .replace(/\bmain\b/gi, 'in')
+    .replace(/\bbht\b/gi, 'very')
+    .replace(/\bbohat\b/gi, 'very')
+    .replace(/\bachha\b/gi, 'good')
+    .replace(/\baccha\b/gi, 'good')
 }
 
 function detectIntent(message) {

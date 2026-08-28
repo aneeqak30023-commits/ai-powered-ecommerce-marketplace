@@ -2,41 +2,11 @@ import productsData from '../data/products.json'
 import categoriesData from '../data/categories.json'
 import { detectIntent } from './intentDetector.js'
 import { searchKnowledgeBase } from './knowledgeBase.js'
+import { searchProductsMultilingual } from './multilingualSearch.js'
+import { handleComparisonRequest } from './productComparison.js'
 
 function delay(ms = 600) {
   return new Promise(resolve => setTimeout(resolve, ms + Math.random() * 400))
-}
-
-function findProducts(query, products) {
-  const q = query
-    .toLowerCase()
-    .replace(/^((find|search|looking for|do you have|show me|i need|i want|looking to buy|i'm searching)\s*)+/i, '')
-    .replace(/[^\w\s]/g, '')
-    .trim()
-
-  if (!q) return []
-
-  const words = q.split(/\s+/).filter(w => w.length > 2)
-
-  return products.filter(p => {
-    const category = categoriesData.find(c => c.id === p.categoryId)
-    const name = p.name.toLowerCase()
-    const description = p.description?.toLowerCase() || ''
-    const catName = category?.name.toLowerCase() || ''
-
-    return words.some(w => {
-      const variants = [w]
-      if (w.endsWith('s')) variants.push(w.slice(0, -1))
-      if (w.endsWith('es')) variants.push(w.slice(0, -2))
-
-      return variants.some(v =>
-        name.includes(v) ||
-        description.includes(v) ||
-        p.tags?.some(t => t.toLowerCase().includes(v)) ||
-        catName.includes(v)
-      )
-    })
-  }).slice(0, 5)
 }
 
 export const aiService = {
@@ -80,7 +50,7 @@ export const aiService = {
     }
 
     if (/^(find|search|looking for|do you have|show me|i need|i want|looking to buy|i'?m searching)/i.test(text)) {
-      const results = findProducts(text, products)
+      const results = searchProductsMultilingual(text, products, categories)
       if (results.length > 0) {
         return {
           text: `I found ${results.length} product${results.length > 1 ? 's' : ''} that match your search:`,
@@ -112,18 +82,19 @@ export const aiService = {
     }
 
     if (/^(compare|difference|vs|versus|which is better|comparison)/i.test(text)) {
-      const matches = findProducts(text, products).slice(0, 3)
-      if (matches.length >= 2) {
+      const comparisonResult = handleComparisonRequest(message, products)
+      if (comparisonResult.comparison) {
         return {
-          text: `Here's a quick comparison:\n\n${matches.map(p => `• ${p.name}: $${p.price.toFixed(2)} — ${p.rating}★ (${p.reviewCount} reviews)`).join('\n')}\n\nThe highest rated option is ${matches[0].name}. Would you like more details on any of these?`,
-          products: matches,
+          text: comparisonResult.text,
+          products: comparisonResult.products,
           intent: intentResult.intent,
           intentConfidence: intentResult.confidence,
-          entities: intentResult.entities
+          entities: intentResult.entities,
+          comparison: comparisonResult.comparison
         }
       }
       return {
-        text: "I need at least 2 products to compare. Could you mention specific products or categories? For example: 'compare wireless headphones'",
+        text: comparisonResult.text,
         intent: intentResult.intent,
         intentConfidence: intentResult.confidence,
         entities: intentResult.entities
@@ -164,7 +135,7 @@ export const aiService = {
       return { text: "Stock availability is shown on each product page. Items marked 'In Stock' are ready to ship. If an item is out of stock, you can check back later or browse similar products in the same category.", intent: intentResult.intent, intentConfidence: intentResult.confidence, entities: intentResult.entities }
     }
 
-    const searchResults = findProducts(text, products)
+    const searchResults = searchProductsMultilingual(text, products, categories)
     if (searchResults.length > 0) {
       return {
         text: `I found ${searchResults.length} product${searchResults.length > 1 ? 's' : ''} that might interest you:`,

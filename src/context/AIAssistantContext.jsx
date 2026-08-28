@@ -17,7 +17,6 @@ function saveMessages(messages) {
 
 function reduceProducts(products) {
   return (products || [])
-    .slice(0, 20)
     .map((p) => ({
       id: p.id,
       name: p.name,
@@ -77,7 +76,7 @@ export function AIAssistantProvider({ children }) {
         }
       } catch {
         const { processMessage } = await import('../services/aiService.js')
-        const { products } = await import('../data/products.json')
+        const products = (await import('../data/products.json')).default
         result = await processMessage(text, products)
       }
 
