@@ -43,7 +43,18 @@ export default async function handler(request, response) {
   }
 
   try {
-    const body = request.body || {}
+    const body = await new Promise((resolve, reject) => {
+      const chunks = []
+      request.on('data', chunk => chunks.push(chunk))
+      request.on('end', () => {
+        try {
+          resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')))
+        } catch {
+          reject(new Error('Invalid JSON'))
+        }
+      })
+      request.on('error', reject)
+    })
     const { message, products = [], categories = [] } = body
 
     if (!message || typeof message !== 'string') {
