@@ -43,7 +43,13 @@ export default async function handler(request, response) {
   }
 
   try {
-    const rawBody = await request.text()
+    const rawBody = await new Promise((resolve) => {
+      let data = ''
+      request.setEncoding('utf8')
+      request.on('data', chunk => { data += chunk })
+      request.on('end', () => resolve(data))
+      request.on('error', () => resolve(''))
+    })
     const body = JSON.parse(rawBody || '{}')
     const { message, products = [], categories = [] } = body
 
