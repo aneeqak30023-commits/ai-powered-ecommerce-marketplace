@@ -43,18 +43,8 @@ export default async function handler(request, response) {
   }
 
   try {
-    const body = await new Promise((resolve, reject) => {
-      const chunks = []
-      request.on('data', chunk => chunks.push(chunk))
-      request.on('end', () => {
-        try {
-          resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')))
-        } catch {
-          reject(new Error('Invalid JSON'))
-        }
-      })
-      request.on('error', reject)
-    })
+    const rawBody = await request.text()
+    const body = JSON.parse(rawBody || '{}')
     const { message, products = [], categories = [] } = body
 
     if (!message || typeof message !== 'string') {
@@ -69,7 +59,18 @@ export default async function handler(request, response) {
       return response.status(500).json({ error: 'AI service not configured' })
     }
 
-    const intent = detectIntent(normalizedMessage)
+    const localIntent = detectIntent(normalizedMessage)
+    let intent = localIntent
+
+    // Try semantic intent classification via Gemini
+    const semanticIntent = await classifyIntentSemantically(message)
+    if (semanticIntent && semanticIntent.confidence >= 0.6) {
+      intent = {
+        intent: semanticIntent.intent,
+        confidence: semanticIntent.confidence,
+        entities: localIntent.entities
+      }
+    }
 
     if (intent.intent === 'PRODUCT_COMPARISON') {
       const productsPath = path.join(process.cwd(), 'src/data/products.json')
@@ -480,7 +481,7 @@ Keep responses concise and helpful.`
 
     let geminiResponse
     try {
-      geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(geminiBody)
@@ -697,4 +698,87 @@ function searchKnowledgeBase(query) {
   }
 
   return null
+}
+
+async function classifyIntentSemantically(message) {
+  if (!message || typeof message !== 'string') {
+    return null
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) {
+    return null
+  }
+
+  const systemPrompt = `You are an intent classifier for an e-commerce shopping assistant. Classify the customer's query into exactly ONE of these intents:
+- PRODUCT_SEARCH: looking for specific products, browsing catalog, finding items
+- PRODUCT_RECOMMENDATION: asking for suggestions, best products, what to buy
+- PRODUCT_COMPARISON: comparing two or more products, which is better
+- PRODUCT_INFORMATION: asking about product details, specs, features, how to use
+- ORDER_STATUS: checking order status, tracking, delivery updates
+- ORDER_CANCELLATION: canceling an order
+- RETURN_REQUEST: returning a product
+- REFUND_REQUEST: asking for refund, money back
+- COMPLAINT: damaged item, wrong product, quality issues, unhappy
+- SHIPPING_INQUIRY: shipping costs, delivery time, shipping methods
+- PAYMENT_INQUIRY: payment methods, checkout issues, secure payment
+- FAQ: general questions about policies, terms, how-to
+- HUMAN_SUPPORT: wants to speak to a human, customer service
+- GENERAL_INQUIRY: greetings, thanks, or anything else
+
+Respond in this EXACT format:
+INTENT_NAME|confidence|short_reason
+
+Example:
+PRODUCT_SEARCH|0.95|customer wants to find wireless headphones
+
+Do not include any other text.`
+
+  try {
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve(null), 3000)
+    })
+
+    const classificationPromise = fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\nQuery: ${message}` }] }],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 64
+        }
+      })
+    })
+      .then(res => {
+        if (!res.ok) return null
+        return res.json()
+      })
+      .then(data => {
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
+        const parts = text.trim().split('|')
+        if (parts.length >= 3) {
+          const intent = parts[0].trim()
+          const confidence = parseFloat(parts[1].trim()) || 0.5
+          const reason = parts.slice(2).join('|').trim()
+          const validIntents = [
+            'PRODUCT_SEARCH', 'PRODUCT_RECOMMENDATION', 'PRODUCT_COMPARISON',
+            'PRODUCT_INFORMATION', 'ORDER_STATUS', 'ORDER_CANCELLATION',
+            'RETURN_REQUEST', 'REFUND_REQUEST', 'COMPLAINT',
+            'SHIPPING_INQUIRY', 'PAYMENT_INQUIRY', 'FAQ',
+            'HUMAN_SUPPORT', 'GENERAL_INQUIRY'
+          ]
+          if (validIntents.includes(intent)) {
+            return { intent, confidence, reason }
+          }
+        }
+        return null
+      })
+      .catch(() => null)
+
+    return Promise.race([classificationPromise, timeoutPromise])
+  } catch (error) {
+    console.error('Semantic classification error:', error)
+    return null
+  }
 }
