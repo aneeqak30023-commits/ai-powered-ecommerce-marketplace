@@ -46,34 +46,48 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
       style={{
         display: 'flex',
         alignItems: 'flex-start',
-        gap: 14,
-        padding: 16,
+        gap: 16,
+        padding: '18px 20px',
         borderBottom: `1px solid ${C.border}`,
-        flexWrap: isMobile ? 'wrap' : 'nowrap'
+        flexWrap: isMobile ? 'wrap' : 'nowrap',
+        transition: 'background 0.2s ease'
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = '#FAFBFC' }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
     >
       <img
         src={image}
         alt={name}
-        style={{ width: 80, height: 80, borderRadius: 8, objectFit: 'cover', flex: '0 0 auto', background: C.surface }}
+        style={{ width: 88, height: 88, borderRadius: 12, objectFit: 'cover', flex: '0 0 auto', background: C.surface, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
       />
 
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-          <span style={{ fontSize: 15, fontWeight: 600, color: C.text }}>{name}</span>
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'flex-start' }}>
+          <span style={{ fontSize: 15, fontWeight: 600, color: C.text, lineHeight: 1.4 }}>{name}</span>
           <button
             type="button"
             onClick={() => onRemove && onRemove(id)}
             aria-label={`Remove ${name}`}
-            style={{ border: 'none', background: 'transparent', color: C.textSecondary, cursor: 'pointer', flex: '0 0 auto', padding: 2 }}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: C.textSecondary,
+              cursor: 'pointer',
+              flex: '0 0 auto',
+              padding: 4,
+              borderRadius: 6,
+              transition: 'color 0.15s ease, background 0.15s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = C.danger || '#DC2626'; e.currentTarget.style.background = '#FEE2E2' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = C.textSecondary; e.currentTarget.style.background = 'transparent' }}
           >
             <CloseIcon />
           </button>
         </div>
-        <span style={{ fontSize: 14, color: C.textSecondary }}>{formatPrice(price)}</span>
+        <span style={{ fontSize: 14, color: C.textSecondary, fontWeight: 500 }}>{formatPrice(price)}</span>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 4, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', border: `1px solid ${C.border}`, borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginTop: 6, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', border: `1px solid ${C.border}`, borderRadius: 10, overflow: 'hidden', background: C.surface }}>
             <button
               type="button"
               onClick={() => onUpdateQuantity && onUpdateQuantity(id, Math.max(1, quantity - 1))}
@@ -88,7 +102,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
                 const v = parseInt(e.target.value, 10)
                 if (!isNaN(v) && v > 0 && onUpdateQuantity) onUpdateQuantity(id, v)
               }}
-              style={{ width: 44, textAlign: 'center', border: 'none', outline: 'none', fontSize: 14, color: C.text, padding: '8px 0' }}
+              style={{ width: 48, textAlign: 'center', border: 'none', outline: 'none', fontSize: 14, color: C.text, padding: '10px 0' }}
               aria-label="Quantity"
             />
             <button
@@ -101,7 +115,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
             </button>
           </div>
 
-          <span style={{ fontSize: 15, fontWeight: 700, color: C.text }}>{formatPrice(lineTotal)}</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: C.text }}>{formatPrice(lineTotal)}</span>
         </div>
       </div>
     </div>
@@ -109,11 +123,12 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
 }
 
 const qtyBtn = {
-  width: 36,
-  height: 36,
+  width: 38,
+  height: 38,
   border: 'none',
   background: 'transparent',
   color: C.text,
   fontSize: 16,
-  cursor: 'pointer'
+  cursor: 'pointer',
+  transition: 'background 0.15s ease'
 }

@@ -30,6 +30,7 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
   const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'all')
   const [priceRange, setPriceRange] = useState('all')
   const [sortBy, setSortBy] = useState('featured')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
     if (onFilterChange) {
@@ -40,119 +41,230 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
   const filtersActive =
     selectedCategory !== 'all' || priceRange !== 'all' || sortBy !== 'featured'
 
-  const chipStyle = (active) => ({
-    padding: '8px 16px',
-    borderRadius: 9999,
-    border: `1px solid ${active ? C.primary : C.border}`,
-    background: active ? C.primary : C.surface,
-    color: active ? '#fff' : C.text,
-    fontSize: 14,
-    fontWeight: 500,
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    transition: 'background .15s ease, color .15s ease, border-color .15s ease'
-  })
-
   const clearAll = () => {
     setSelectedCategory('all')
     setPriceRange('all')
     setSortBy('featured')
   }
 
+  const activeFilters = []
+  if (selectedCategory !== 'all') {
+    const cat = categories.find(c => c.id === selectedCategory)
+    activeFilters.push({ key: 'category', label: cat?.name || selectedCategory, clear: () => setSelectedCategory('all') })
+  }
+  if (priceRange !== 'all') {
+    const range = PRICE_RANGES.find(p => p.value === priceRange)
+    activeFilters.push({ key: 'price', label: range?.label || priceRange, clear: () => setPriceRange('all') })
+  }
+
   return (
-    <div
-      style={{
-        background: C.surface,
-        border: `1px solid ${C.border}`,
-        borderRadius: 16,
-        padding: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 20
-      }}
-    >
-      <div>
-        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 12 }}>
-          Category
-        </div>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-          <button type="button" style={chipStyle(selectedCategory === 'all')} onClick={() => setSelectedCategory('all')}>
-            All
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              style={chipStyle(selectedCategory === cat.id)}
-              onClick={() => setSelectedCategory(cat.id)}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Active Filter Chips */}
+      {activeFilters.length > 0 && (
+        <div className="filter-chips" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {activeFilters.map((filter) => (
+            <span
+              key={filter.key}
+              className="filter-chip-active"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 12px',
+                borderRadius: 9999,
+                background: C.primary,
+                color: 'white',
+                fontSize: 12,
+                fontWeight: 600
+              }}
             >
-              {cat.name}
-            </button>
+              {filter.label}
+              <button
+                type="button"
+                onClick={filter.clear}
+                style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: 18,
+                  height: 18,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'white',
+                  fontSize: 12,
+                  padding: 0
+                }}
+              >
+                ×
+              </button>
+            </span>
           ))}
-        </div>
-      </div>
-
-      <div>
-        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 12 }}>
-          Price
-        </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {PRICE_RANGES.map((p) => (
-            <button
-              key={p.value}
-              type="button"
-              style={chipStyle(priceRange === p.value)}
-              onClick={() => setPriceRange(p.value)}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 200px' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 12 }}>
-            Sort By
-          </div>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: 10,
-              border: `1px solid ${C.border}`,
-              background: C.background,
-              color: C.text,
-              fontSize: 14,
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        </div>
-
-        {filtersActive && (
           <button
             type="button"
             onClick={clearAll}
             style={{
-              padding: '10px 16px',
-              borderRadius: 10,
+              padding: '6px 12px',
+              borderRadius: 9999,
               border: `1px solid ${C.border}`,
-              background: C.surface,
-              color: C.text,
-              fontSize: 14,
-              fontWeight: 600,
+              background: 'transparent',
+              color: C.textSecondary,
+              fontSize: 12,
+              fontWeight: 500,
               cursor: 'pointer'
             }}
           >
-            Clear Filters
+            Clear all
           </button>
+        </div>
+      )}
+
+      {/* Sort Dropdown - Pill Style */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary }}>Sort:</span>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="pill-btn"
+          style={{
+            padding: '8px 16px',
+            borderRadius: 9999,
+            border: `1px solid ${C.border}`,
+            background: C.surface,
+            color: C.text,
+            fontSize: 13,
+            fontWeight: 500,
+            outline: 'none',
+            cursor: 'pointer',
+            appearance: 'none',
+            paddingRight: 32,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'right 12px center'
+          }}
+        >
+          {SORT_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Filter Sections - Collapsible */}
+      <div
+        style={{
+          background: C.surface,
+          border: `1px solid ${C.border}`,
+          borderRadius: 16,
+          overflow: 'hidden'
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '16px 20px',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: 14,
+            fontWeight: 600,
+            color: C.text
+          }}
+        >
+          <span>Filters</span>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s ease' }}
+          >
+            <path d="M6 9l6 6 6-6" stroke={C.textSecondary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+
+        {isExpanded && (
+          <div style={{ padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {/* Category Filter */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: C.textSecondary, marginBottom: 10 }}>
+                Category
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory('all')}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 9999,
+                    border: `1px solid ${selectedCategory === 'all' ? C.primary : C.border}`,
+                    background: selectedCategory === 'all' ? C.primary : 'transparent',
+                    color: selectedCategory === 'all' ? 'white' : C.text,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  All
+                </button>
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat.id)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: 9999,
+                      border: `1px solid ${selectedCategory === cat.id ? C.primary : C.border}`,
+                      background: selectedCategory === cat.id ? C.primary : 'transparent',
+                      color: selectedCategory === cat.id ? 'white' : C.text,
+                      fontSize: 13,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price Filter */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: C.textSecondary, marginBottom: 10 }}>
+                Price
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {PRICE_RANGES.map((p) => (
+                  <button
+                    key={p.value}
+                    type="button"
+                    onClick={() => setPriceRange(p.value)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: 9999,
+                      border: `1px solid ${priceRange === p.value ? C.primary : C.border}`,
+                      background: priceRange === p.value ? C.primary : 'transparent',
+                      color: priceRange === p.value ? 'white' : C.text,
+                      fontSize: 13,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

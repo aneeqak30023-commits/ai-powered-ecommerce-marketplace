@@ -41,7 +41,7 @@ function formatPrice(value) {
 
 function SummaryRow({ label, value, strong }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: strong ? 18 : 14, fontWeight: strong ? 700 : 500, color: strong ? C.text : C.textSecondary, padding: '6px 0' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: strong ? 18 : 14, fontWeight: strong ? 700 : 500, color: strong ? C.text : C.textSecondary, padding: '8px 0' }}>
       <span>{label}</span>
       <span style={strong ? { color: C.primary } : undefined}>{value}</span>
     </div>
@@ -55,15 +55,39 @@ export default function CartPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '60px 20px', textAlign: 'center' }}>
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ marginBottom: 16 }}>
-          <path d="M3 4h2l2.4 12.3a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.8L21 8H6" stroke={C.border} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="9.5" cy="20" r="1.4" fill={C.border} />
-          <circle cx="17.5" cy="20" r="1.4" fill={C.border} />
-        </svg>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>Your cart is empty</h2>
-        <p style={{ color: C.textSecondary, margin: '0 0 24px' }}>Looks like you haven't added anything yet.</p>
-        <Link to="/products" style={{ display: 'inline-block', padding: '12px 24px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600 }}>
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
+        <div style={{
+          width: 80,
+          height: 80,
+          borderRadius: '50%',
+          background: C.primaryLight,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 20
+        }}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ color: C.primary }}>
+            <path d="M3 4h2l2.4 12.3a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.8L21 8H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
+            <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
+          </svg>
+        </div>
+        <h2 style={{ fontSize: 24, fontWeight: 700, color: C.text, margin: '0 0 10px', letterSpacing: '-0.01em' }}>Your cart is empty</h2>
+        <p style={{ color: C.textSecondary, margin: '0 0 28px', fontSize: 15 }}>Looks like you haven't added anything yet.</p>
+        <Link to="/products" style={{
+          display: 'inline-block',
+          padding: '14px 28px',
+          background: C.primary,
+          color: '#fff',
+          textDecoration: 'none',
+          borderRadius: 12,
+          fontWeight: 600,
+          fontSize: 15,
+          transition: 'background 0.2s ease, transform 0.15s ease'
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryDark; e.currentTarget.style.transform = 'translateY(-1px)' }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = 'translateY(0)' }}
+        >
           Start Shopping
         </Link>
       </div>
@@ -71,29 +95,41 @@ export default function CartPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px' }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 24px' }}>Your Cart</h1>
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 20px' }}>
+      <h1 style={{ fontSize: 30, fontWeight: 700, color: C.text, margin: '0 0 28px', letterSpacing: '-0.02em' }}>Your Cart</h1>
 
       <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 24, alignItems: 'flex-start' }}>
-        <div style={{ flex: '1 1 auto', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ flex: '1 1 auto', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
           {cartItems.map((item) => (
             <CartItem key={item.id} item={item} onUpdateQuantity={updateQuantity} onRemove={removeFromCart} />
           ))}
         </div>
 
-        <div style={{ flex: '0 0 320px', width: isMobile ? '100%' : 320, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 700, color: C.text }}>Order Summary</h3>
+        <div style={{ flex: '0 0 340px', width: isMobile ? '100%' : 340, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
+          <h3 style={{ margin: '0 0 16px', fontSize: 18, fontWeight: 700, color: C.text }}>Order Summary</h3>
           <SummaryRow label="Subtotal" value={formatPrice(subtotal)} />
           <SummaryRow label="Shipping" value={shipping === 0 ? 'Free' : formatPrice(shipping)} />
           <SummaryRow label="Tax (8%)" value={formatPrice(tax)} />
-          <div style={{ borderTop: `1px solid ${C.border}`, margin: '8px 0' }} />
+          <div style={{ borderTop: `1px solid ${C.border}`, margin: '10px 0' }} />
           <SummaryRow label="Total" value={formatPrice(total)} strong />
 
           <Link
             to="/checkout"
-            style={{ display: 'block', textAlign: 'center', marginTop: 16, padding: '12px 16px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600, transition: 'background .15s ease' }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = C.primaryDark)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = C.primary)}
+            style={{
+              display: 'block',
+              textAlign: 'center',
+              marginTop: 20,
+              padding: '14px 20px',
+              background: C.primary,
+              color: '#fff',
+              textDecoration: 'none',
+              borderRadius: 12,
+              fontWeight: 600,
+              fontSize: 15,
+              transition: 'background 0.2s ease, transform 0.15s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryDark; e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = 'translateY(0)' }}
           >
             Proceed to Checkout
           </Link>

@@ -80,14 +80,7 @@ export default function ProductGrid({ products = [], loading = false, emptyMessa
         @keyframes nx-shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
       `}</style>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: 24,
-          padding: '8px 0'
-        }}
-      >
+      <div className="product-grid">
         {loading ? (
           Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
         ) : products.length === 0 ? (

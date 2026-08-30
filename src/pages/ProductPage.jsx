@@ -40,7 +40,7 @@ export default function ProductPage() {
             onClick={() => navigate('/products')}
             style={{
               padding: '12px 24px',
-              borderRadius: 10,
+              borderRadius: 12,
               border: 'none',
               background: `linear-gradient(135deg, ${C.primary} 0%, ${C.primaryDark} 100%)`,
               color: '#fff',
@@ -58,26 +58,34 @@ export default function ProductPage() {
 
   const relatedProducts = allProducts
     .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
-    .slice(0, 4)
+    .slice(0, 6)
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            marginBottom: 24,
-            background: 'none',
-            border: 'none',
-            color: C.primary,
-            fontWeight: 600,
-            fontSize: 14,
-            cursor: 'pointer',
-            padding: 0
-          }}
-        >
-          ← Back
-        </button>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px' }}>
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, fontSize: 13, color: C.textSecondary }}>
+          <button
+            onClick={() => navigate('/')}
+            style={{ background: 'none', border: 'none', color: C.textSecondary, cursor: 'pointer', padding: 0, fontSize: 13 }}
+            onMouseEnter={(e) => e.currentTarget.style.color = C.primary}
+            onMouseLeave={(e) => e.currentTarget.style.color = C.textSecondary}
+          >
+            Home
+          </button>
+          <span>/</span>
+          <button
+            onClick={() => navigate('/products')}
+            style={{ background: 'none', border: 'none', color: C.textSecondary, cursor: 'pointer', padding: 0, fontSize: 13 }}
+            onMouseEnter={(e) => e.currentTarget.style.color = C.primary}
+            onMouseLeave={(e) => e.currentTarget.style.color = C.textSecondary}
+          >
+            Products
+          </button>
+          <span>/</span>
+          <span style={{ color: C.text }}>{product.name}</span>
+        </div>
+
         <ProductDetail
           product={product}
           relatedProducts={relatedProducts}

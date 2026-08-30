@@ -56,10 +56,13 @@ export default function CheckoutForm() {
 
   if (cartItems.length === 0) {
     return (
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '60px 20px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>Your cart is empty</h2>
-        <p style={{ color: C.textSecondary, margin: '0 0 24px' }}>Add items to your cart before checking out.</p>
-        <Link to="/products" style={{ display: 'inline-block', padding: '12px 24px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600 }}>
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, color: C.text, margin: '0 0 10px' }}>Your cart is empty</h2>
+        <p style={{ color: C.textSecondary, margin: '0 0 28px', fontSize: 15 }}>Add items to your cart before checking out.</p>
+        <Link to="/products" style={{ display: 'inline-block', padding: '14px 28px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 12, fontWeight: 600, fontSize: 15, transition: 'background 0.2s ease, transform 0.15s ease' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryDark; e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = 'translateY(0)' }}
+        >
           Back to Products
         </Link>
       </div>
@@ -105,38 +108,39 @@ export default function CheckoutForm() {
   const inputStyle = (key) => ({
     width: '100%',
     boxSizing: 'border-box',
-    padding: '10px 12px',
-    borderRadius: 8,
+    padding: '12px 14px',
+    borderRadius: 10,
     border: `1px solid ${errors[key] ? C.danger : C.border}`,
     background: C.surface,
     color: C.text,
     fontSize: 14,
-    outline: 'none'
+    outline: 'none',
+    transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
   })
 
   const labelStyle = { display: 'block', fontSize: 13, fontWeight: 600, color: C.textSecondary, marginBottom: 6 }
 
   const Section = ({ title, children }) => (
-    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20, marginBottom: 16 }}>
-      <h3 style={{ margin: '0 0 14px', fontSize: 16, fontWeight: 700, color: C.text }}>{title}</h3>
+    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, marginBottom: 20, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
+      <h3 style={{ margin: '0 0 18px', fontSize: 16, fontWeight: 700, color: C.text }}>{title}</h3>
       {children}
     </div>
   )
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px' }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 24px' }}>Checkout</h1>
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 20px' }}>
+      <h1 style={{ fontSize: 30, fontWeight: 700, color: C.text, margin: '0 0 28px', letterSpacing: '-0.02em' }}>Checkout</h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 24, alignItems: 'flex-start' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 28, alignItems: 'flex-start' }}>
         <div style={{ flex: '1 1 auto', minWidth: 0 }}>
           <Section title="Contact Information">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label style={labelStyle}>Full Name</label>
                 <input style={inputStyle('name')} value={form.name} onChange={(e) => setField('name', e.target.value)} placeholder="Jane Doe" />
                 {errors.name && <p style={errStyle}>{errors.name}</p>}
               </div>
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <label style={labelStyle}>Email</label>
                   <input style={inputStyle('email')} value={form.email} onChange={(e) => setField('email', e.target.value)} placeholder="jane@example.com" />
@@ -152,13 +156,13 @@ export default function CheckoutForm() {
           </Section>
 
           <Section title="Shipping Address">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label style={labelStyle}>Address</label>
                 <input style={inputStyle('address')} value={form.address} onChange={(e) => setField('address', e.target.value)} placeholder="123 Market St" />
                 {errors.address && <p style={errStyle}>{errors.address}</p>}
               </div>
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 <div style={{ flex: 2, minWidth: 140 }}>
                   <label style={labelStyle}>City</label>
                   <input style={inputStyle('city')} value={form.city} onChange={(e) => setField('city', e.target.value)} />
@@ -179,42 +183,57 @@ export default function CheckoutForm() {
           </Section>
 
           <Section title="Payment Method">
-            <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 12, border: `1px solid ${C.border}`, borderRadius: 8, cursor: 'pointer' }}>
-              <input type="radio" name="payment" defaultChecked />
+            <label style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, border: `1px solid ${C.border}`, borderRadius: 12, cursor: 'pointer', transition: 'border-color 0.2s ease' }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border }}
+            >
+              <input type="radio" name="payment" defaultChecked style={{ accentColor: C.primary }} />
               <span style={{ fontSize: 14, color: C.text, fontWeight: 500 }}>Demo Payment — No real charge</span>
             </label>
           </Section>
 
           <button
             type="submit"
-            style={{ width: '100%', padding: '14px 20px', border: 'none', borderRadius: 8, background: C.primary, color: '#fff', fontSize: 16, fontWeight: 700, cursor: 'pointer', transition: 'background .15s ease' }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = C.primaryDark)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = C.primary)}
+            style={{
+              width: '100%',
+              padding: '16px 24px',
+              border: 'none',
+              borderRadius: 12,
+              background: C.primary,
+              color: '#fff',
+              fontSize: 16,
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'background 0.2s ease, transform 0.15s ease',
+              marginTop: 8
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryDark; e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = 'translateY(0)' }}
           >
             Place Demo Order
           </button>
         </div>
 
-        <div style={{ flex: '0 0 320px', width: isMobile ? '100%' : 320, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 700, color: C.text }}>Order Summary</h3>
-          <div style={{ maxHeight: 240, overflowY: 'auto', marginBottom: 12 }}>
+        <div style={{ flex: '0 0 340px', width: isMobile ? '100%' : 340, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
+          <h3 style={{ margin: '0 0 16px', fontSize: 18, fontWeight: 700, color: C.text }}>Order Summary</h3>
+          <div style={{ maxHeight: 260, overflowY: 'auto', marginBottom: 16 }}>
             {cartItems.map((item) => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 13, color: C.textSecondary, padding: '6px 0', borderBottom: `1px solid ${C.border}` }}>
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name} × {item.quantity}</span>
-                <span style={{ flex: '0 0 auto' }}>{formatPrice(Number(item.price) * (item.quantity || 1))}</span>
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 13, color: C.textSecondary, padding: '8px 0', borderBottom: `1px solid ${C.border}` }}>
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 500 }}>{item.name} × {item.quantity}</span>
+                <span style={{ flex: '0 0 auto', fontWeight: 600, color: C.text }}>{formatPrice(Number(item.price) * (item.quantity || 1))}</span>
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: C.textSecondary, padding: '4px 0' }}>
-            <span>Subtotal</span><span>{formatPrice(subtotal)}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: C.textSecondary, padding: '6px 0' }}>
+            <span>Subtotal</span><span style={{ fontWeight: 600, color: C.text }}>{formatPrice(subtotal)}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: C.textSecondary, padding: '4px 0' }}>
-            <span>Shipping</span><span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: C.textSecondary, padding: '6px 0' }}>
+            <span>Shipping</span><span style={{ fontWeight: 600, color: C.text }}>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: C.textSecondary, padding: '4px 0' }}>
-            <span>Tax (8%)</span><span>{formatPrice(tax)}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: C.textSecondary, padding: '6px 0' }}>
+            <span>Tax (8%)</span><span style={{ fontWeight: 600, color: C.text }}>{formatPrice(tax)}</span>
           </div>
-          <div style={{ borderTop: `1px solid ${C.border}`, margin: '8px 0' }} />
+          <div style={{ borderTop: `1px solid ${C.border}`, margin: '10px 0' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 18, fontWeight: 700, color: C.text }}>
             <span>Total</span><span style={{ color: C.primary }}>{formatPrice(total)}</span>
           </div>

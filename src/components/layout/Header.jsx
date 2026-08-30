@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext.jsx'
 import { useWishlist } from '../../context/WishlistContext.jsx'
@@ -88,7 +88,14 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const [scrolled, setScrolled] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -100,39 +107,199 @@ export default function Header() {
   return (
     <>
       <style>{`
-        .nx-header { position: sticky; top: 0; z-index: 40; background: ${C.surface}; border-bottom: 1px solid ${C.border}; }
-        .nx-header-inner { max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 24px; }
-        .nx-logo { display: flex; align-items: center; gap: 10px; color: ${C.primary}; font-weight: 700; font-size: 22px; text-decoration: none; white-space: nowrap; letter-spacing: -0.02em; }
-        .nx-logo-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: #fff; }
-        .nx-search-wrap { flex: 1; max-width: 520px; margin: 0 auto; position: relative; }
-        .nx-search-input { width: 100%; box-sizing: border-box; padding: 11px 18px 11px 44px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.background}; font-size: 14px; color: ${C.text}; outline: none; transition: border-color .15s ease, box-shadow .15s ease; }
-        .nx-search-input:focus { border-color: ${C.primary}; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
-        .nx-search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: ${C.textSecondary}; }
-        .nx-nav { display: flex; align-items: center; gap: 28px; }
-        .nx-nav-link { color: ${C.textSecondary}; text-decoration: none; font-size: 15px; font-weight: 500; transition: color .15s ease; position: relative; }
-        .nx-nav-link:hover { color: ${C.primary}; }
-        .nx-nav-link.nx-ai-link { color: ${C.primary}; font-weight: 600; background: ${C.primaryLight}; padding: 8px 16px; border-radius: 9999px; }
-        .nx-nav-link.nx-ai-link:hover { background: #EEF2FF; }
-        .nx-cart-btn { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.surface}; color: ${C.text}; cursor: pointer; transition: all .15s ease; }
-        .nx-cart-btn:hover { background: ${C.background}; border-color: ${C.primary}; color: ${C.primary}; }
-        .nx-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9999px; background: ${C.primary}; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
-        .nx-icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.surface}; color: ${C.text}; cursor: pointer; transition: all .15s ease; }
-        .nx-icon-btn:hover { background: ${C.background}; border-color: ${C.primary}; color: ${C.primary}; }
-        .nx-mobile-menu { border-top: 1px solid ${C.border}; background: ${C.surface}; padding: 8px 24px 16px; }
-        .nx-mobile-link { display: block; padding: 12px 4px; color: ${C.text}; text-decoration: none; font-weight: 500; border-bottom: 1px solid ${C.border}; }
+        .nx-header {
+          position: sticky;
+          top: 0;
+          z-index: 40;
+          background: rgba(255, 255, 255, 0.92);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid ${C.border};
+          transition: box-shadow 0.3s ease;
+        }
+        .nx-header.scrolled {
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        .nx-header-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 16px 24px;
+          display: flex;
+          align-items: center;
+          gap: 24px;
+        }
+        .nx-logo {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: ${C.primary};
+          font-weight: 700;
+          font-size: 22px;
+          text-decoration: none;
+          white-space: nowrap;
+          letter-spacing: -0.03em;
+        }
+        .nx-logo-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+          color: #fff;
+          box-shadow: 0 4px 10px rgba(99, 102, 241, 0.25);
+        }
+        .nx-search-wrap {
+          flex: 1;
+          max-width: 520px;
+          margin: 0 auto;
+          position: relative;
+        }
+        .nx-search-input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 12px 18px 12px 44px;
+          border-radius: 9999px;
+          border: 1px solid ${C.border};
+          background: ${C.background};
+          font-size: 14px;
+          color: ${C.text};
+          outline: none;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .nx-search-input:focus {
+          border-color: ${C.primary};
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+        .nx-search-icon {
+          position: absolute;
+          left: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: ${C.textSecondary};
+          pointer-events: none;
+        }
+        .nx-nav {
+          display: flex;
+          align-items: center;
+          gap: 28px;
+        }
+        .nx-nav-link {
+          color: ${C.textSecondary};
+          text-decoration: none;
+          font-size: 15px;
+          font-weight: 500;
+          transition: color 0.2s ease;
+          position: relative;
+        }
+        .nx-nav-link:hover {
+          color: ${C.primary};
+        }
+        .nx-nav-link.nx-ai-link {
+          color: ${C.primary};
+          font-weight: 600;
+          background: ${C.primaryLight};
+          padding: 8px 16px;
+          border-radius: 9999px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .nx-nav-link.nx-ai-link:hover {
+          background: #EEF2FF;
+        }
+        .nx-cart-btn {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 42px;
+          height: 42px;
+          border-radius: 9999px;
+          border: 1px solid ${C.border};
+          background: ${C.surface};
+          color: ${C.text};
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .nx-cart-btn:hover {
+          background: ${C.background};
+          border-color: ${C.primary};
+          color: ${C.primary};
+        }
+        .nx-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 5px;
+          border-radius: 9999px;
+          background: ${C.primary};
+          color: #fff;
+          font-size: 11px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+        }
+        .nx-icon-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 42px;
+          height: 42px;
+          border-radius: 9999px;
+          border: 1px solid ${C.border};
+          background: ${C.surface};
+          color: ${C.text};
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .nx-icon-btn:hover {
+          background: ${C.background};
+          border-color: ${C.primary};
+          color: ${C.primary};
+        }
+        .nx-mobile-menu {
+          border-top: 1px solid ${C.border};
+          background: ${C.surface};
+          padding: 8px 24px 16px;
+        }
+        .nx-mobile-link {
+          display: block;
+          padding: 12px 4px;
+          color: ${C.text};
+          text-decoration: none;
+          font-weight: 500;
+          border-bottom: 1px solid ${C.border};
+        }
         .nx-show-mobile { display: none; }
         @media (max-width: 767px) {
           .nx-hide-mobile { display: none !important; }
           .nx-show-mobile { display: flex !important; }
           .nx-search-wrap { display: none; }
-          .nx-search-wrap.nx-search-open { display: block; position: absolute; left: 0; right: 0; top: 100%; padding: 12px 16px; background: ${C.surface}; border-bottom: 1px solid ${C.border}; max-width: none; }
+          .nx-search-wrap.nx-search-open {
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            padding: 12px 16px;
+            background: ${C.surface};
+            border-bottom: 1px solid ${C.border};
+            max-width: none;
+          }
+          .nx-header-inner { padding: 12px 16px; }
         }
         @media (min-width: 768px) {
           .nx-hide-desktop { display: none !important; }
         }
       `}</style>
 
-      <header className="nx-header">
+      <header className={`nx-header${scrolled ? ' scrolled' : ''}`}>
         <div className="nx-header-inner">
           <Link to="/" className="nx-logo" onClick={() => setMenuOpen(false)}>
             <span className="nx-logo-icon"><ShoppingBagIcon size={20} /></span>
@@ -144,7 +311,7 @@ export default function Header() {
             <input
               className="nx-search-input"
               type="text"
-              placeholder="Search products..."
+              placeholder="What are you looking for today?"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               aria-label="Search products"

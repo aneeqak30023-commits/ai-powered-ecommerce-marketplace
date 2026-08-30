@@ -49,7 +49,7 @@ export default function CartDrawer({ isOpen, onClose }) {
       <style>{`
         @keyframes nx-drawer-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
         @keyframes nx-fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .nx-drawer-panel { animation: nx-drawer-in .25s ease-out; }
+        .nx-drawer-panel { animation: nx-drawer-in .3s cubic-bezier(0.16, 1, 0.3, 1); }
         .nx-drawer-backdrop { animation: nx-fade-in .2s ease-out; }
       `}</style>
 
@@ -68,7 +68,7 @@ export default function CartDrawer({ isOpen, onClose }) {
           top: 0,
           right: 0,
           height: '100%',
-          width: 'min(400px, 100%)',
+          width: 'min(420px, 100%)',
           background: C.surface,
           boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)',
           zIndex: 51,
@@ -76,20 +76,23 @@ export default function CartDrawer({ isOpen, onClose }) {
           flexDirection: 'column'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px', borderBottom: `1px solid ${C.border}` }}>
           <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text }}>
-            Shopping Cart {cartItems.length > 0 && <span style={{ color: C.textSecondary, fontWeight: 500 }}>({cartItems.length})</span>}
+            Shopping Cart {cartItems.length > 0 && <span style={{ color: C.textSecondary, fontWeight: 500, fontSize: 14 }}>({cartItems.length})</span>}
           </h2>
-          <button type="button" onClick={onClose} aria-label="Close cart" style={{ border: 'none', background: 'transparent', color: C.text, cursor: 'pointer' }}>
+          <button type="button" onClick={onClose} aria-label="Close cart" style={{ border: 'none', background: 'transparent', color: C.text, cursor: 'pointer', padding: 6, borderRadius: 8, transition: 'background 0.15s ease' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = C.background }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+          >
             <CloseIcon />
           </button>
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {cartItems.length === 0 ? (
-            <div style={{ padding: 40, textAlign: 'center', color: C.textSecondary }}>
-              <p style={{ margin: '0 0 16px' }}>Your cart is empty.</p>
-              <Link to="/products" onClick={onClose} style={{ color: C.primary, textDecoration: 'none', fontWeight: 600 }}>Browse products</Link>
+            <div style={{ padding: 48, textAlign: 'center', color: C.textSecondary }}>
+              <p style={{ margin: '0 0 16px', fontSize: 15 }}>Your cart is empty.</p>
+              <Link to="/products" onClick={onClose} style={{ color: C.primary, textDecoration: 'none', fontWeight: 600, fontSize: 14 }}>Browse products</Link>
             </div>
           ) : (
             cartItems.map((item) => (
@@ -99,17 +102,28 @@ export default function CartDrawer({ isOpen, onClose }) {
         </div>
 
         {cartItems.length > 0 && (
-          <div style={{ borderTop: `1px solid ${C.border}`, padding: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 12 }}>
+          <div style={{ borderTop: `1px solid ${C.border}`, padding: 20, background: C.surface }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 16 }}>
               <span>Subtotal</span>
               <span style={{ color: C.primary }}>{formatPrice(subtotal)}</span>
             </div>
             <Link
               to="/checkout"
               onClick={onClose}
-              style={{ display: 'block', textAlign: 'center', padding: '12px 16px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600, transition: 'background .15s ease' }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = C.primaryDark)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = C.primary)}
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                padding: '14px 20px',
+                background: C.primary,
+                color: '#fff',
+                textDecoration: 'none',
+                borderRadius: 12,
+                fontWeight: 600,
+                fontSize: 15,
+                transition: 'background 0.2s ease, transform 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryDark; e.currentTarget.style.transform = 'translateY(-1px)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = 'translateY(0)' }}
             >
               Checkout
             </Link>

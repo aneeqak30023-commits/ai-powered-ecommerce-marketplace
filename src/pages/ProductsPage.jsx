@@ -89,27 +89,30 @@ export default function ProductsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <div>
-              <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: 0, letterSpacing: '-0.02em' }}>
-                {searchQuery ? `Results for "${searchQuery}"` : 'All Products'}
-              </h1>
-              <p style={{ fontSize: 14, color: C.textSecondary, margin: '4px 0 0' }}>
-                {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
-              </p>
-            </div>
-          </div>
+      {/* Page Header */}
+      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px 24px' }}>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+            {searchQuery ? `Results for "${searchQuery}"` : 'All Products'}
+          </h1>
+          <p style={{ fontSize: 14, color: C.textSecondary, margin: 0 }}>
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
+          </p>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 24 }}>
-          <aside style={{ width: 260, flexShrink: 0 }}>
+      </div>
+
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 32 }}>
+          {/* Sidebar Filters */}
+          <aside style={{ width: 280, flexShrink: 0 }}>
             <ProductFilters
               categories={allCategories}
               onFilterChange={handleFilterChange}
               initialCategory={categoryFromUrl}
             />
           </aside>
+
+          {/* Product Grid */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <ProductGrid products={filteredProducts} onAddToCart={addToCart} />
           </div>

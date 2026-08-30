@@ -25,9 +25,12 @@ function formatPrice(value) {
 export default function OrderConfirmation({ order }) {
   if (!order) {
     return (
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '60px 20px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>No order found</h2>
-        <Link to="/products" style={{ display: 'inline-block', marginTop: 16, padding: '12px 24px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600 }}>
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '80px 20px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, color: C.text, margin: '0 0 10px' }}>No order found</h2>
+        <Link to="/products" style={{ display: 'inline-block', marginTop: 20, padding: '14px 28px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 12, fontWeight: 600, fontSize: 15, transition: 'background 0.2s ease, transform 0.15s ease' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryDark; e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = 'translateY(0)' }}
+        >
           Start Shopping
         </Link>
       </div>
@@ -37,58 +40,82 @@ export default function OrderConfirmation({ order }) {
   const { id, total, items = [], shipping = {}, customer = {}, date } = order
 
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 20px' }}>
-      <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <div style={{ width: 72, height: 72, borderRadius: 9999, background: C.success, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '48px 20px' }}>
+      <div style={{ textAlign: 'center', marginBottom: 36 }}>
+        <div style={{
+          width: 80,
+          height: 80,
+          borderRadius: '50%',
+          background: C.success,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 18,
+          boxShadow: '0 10px 25px -5px rgba(22,163,74,0.3)'
+        }}>
           <CheckIcon />
         </div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, color: C.text, margin: '0 0 6px' }}>Order Confirmed!</h1>
-        <p style={{ color: C.textSecondary, margin: 0 }}>Thank you for your purchase. Your order has been placed successfully.</p>
+        <h1 style={{ fontSize: 30, fontWeight: 800, color: C.text, margin: '0 0 8px', letterSpacing: '-0.02em' }}>Order Confirmed!</h1>
+        <p style={{ color: C.textSecondary, margin: 0, fontSize: 15 }}>Thank you for your purchase. Your order has been placed successfully.</p>
       </div>
 
-      <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'space-between', borderBottom: `1px solid ${C.border}`, paddingBottom: 16, marginBottom: 16 }}>
+      <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: 28, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)', marginBottom: 24 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-between', borderBottom: `1px solid ${C.border}`, paddingBottom: 20, marginBottom: 20 }}>
           <div>
-            <div style={{ fontSize: 12, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '.04em' }}>Order ID</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>{id}</div>
+            <div style={{ fontSize: 12, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 600 }}>Order ID</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginTop: 4 }}>{id}</div>
           </div>
           <div>
-            <div style={{ fontSize: 12, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '.04em' }}>Date</div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: C.text }}>{date ? new Date(date).toLocaleDateString() : '—'}</div>
+            <div style={{ fontSize: 12, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 600 }}>Date</div>
+            <div style={{ fontSize: 16, fontWeight: 600, color: C.text, marginTop: 4 }}>{date ? new Date(date).toLocaleDateString() : '—'}</div>
           </div>
           <div>
-            <div style={{ fontSize: 12, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '.04em' }}>Total</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: C.primary }}>{formatPrice(total)}</div>
+            <div style={{ fontSize: 12, color: C.textSecondary, textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 600 }}>Total</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: C.primary, marginTop: 4 }}>{formatPrice(total)}</div>
           </div>
         </div>
 
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: '0 0 12px' }}>Items</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: '0 0 14px' }}>Items</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
           {items.map((item) => (
-            <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <img src={item.image} alt={item.name} style={{ width: 52, height: 52, borderRadius: 8, objectFit: 'cover', background: C.background }} />
+            <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <img src={item.image} alt={item.name} style={{ width: 56, height: 56, borderRadius: 12, objectFit: 'cover', background: C.background, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: C.text }}>{item.name}</div>
-                <div style={{ fontSize: 13, color: C.textSecondary }}>Qty: {item.quantity}</div>
+                <div style={{ fontSize: 13, color: C.textSecondary, marginTop: 2 }}>Qty: {item.quantity}</div>
               </div>
               <div style={{ fontSize: 14, fontWeight: 600, color: C.text }}>{formatPrice(Number(item.price) * (item.quantity || 1))}</div>
             </div>
           ))}
         </div>
 
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>Shipping Address</h3>
-        <p style={{ margin: 0, fontSize: 14, color: C.textSecondary, lineHeight: 1.6 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: '0 0 10px' }}>Shipping Address</h3>
+        <div style={{
+          background: C.background,
+          border: `1px solid ${C.border}`,
+          borderRadius: 12,
+          padding: 16,
+          fontSize: 14,
+          color: C.textSecondary,
+          lineHeight: 1.7
+        }}>
           {customer.name}<br />
           {shipping.address}, {shipping.city}, {shipping.state} {shipping.zip}<br />
           {customer.email} · {customer.phone}
-        </p>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 24, flexWrap: 'wrap' }}>
-        <Link to="/products" style={{ padding: '12px 24px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600 }}>
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Link to="/products" style={{ padding: '14px 28px', background: C.primary, color: '#fff', textDecoration: 'none', borderRadius: 12, fontWeight: 600, fontSize: 15, transition: 'background 0.2s ease, transform 0.15s ease' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryDark; e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = 'translateY(0)' }}
+        >
           Continue Shopping
         </Link>
-        <Link to="/orders" style={{ padding: '12px 24px', border: `1px solid ${C.border}`, color: C.text, textDecoration: 'none', borderRadius: 8, fontWeight: 600, background: C.surface }}>
+        <Link to="/orders" style={{ padding: '14px 28px', border: `1px solid ${C.border}`, color: C.text, textDecoration: 'none', borderRadius: 12, fontWeight: 600, background: C.surface, fontSize: 15, transition: 'background 0.2s ease, transform 0.15s ease' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = C.background; e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = C.surface; e.currentTarget.style.transform = 'translateY(0)' }}
+        >
           View Orders
         </Link>
       </div>

@@ -58,16 +58,16 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
       onMouseLeave={() => setHovered(false)}
       style={{
         background: C.surface,
-        borderRadius: 16,
+        borderRadius: 20,
         border: `1px solid ${C.border}`,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         boxShadow: hovered
-          ? '0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02)'
-          : '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
-        transition: 'box-shadow .25s ease, transform .25s ease',
-        transform: hovered ? 'translateY(-4px)' : 'none'
+          ? '0 25px 50px -12px rgba(0,0,0,0.08)'
+          : '0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02)',
+        transition: 'box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        transform: hovered ? 'translateY(-6px)' : 'none'
       }}
     >
       <Link to={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -76,17 +76,17 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
             <span
               style={{
                 position: 'absolute',
-                top: 12,
-                left: 12,
+                top: 14,
+                left: 14,
                 zIndex: 2,
                 background: C.primary,
                 color: '#fff',
                 fontSize: 11,
                 fontWeight: 600,
-                padding: '4px 10px',
+                padding: '5px 12px',
                 borderRadius: 9999,
                 textTransform: 'uppercase',
-                letterSpacing: '.03em'
+                letterSpacing: '.04em'
               }}
             >
               {categoryName}
@@ -96,14 +96,14 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
             <span
               style={{
                 position: 'absolute',
-                top: 12,
-                right: 12,
+                top: 14,
+                right: 14,
                 zIndex: 2,
                 background: C.accent,
                 color: '#fff',
                 fontSize: 11,
                 fontWeight: 700,
-                padding: '4px 10px',
+                padding: '5px 12px',
                 borderRadius: 9999
               }}
             >
@@ -114,15 +114,15 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
             <span
               style={{
                 position: 'absolute',
-                bottom: 12,
-                right: 12,
+                bottom: 14,
+                right: 14,
                 zIndex: 2,
                 background: 'rgba(255,255,255,0.95)',
                 backdropFilter: 'blur(8px)',
                 color: C.primary,
                 fontSize: 11,
                 fontWeight: 700,
-                padding: '4px 10px',
+                padding: '5px 12px',
                 borderRadius: 9999,
                 border: '1px solid rgba(99,102,241,0.15)'
               }}
@@ -141,21 +141,21 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
               aria-label="Toggle wishlist"
               style={{
                 position: 'absolute',
-                bottom: 12,
-                left: 12,
+                bottom: 14,
+                left: 14,
                 zIndex: 2,
-                width: 36,
-                height: 36,
+                width: 38,
+                height: 38,
                 borderRadius: '50%',
                 border: 'none',
                 background: '#FFFFFF',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                 color: '#EF4444',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                transition: 'transform .15s ease'
+                transition: 'transform 0.2s ease'
               }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)' }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
@@ -173,13 +173,13 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              transition: 'transform .3s ease',
+              transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
               transform: hovered ? 'scale(1.05)' : 'scale(1)'
             }}
           />
         </div>
 
-        <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 10, flexGrow: 1 }}>
+        <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 10, flexGrow: 1 }}>
           <h3
             style={{
               margin: 0,
@@ -210,8 +210,8 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
 
           {aiReason && (
             <div style={{
-              padding: '8px 12px',
-              borderRadius: 8,
+              padding: '10px 14px',
+              borderRadius: 10,
               background: C.primaryLight,
               border: '1px solid rgba(99,102,241,0.1)',
               fontSize: 12,
@@ -233,7 +233,7 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
         </div>
       </Link>
 
-      <div style={{ padding: '0 18px 18px', display: 'flex', gap: 8 }}>
+      <div style={{ padding: '0 20px 20px', display: 'flex', gap: 8 }}>
         <button
           type="button"
           onClick={(e) => {
@@ -244,15 +244,15 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
           disabled={outOfStock}
           style={{
             flex: 1,
-            padding: '10px 12px',
+            padding: '11px 14px',
             border: 'none',
-            borderRadius: 10,
+            borderRadius: 12,
             background: outOfStock ? C.border : C.primary,
             color: outOfStock ? C.textSecondary : '#fff',
             fontSize: 14,
             fontWeight: 600,
             cursor: outOfStock ? 'not-allowed' : 'pointer',
-            transition: 'background .15s ease'
+            transition: 'background 0.2s ease'
           }}
           onMouseEnter={(e) => { if (!outOfStock) e.currentTarget.style.background = C.primaryDark }}
           onMouseLeave={(e) => { if (!outOfStock) e.currentTarget.style.background = C.primary }}
@@ -270,13 +270,13 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
             style={{
               padding: '10px 14px',
               border: `1px solid ${C.border}`,
-              borderRadius: 10,
+              borderRadius: 12,
               background: C.surface,
               color: C.textSecondary,
               fontSize: 13,
               fontWeight: 600,
               cursor: 'pointer',
-              transition: 'all .15s ease'
+              transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.color = C.primary }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textSecondary }}
