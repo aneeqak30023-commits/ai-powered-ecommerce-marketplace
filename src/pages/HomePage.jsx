@@ -1,6 +1,7 @@
 import Hero from '../components/home/Hero'
 import FeaturedCategories from '../components/home/FeaturedCategories'
 import FeaturedProducts from '../components/home/FeaturedProducts'
+import RecentlyViewedProducts from '../components/home/RecentlyViewedProducts'
 import products from '../data/products.json'
 import categories from '../data/categories.json'
 import { useCart } from '../context/CartContext'
@@ -28,6 +29,7 @@ export default function HomePage() {
   return (
     <div>
       <Hero />
+      <RecentlyViewedProducts />
 
       <section className="section-sm" style={{ background: C.surface, borderBottom: `1px solid ${C.border}` }}>
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

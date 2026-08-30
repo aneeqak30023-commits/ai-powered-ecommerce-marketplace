@@ -1,7 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import ProductDetail from '../components/product/ProductDetail'
 import allProducts from '../data/products.json'
 import { useCart } from '../context/CartContext'
+import { useRecentlyViewed } from '../context/RecentlyViewedContext'
 
 const C = {
   primary: '#6366F1',
@@ -17,8 +19,16 @@ export default function ProductPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { addToCart } = useCart()
+  const { addRecentlyViewed } = useRecentlyViewed()
 
   const product = allProducts.find(p => p.id === Number(id))
+
+  // Track product view unconditionally
+  useEffect(() => {
+    if (product) {
+      addRecentlyViewed(product)
+    }
+  }, [product?.id, addRecentlyViewed])
 
   if (!product) {
     return (
