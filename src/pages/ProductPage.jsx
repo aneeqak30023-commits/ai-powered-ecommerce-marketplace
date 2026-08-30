@@ -1,7 +1,17 @@
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import ProductDetail from '../components/product/ProductDetail'
 import allProducts from '../data/products.json'
 import { useCart } from '../context/CartContext'
+
+const C = {
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
+  surface: '#FFFFFF',
+  background: '#F8FAFC',
+  text: '#0F172A',
+  textSecondary: '#475569',
+  border: '#E2E8F0'
+}
 
 export default function ProductPage() {
   const { id } = useParams()
@@ -12,16 +22,25 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-[#0F172A] mb-4">Product Not Found</h1>
-          <p className="text-[#475569] mb-6">The product you are looking for does not exist.</p>
-          <Link
-            to="/products"
-            className="inline-block bg-[#4F46E5] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#4338CA] transition-colors"
+      <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: 40, fontWeight: 800, color: C.text, margin: '0 0 16px' }}>Product Not Found</h1>
+          <p style={{ fontSize: 16, color: C.textSecondary, margin: '0 0 24px' }}>The product you are looking for does not exist.</p>
+          <button
+            onClick={() => navigate('/products')}
+            style={{
+              padding: '12px 24px',
+              borderRadius: 10,
+              border: 'none',
+              background: `linear-gradient(135deg, ${C.primary} 0%, ${C.primaryDark} 100%)`,
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: 'pointer'
+            }}
           >
             Browse Products
-          </Link>
+          </button>
         </div>
       </div>
     )
@@ -32,11 +51,20 @@ export default function ProductPage() {
     .slice(0, 4)
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div style={{ minHeight: '100vh', background: C.background }}>
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 text-[#4F46E5] hover:text-[#4338CA] font-medium"
+          style={{
+            marginBottom: 24,
+            background: 'none',
+            border: 'none',
+            color: C.primary,
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+            padding: 0
+          }}
         >
           ← Back
         </button>

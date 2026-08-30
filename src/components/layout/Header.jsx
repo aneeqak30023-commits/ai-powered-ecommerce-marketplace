@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext.jsx'
+import { useWishlist } from '../../context/WishlistContext.jsx'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
-  secondary: '#0EA5E9',
-  accent: '#F59E0B',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
+  primaryLight: '#EEF2FF',
   surface: '#FFFFFF',
   background: '#F8FAFC',
   text: '#0F172A',
@@ -17,26 +17,16 @@ const C = {
 const NAV_LINKS = [
   { label: 'Home', to: '/' },
   { label: 'Products', to: '/products' },
-  { label: 'Orders', to: '/orders' }
+  { label: 'Categories', to: '/products' },
+  { label: 'Wishlist', to: '/wishlist' },
+  { label: 'AI Assistant', to: '/products', highlight: true }
 ]
 
 function ShoppingBagIcon({ size = 24 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M6 7h12l-1 13H7L6 7z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9 7V5a3 3 0 0 1 6 0v2"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M6 7h12l-1 13H7L6 7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -53,13 +43,7 @@ function SearchIcon({ size = 18 }) {
 function CartIcon({ size = 22 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M3 4h2l2.4 12.3a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.8L21 8H6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M3 4h2l2.4 12.3a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.8L21 8H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
       <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
     </svg>
@@ -82,8 +66,25 @@ function CloseIcon({ size = 22 }) {
   )
 }
 
+function SparkleIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" fill="currentColor" />
+    </svg>
+  )
+}
+
+function HeartIcon({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export default function Header() {
   const { cartCount } = useCart()
+  const { wishlistCount } = useWishlist()
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -99,28 +100,32 @@ export default function Header() {
   return (
     <>
       <style>{`
-        .nx-header { position: sticky; top: 0; z-index: 40; background: ${C.surface}; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .nx-header-inner { max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 16px; }
-        .nx-logo { display: flex; align-items: center; gap: 8px; color: ${C.primary}; font-weight: 700; font-size: 20px; text-decoration: none; white-space: nowrap; }
-        .nx-search-wrap { flex: 1; max-width: 480px; margin: 0 auto; position: relative; }
-        .nx-search-input { width: 100%; box-sizing: border-box; padding: 10px 16px 10px 42px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.background}; font-size: 14px; color: ${C.text}; outline: none; transition: border-color .15s ease, box-shadow .15s ease; }
-        .nx-search-input:focus { border-color: ${C.primary}; box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
-        .nx-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: ${C.textSecondary}; }
-        .nx-nav { display: flex; align-items: center; gap: 22px; }
-        .nx-nav-link { color: ${C.textSecondary}; text-decoration: none; font-size: 15px; font-weight: 500; transition: color .15s ease; }
+        .nx-header { position: sticky; top: 0; z-index: 40; background: ${C.surface}; border-bottom: 1px solid ${C.border}; }
+        .nx-header-inner { max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 24px; }
+        .nx-logo { display: flex; align-items: center; gap: 10px; color: ${C.primary}; font-weight: 700; font-size: 22px; text-decoration: none; white-space: nowrap; letter-spacing: -0.02em; }
+        .nx-logo-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: #fff; }
+        .nx-search-wrap { flex: 1; max-width: 520px; margin: 0 auto; position: relative; }
+        .nx-search-input { width: 100%; box-sizing: border-box; padding: 11px 18px 11px 44px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.background}; font-size: 14px; color: ${C.text}; outline: none; transition: border-color .15s ease, box-shadow .15s ease; }
+        .nx-search-input:focus { border-color: ${C.primary}; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+        .nx-search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: ${C.textSecondary}; }
+        .nx-nav { display: flex; align-items: center; gap: 28px; }
+        .nx-nav-link { color: ${C.textSecondary}; text-decoration: none; font-size: 15px; font-weight: 500; transition: color .15s ease; position: relative; }
         .nx-nav-link:hover { color: ${C.primary}; }
-        .nx-cart-btn { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.surface}; color: ${C.text}; cursor: pointer; transition: background .15s ease; }
-        .nx-cart-btn:hover { background: ${C.background}; }
+        .nx-nav-link.nx-ai-link { color: ${C.primary}; font-weight: 600; background: ${C.primaryLight}; padding: 8px 16px; border-radius: 9999px; }
+        .nx-nav-link.nx-ai-link:hover { background: #EEF2FF; }
+        .nx-cart-btn { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.surface}; color: ${C.text}; cursor: pointer; transition: all .15s ease; }
+        .nx-cart-btn:hover { background: ${C.background}; border-color: ${C.primary}; color: ${C.primary}; }
         .nx-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9999px; background: ${C.primary}; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
-        .nx-icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.surface}; color: ${C.text}; cursor: pointer; }
-        .nx-mobile-menu { border-top: 1px solid ${C.border}; background: ${C.surface}; padding: 8px 20px 16px; }
+        .nx-icon-btn { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 9999px; border: 1px solid ${C.border}; background: ${C.surface}; color: ${C.text}; cursor: pointer; transition: all .15s ease; }
+        .nx-icon-btn:hover { background: ${C.background}; border-color: ${C.primary}; color: ${C.primary}; }
+        .nx-mobile-menu { border-top: 1px solid ${C.border}; background: ${C.surface}; padding: 8px 24px 16px; }
         .nx-mobile-link { display: block; padding: 12px 4px; color: ${C.text}; text-decoration: none; font-weight: 500; border-bottom: 1px solid ${C.border}; }
         .nx-show-mobile { display: none; }
         @media (max-width: 767px) {
           .nx-hide-mobile { display: none !important; }
           .nx-show-mobile { display: flex !important; }
           .nx-search-wrap { display: none; }
-          .nx-search-wrap.nx-search-open { display: block; position: absolute; left: 0; right: 0; top: 100%; padding: 12px 16px; background: ${C.surface}; border-top: 1px solid ${C.border}; max-width: none; }
+          .nx-search-wrap.nx-search-open { display: block; position: absolute; left: 0; right: 0; top: 100%; padding: 12px 16px; background: ${C.surface}; border-bottom: 1px solid ${C.border}; max-width: none; }
         }
         @media (min-width: 768px) {
           .nx-hide-desktop { display: none !important; }
@@ -130,7 +135,7 @@ export default function Header() {
       <header className="nx-header">
         <div className="nx-header-inner">
           <Link to="/" className="nx-logo" onClick={() => setMenuOpen(false)}>
-            <ShoppingBagIcon />
+            <span className="nx-logo-icon"><ShoppingBagIcon size={20} /></span>
             <span>NexMart</span>
           </Link>
 
@@ -148,11 +153,14 @@ export default function Header() {
 
           <nav className="nx-nav nx-hide-mobile">
             {NAV_LINKS.map((l) => (
-              <Link key={l.to} to={l.to} className="nx-nav-link">{l.label}</Link>
+              <Link key={l.to} to={l.to} className={`nx-nav-link${l.highlight ? ' nx-ai-link' : ''}`} onClick={() => setMenuOpen(false)}>
+                {l.highlight && <SparkleIcon size={14} />}
+                {l.label}
+              </Link>
             ))}
           </nav>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button
               type="button"
               className="nx-icon-btn nx-show-mobile"
@@ -161,6 +169,16 @@ export default function Header() {
               style={{ display: 'none' }}
             >
               <SearchIcon />
+            </button>
+
+            <button
+              type="button"
+              className="nx-icon-btn"
+              aria-label="Open wishlist"
+              onClick={() => navigate('/wishlist')}
+            >
+              <HeartIcon />
+              {wishlistCount > 0 && <span className="nx-badge">{wishlistCount}</span>}
             </button>
 
             <button

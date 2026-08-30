@@ -4,8 +4,8 @@ import CartItem from './CartItem.jsx'
 import { useCart } from '../../context/CartContext.jsx'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
   surface: '#FFFFFF',
   background: '#F8FAFC',
   text: '#0F172A',

@@ -6,6 +6,17 @@ import allProducts from '../data/products.json'
 import allCategories from '../data/categories.json'
 import { useCart } from '../context/CartContext'
 
+const C = {
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
+  primaryLight: '#EEF2FF',
+  surface: '#FFFFFF',
+  background: '#F8FAFC',
+  text: '#0F172A',
+  textSecondary: '#475569',
+  border: '#E2E8F0'
+}
+
 export default function ProductsPage() {
   const [searchParams] = useSearchParams()
   const searchFromUrl = searchParams.get('search') || ''
@@ -77,23 +88,29 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div style={{ minHeight: '100vh', background: C.background }}>
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h1 className="text-3xl font-bold text-[#0F172A] mb-4 sm:mb-0">All Products</h1>
-          <span className="text-[#475569]">
-            {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
-          </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: 0, letterSpacing: '-0.02em' }}>
+                {searchQuery ? `Results for "${searchQuery}"` : 'All Products'}
+              </h1>
+              <p style={{ fontSize: 14, color: C.textSecondary, margin: '4px 0 0' }}>
+                {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col lg:flex-row gap-8">
-          <aside className="w-full lg:w-64 flex-shrink-0">
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 24 }}>
+          <aside style={{ width: 260, flexShrink: 0 }}>
             <ProductFilters
               categories={allCategories}
               onFilterChange={handleFilterChange}
               initialCategory={categoryFromUrl}
             />
           </aside>
-          <div className="flex-1">
+          <div style={{ flex: 1, minWidth: 0 }}>
             <ProductGrid products={filteredProducts} onAddToCart={addToCart} />
           </div>
         </div>

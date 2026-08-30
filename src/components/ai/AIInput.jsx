@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
   surface: '#FFFFFF',
   text: '#0F172A',
   textSecondary: '#475569',
@@ -23,7 +23,7 @@ export default function AIInput({ onSend, disabled = false, isTyping = false }) 
   const send = () => {
     const text = value.trim()
     if (!text || disabled) return
-    onSend && onSend(text)
+    if (onSend) onSend(text)
     setValue('')
   }
 

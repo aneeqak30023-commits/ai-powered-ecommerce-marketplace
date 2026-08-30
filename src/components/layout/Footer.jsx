@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 
 const C = {
-  footerBg: '#1E293B',
+  footerBg: '#0F172A',
   footerText: '#CBD5E1',
   footerMuted: '#94A3B8',
-  primary: '#4F46E5'
+  primary: '#6366F1',
+  primaryLight: '#EEF2FF'
 }
 
 function SocialIcon({ children }) {
@@ -38,23 +39,23 @@ export default function Footer() {
   return (
     <footer style={{ background: C.footerBg, color: C.footerText, marginTop: 'auto' }}>
       <style>{`
-        .nx-footer-grid { max-width: 1200px; margin: 0 auto; padding: 48px 20px 32px; display: grid; gap: 32px; grid-template-columns: repeat(2, 1fr); }
+        .nx-footer-grid { max-width: 1200px; margin: 0 auto; padding: 64px 24px 40px; display: grid; gap: 40px; grid-template-columns: repeat(2, 1fr); }
         @media (min-width: 1024px) { .nx-footer-grid { grid-template-columns: repeat(4, 1fr); } }
-        .nx-footer-title { color: #fff; font-size: 15px; font-weight: 700; margin: 0 0 16px; text-transform: uppercase; letter-spacing: .04em; }
-        .nx-footer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+        .nx-footer-title { color: #fff; font-size: 14px; font-weight: 700; margin: 0 0 20px; text-transform: uppercase; letter-spacing: .06em; }
+        .nx-footer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
         .nx-footer-link { color: ${C.footerText}; text-decoration: none; font-size: 14px; transition: color .15s ease; }
         .nx-footer-link:hover { color: #fff; }
-        .nx-footer-desc { font-size: 14px; line-height: 1.6; color: ${C.footerMuted}; margin: 0 0 16px; }
-        .nx-footer-social { display: flex; gap: 10px; margin-top: 16px; }
-        .nx-footer-bar { border-top: 1px solid rgba(255,255,255,0.1); padding: 18px 20px; text-align: center; font-size: 13px; color: ${C.footerMuted}; }
+        .nx-footer-desc { font-size: 14px; line-height: 1.7; color: ${C.footerMuted}; margin: 0 0 20px; }
+        .nx-footer-social { display: flex; gap: 10px; margin-top: 20px; }
+        .nx-footer-bar { border-top: 1px solid rgba(255,255,255,0.08); padding: 24px; text-align: center; font-size: 13px; color: ${C.footerMuted}; }
+        .nx-footer-ai-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 9999px; background: rgba(99,102,241,0.15); color: #A5B4FC; font-size: 12px; font-weight: 600; margin-top: 12px; }
       `}</style>
 
       <div className="nx-footer-grid">
         <div>
           <h3 className="nx-footer-title">About NexMart</h3>
           <p className="nx-footer-desc">
-            NexMart is your AI-powered marketplace, bringing you the latest products
-            with smart, personalized recommendations and a seamless shopping experience.
+            NexMart is your AI-powered marketplace, bringing you the latest products with smart, personalized recommendations and a seamless shopping experience.
           </p>
           <div className="nx-footer-social">
             <SocialIcon>
@@ -66,6 +67,10 @@ export default function Footer() {
             <SocialIcon>
               <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
             </SocialIcon>
+          </div>
+          <div className="nx-footer-ai-badge">
+            <span>✨</span>
+            AI-Powered Shopping
           </div>
         </div>
 
@@ -80,6 +85,16 @@ export default function Footer() {
         </div>
 
         <div>
+          <h3 className="nx-footer-title">AI Features</h3>
+          <ul className="nx-footer-list">
+            <li><Link to="/products" className="nx-footer-link">Smart Search</Link></li>
+            <li><Link to="/products" className="nx-footer-link">Product Comparison</Link></li>
+            <li><Link to="/products" className="nx-footer-link">AI Recommendations</Link></li>
+            <li><Link to="/products" className="nx-footer-link">Multilingual Search</Link></li>
+          </ul>
+        </div>
+
+        <div>
           <h3 className="nx-footer-title">Quick Links</h3>
           <ul className="nx-footer-list">
             <li><Link to="/" className="nx-footer-link">Home</Link></li>
@@ -88,19 +103,10 @@ export default function Footer() {
             <li><Link to="/orders" className="nx-footer-link">Orders</Link></li>
           </ul>
         </div>
-
-        <div>
-          <h3 className="nx-footer-title">Contact Info</h3>
-          <ul className="nx-footer-list">
-            <li className="nx-footer-link">Email: support@nexmart.com</li>
-            <li className="nx-footer-link">Phone: +1 (555) 123-4567</li>
-            <li className="nx-footer-link">Address: 123 Market Street, San Francisco, CA 94103</li>
-          </ul>
-        </div>
       </div>
 
       <div className="nx-footer-bar">
-        &copy; {year} NexMart. All rights reserved.
+        &copy; {year} NexMart. All rights reserved. Powered by AI.
       </div>
     </footer>
   )

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import ProductCard from './ProductCard.jsx'
+import { useWishlist } from '../../context/WishlistContext.jsx'
 
 const C = {
   surface: '#FFFFFF',
@@ -7,7 +8,7 @@ const C = {
   text: '#0F172A',
   textSecondary: '#475569',
   border: '#E2E8F0',
-  primary: '#4F46E5'
+  primary: '#6366F1'
 }
 
 function SkeletonCard() {
@@ -15,13 +16,13 @@ function SkeletonCard() {
     <div
       style={{
         background: C.surface,
-        borderRadius: 12,
+        borderRadius: 16,
         border: `1px solid ${C.border}`,
         overflow: 'hidden'
       }}
     >
       <div className="nx-shimmer" style={{ aspectRatio: '1 / 1', width: '100%' }} />
-      <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div className="nx-shimmer" style={{ height: 16, width: '85%', borderRadius: 6 }} />
         <div className="nx-shimmer" style={{ height: 12, width: '50%', borderRadius: 6 }} />
         <div className="nx-shimmer" style={{ height: 22, width: '40%', borderRadius: 6, marginTop: 4 }} />
@@ -45,13 +46,7 @@ function EmptyState({ message }) {
       }}
     >
       <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="M3 4h2l2.4 12.3a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.8L21 8H6"
-          stroke={C.border}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M3 4h2l2.4 12.3a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.8L21 8H6" stroke={C.border} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx="9.5" cy="20" r="1.4" fill={C.border} />
         <circle cx="17.5" cy="20" r="1.4" fill={C.border} />
       </svg>
@@ -64,7 +59,7 @@ function EmptyState({ message }) {
           background: C.primary,
           color: '#fff',
           textDecoration: 'none',
-          borderRadius: 8,
+          borderRadius: 10,
           fontWeight: 600,
           fontSize: 14
         }}
@@ -76,6 +71,8 @@ function EmptyState({ message }) {
 }
 
 export default function ProductGrid({ products = [], loading = false, emptyMessage, onAddToCart }) {
+  const { toggleWishlist } = useWishlist()
+
   return (
     <>
       <style>{`
@@ -97,7 +94,7 @@ export default function ProductGrid({ products = [], loading = false, emptyMessa
           <EmptyState message={emptyMessage} />
         ) : (
           products.map((product) => (
-            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onToggleWishlist={toggleWishlist} />
           ))
         )}
       </div>

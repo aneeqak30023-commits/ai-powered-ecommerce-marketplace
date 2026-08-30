@@ -6,48 +6,66 @@ const C = {
   text: '#0F172A',
   textSecondary: '#475569',
   border: '#E2E8F0',
-  primary: '#4F46E5'
+  primary: '#6366F1',
+  primaryLight: '#EEF2FF'
+}
+
+const CATEGORY_COLORS = {
+  electronics: '#EEF2FF',
+  fashion: '#FDF2F8',
+  'home-kitchen': '#F0FDF4',
+  sports: '#FFF7ED',
+  books: '#FFFBEB',
+  beauty: '#FDF2F8'
 }
 
 export default function FeaturedCategories() {
   const categories = categoriesData || []
 
   return (
-    <section style={{ padding: '32px 20px', maxWidth: 1200, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 24, fontWeight: 700, color: C.text, margin: '0 0 20px' }}>Shop by Category</h2>
-
-      <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8, scrollSnapType: 'x mandatory' }}>
+    <section style={{ padding: '32px 0' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16 }}>
         {categories.map((cat) => (
           <Link
             key={cat.id}
             to={`/products?category=${cat.id}`}
             style={{
-              flex: '0 0 auto',
-              width: 160,
-              scrollSnapAlign: 'start',
-              background: C.surface,
-              border: `1px solid ${C.border}`,
-              borderRadius: 12,
-              padding: 20,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: 12,
+              padding: '24px 16px',
+              borderRadius: 16,
+              background: CATEGORY_COLORS[cat.id] || C.surface,
+              border: `1px solid ${C.border}`,
               textDecoration: 'none',
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
-              transition: 'transform .2s ease, box-shadow .2s ease'
+              transition: 'transform .25s ease, box-shadow .25s ease',
+              position: 'relative',
+              overflow: 'hidden'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-4px)'
-              e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.06)'
+              e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'none'
-              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)'
+              e.currentTarget.style.boxShadow = 'none'
             }}
           >
-            <div style={{ fontSize: 44, lineHeight: 1 }}>{cat.icon || '🛍️'}</div>
-            <span style={{ fontSize: 15, fontWeight: 600, color: C.text }}>{cat.name}</span>
+            <div style={{
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              background: C.surface,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 28,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+            }}>
+              {cat.icon || '🛍️'}
+            </div>
+            <span style={{ fontSize: 15, fontWeight: 600, color: C.text, textAlign: 'center' }}>{cat.name}</span>
           </Link>
         ))}
       </div>

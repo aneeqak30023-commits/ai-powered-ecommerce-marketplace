@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
   surface: '#FFFFFF',
   background: '#F8FAFC',
   text: '#0F172A',
@@ -32,8 +32,9 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
   const [sortBy, setSortBy] = useState('featured')
 
   useEffect(() => {
-    onFilterChange &&
+    if (onFilterChange) {
       onFilterChange({ category: selectedCategory, priceRange, sortBy })
+    }
   }, [selectedCategory, priceRange, sortBy, onFilterChange])
 
   const filtersActive =
@@ -49,7 +50,7 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
     fontWeight: 500,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    transition: 'background .15s ease, color .15s ease'
+    transition: 'background .15s ease, color .15s ease, border-color .15s ease'
   })
 
   const clearAll = () => {
@@ -63,15 +64,15 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
       style={{
         background: C.surface,
         border: `1px solid ${C.border}`,
-        borderRadius: 12,
-        padding: 18,
+        borderRadius: 16,
+        padding: 20,
         display: 'flex',
         flexDirection: 'column',
-        gap: 18
+        gap: 20
       }}
     >
       <div>
-        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 10 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 12 }}>
           Category
         </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
@@ -92,7 +93,7 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
       </div>
 
       <div>
-        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 10 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 12 }}>
           Price
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -111,7 +112,7 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
 
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 200px' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 10 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: C.textSecondary, marginBottom: 12 }}>
             Sort By
           </div>
           <select
@@ -120,7 +121,7 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
             style={{
               width: '100%',
               padding: '10px 12px',
-              borderRadius: 8,
+              borderRadius: 10,
               border: `1px solid ${C.border}`,
               background: C.background,
               color: C.text,
@@ -141,7 +142,7 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
             onClick={clearAll}
             style={{
               padding: '10px 16px',
-              borderRadius: 8,
+              borderRadius: 10,
               border: `1px solid ${C.border}`,
               background: C.surface,
               color: C.text,

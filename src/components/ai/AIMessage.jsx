@@ -1,5 +1,5 @@
 const C = {
-  primary: '#4F46E5',
+  primary: '#6366F1',
   surface: '#FFFFFF',
   text: '#0F172A',
   textSecondary: '#475569',

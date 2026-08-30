@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
   text: '#0F172A',
   textSecondary: '#475569',
   border: '#E2E8F0',
@@ -17,7 +17,6 @@ function useMediaQuery(query) {
     const mql = window.matchMedia(query)
     const handler = (e) => setMatches(e.matches)
     mql.addEventListener('change', handler)
-    setMatches(mql.matches)
     return () => mql.removeEventListener('change', handler)
   }, [query])
   return matches
@@ -87,7 +86,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
               value={quantity}
               onChange={(e) => {
                 const v = parseInt(e.target.value, 10)
-                if (!isNaN(v) && v > 0) onUpdateQuantity && onUpdateQuantity(id, v)
+                if (!isNaN(v) && v > 0 && onUpdateQuantity) onUpdateQuantity(id, v)
               }}
               style={{ width: 44, textAlign: 'center', border: 'none', outline: 'none', fontSize: 14, color: C.text, padding: '8px 0' }}
               aria-label="Quantity"

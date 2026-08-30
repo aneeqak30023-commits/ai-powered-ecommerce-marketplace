@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import ProductCard from './ProductCard.jsx'
 import { useReviews } from '../../context/ReviewContext.jsx'
+import { useWishlist } from '../../context/WishlistContext.jsx'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
   accent: '#F59E0B',
   surface: '#FFFFFF',
   background: '#F8FAFC',
@@ -32,27 +32,6 @@ function useMediaQuery(query) {
   return matches
 }
 
-function StarRating({ rating = 0, count }) {
-  const full = Math.round(rating)
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <div style={{ display: 'flex' }}>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <svg key={i} width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2z"
-              fill={i <= full ? C.star : C.starEmpty}
-            />
-          </svg>
-        ))}
-      </div>
-      {typeof count === 'number' && (
-        <span style={{ fontSize: 14, color: C.textSecondary }}>({count} reviews)</span>
-      )}
-    </div>
-  )
-}
-
 function formatPrice(value) {
   return `$${Number(value).toFixed(2)}`
 }
@@ -62,6 +41,7 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
   const [activeImage, setActiveImage] = useState(product?.image)
   const [quantity, setQuantity] = useState(1)
   const { getReviewsForProduct, addReview, getAverageRating, getReviewCount } = useReviews()
+  const { toggleWishlist } = useWishlist()
   const [reviews, setReviews] = useState(() => getReviewsForProduct(product?.id))
   const [reviewForm, setReviewForm] = useState({ reviewerName: '', rating: 5, text: '' })
 
@@ -69,7 +49,7 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
     setActiveImage(product?.image)
     setQuantity(1)
     setReviews(getReviewsForProduct(product?.id))
-  }, [product?.id, getReviewsForProduct])
+  }, [product?.id, product?.image, getReviewsForProduct])
 
   if (!product) return null
 
@@ -254,7 +234,7 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
           <h2 style={{ fontSize: 22, fontWeight: 700, color: C.text, margin: '0 0 20px' }}>Related Products</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 20 }}>
             {relatedProducts.slice(0, 4).map((p) => (
-              <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
+              <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} onToggleWishlist={toggleWishlist} />
             ))}
           </div>
         </div>

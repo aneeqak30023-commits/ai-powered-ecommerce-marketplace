@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, createContext, useContext, useReducer } from 'react'
+import { useCallback, useEffect, createContext, useContext, useReducer } from 'react'
 
 const STORAGE_KEY = 'nexmart-cart'
 

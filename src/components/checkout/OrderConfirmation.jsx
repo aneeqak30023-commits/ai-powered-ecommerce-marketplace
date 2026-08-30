@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 const C = {
-  primary: '#4F46E5',
+  primary: '#6366F1',
   surface: '#FFFFFF',
   background: '#F8FAFC',
   text: '#0F172A',

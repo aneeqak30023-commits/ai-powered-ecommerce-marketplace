@@ -5,8 +5,8 @@ import CartItem from './CartItem.jsx'
 import { useCart } from '../../context/CartContext.jsx'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
   surface: '#FFFFFF',
   text: '#0F172A',
   textSecondary: '#475569',
@@ -34,7 +34,7 @@ function formatPrice(value) {
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { cartItems = [], updateQuantity, removeFromCart } = useCart()
-  const { subtotal, total } = calcTotals(cartItems)
+  const { subtotal } = calcTotals(cartItems)
 
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose && onClose()

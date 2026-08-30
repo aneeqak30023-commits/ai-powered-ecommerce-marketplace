@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext.jsx'
 import { useOrders } from '../../context/OrderContext.jsx'
 
 const C = {
-  primary: '#4F46E5',
-  primaryDark: '#4338CA',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
   surface: '#FFFFFF',
   background: '#F8FAFC',
   text: '#0F172A',
@@ -44,9 +44,10 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export default function CheckoutForm() {
   const isMobile = useMediaQuery('(max-width: 900px)')
   const navigate = useNavigate()
-  const { cartItems = [], updateQuantity, removeFromCart } = useCart()
+  const { cartItems = [], updateQuantity: _updateQuantity, removeFromCart: _removeFromCart } = useCart()
   const { placeOrder } = useOrders()
   const { subtotal, shipping, tax, total } = calcTotals(cartItems)
+  const orderCounter = useRef(0)
 
   const [form, setForm] = useState({
     name: '', email: '', phone: '', address: '', city: '', state: '', zip: ''
@@ -90,14 +91,14 @@ export default function CheckoutForm() {
     const order = {
       items: cartItems,
       customer: { name: form.name, email: form.email, phone: form.phone },
-      shipping: { address: form.address, city: form.city, state: form.state, zip: form.zip },
+      shippingAddress: { address: form.address, city: form.city, state: form.state, zip: form.zip },
       subtotal,
       shipping,
       tax,
       total,
       date: new Date().toISOString()
     }
-    const created = placeOrder ? placeOrder(order) : { ...order, id: 'ORD-' + Date.now() }
+    const created = placeOrder ? placeOrder(order) : { ...order, id: 'ORD-' + (++orderCounter.current) }
     navigate('/confirmation', { state: { order: created } })
   }
 

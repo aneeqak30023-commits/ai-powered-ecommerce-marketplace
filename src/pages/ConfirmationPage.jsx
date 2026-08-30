@@ -2,6 +2,14 @@ import { useLocation, Link } from 'react-router-dom'
 import OrderConfirmation from '../components/checkout/OrderConfirmation'
 import { useOrders } from '../context/OrderContext'
 
+const C = {
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
+  text: '#0F172A',
+  textSecondary: '#475569',
+  background: '#F8FAFC'
+}
+
 export default function ConfirmationPage() {
   const location = useLocation()
   const { orders } = useOrders()
@@ -12,13 +20,13 @@ export default function ConfirmationPage() {
     const foundOrder = orders.find(o => o.id === orderId)
     if (!foundOrder) {
       return (
-        <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-[#0F172A] mb-4">No Order Found</h1>
-            <p className="text-[#475569] mb-6">We could not find an order with that ID.</p>
+        <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <h1 style={{ fontSize: 40, fontWeight: 800, color: C.text, margin: '0 0 16px' }}>No Order Found</h1>
+            <p style={{ fontSize: 16, color: C.textSecondary, margin: '0 0 24px' }}>We could not find an order with that ID.</p>
             <Link
               to="/products"
-              className="inline-block bg-[#4F46E5] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#4338CA] transition-colors"
+              style={{ display: 'inline-block', padding: '12px 24px', background: `linear-gradient(135deg, ${C.primary} 0%, ${C.primaryDark} 100%)`, color: '#fff', textDecoration: 'none', borderRadius: 10, fontWeight: 600 }}
             >
               Continue Shopping
             </Link>
@@ -27,7 +35,7 @@ export default function ConfirmationPage() {
       )
     }
     return (
-      <div className="min-h-screen bg-[#F8FAFC]">
+      <div style={{ minHeight: '100vh', background: C.background }}>
         <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
           <OrderConfirmation order={foundOrder} />
         </div>
@@ -36,7 +44,7 @@ export default function ConfirmationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div style={{ minHeight: '100vh', background: C.background }}>
       <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
         <OrderConfirmation order={order} />
       </div>

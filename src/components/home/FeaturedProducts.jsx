@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom'
 import ProductCard from '../product/ProductCard.jsx'
 import productsData from '../../data/products.json'
+import { useWishlist } from '../../context/WishlistContext.jsx'
 
 const C = {
-  primary: '#4F46E5',
+  primary: '#6366F1',
   text: '#0F172A',
   surface: '#FFFFFF'
 }
 
 export default function FeaturedProducts({ allProducts, onAddToCart }) {
   const products = (allProducts && allProducts.length ? allProducts : productsData || []).slice(0, 8)
+  const { toggleWishlist } = useWishlist()
 
   return (
     <section style={{ padding: '32px 20px', maxWidth: 1200, margin: '0 auto' }}>
@@ -22,7 +24,7 @@ export default function FeaturedProducts({ allProducts, onAddToCart }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 20 }}>
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+          <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onToggleWishlist={toggleWishlist} />
         ))}
       </div>
     </section>
