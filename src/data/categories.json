@@ -4,41 +4,71 @@
     "name": "Electronics",
     "icon": "💻",
     "description": "Latest gadgets and devices",
-    "productCount": 7
+    "productCount": 7,
+    "subcategories": [
+      { "id": "audio", "name": "Audio" },
+      { "id": "wearables", "name": "Wearables" },
+      { "id": "accessories", "name": "Accessories" }
+    ]
   },
   {
     "id": "fashion",
     "name": "Fashion",
     "icon": "👗",
     "description": "Trendy clothing and accessories",
-    "productCount": 7
+    "productCount": 7,
+    "subcategories": [
+      { "id": "clothing", "name": "Clothing" },
+      { "id": "shoes", "name": "Shoes" },
+      { "id": "accessories", "name": "Accessories" }
+    ]
   },
   {
     "id": "home-kitchen",
     "name": "Home & Kitchen",
     "icon": "🏠",
     "description": "Everything for your home",
-    "productCount": 7
+    "productCount": 7,
+    "subcategories": [
+      { "id": "kitchen", "name": "Kitchen" },
+      { "id": "smart-home", "name": "Smart Home" },
+      { "id": "home-comfort", "name": "Home Comfort" }
+    ]
   },
   {
     "id": "sports",
     "name": "Sports",
     "icon": "⚽",
     "description": "Gear for every sport",
-    "productCount": 7
+    "productCount": 7,
+    "subcategories": [
+      { "id": "fitness", "name": "Fitness" },
+      { "id": "outdoor", "name": "Outdoor" }
+    ]
   },
   {
     "id": "books",
     "name": "Books",
     "icon": "📚",
     "description": "Bestsellers and more",
-    "productCount": 7
+    "productCount": 7,
+    "subcategories": [
+      { "id": "fiction", "name": "Fiction" },
+      { "id": "non-fiction", "name": "Non-Fiction" },
+      { "id": "cookbooks", "name": "Cookbooks" }
+    ]
   },
   {
     "id": "beauty",
     "name": "Beauty",
     "icon": "✨",
     "description": "Skincare and cosmetics",
-    "productCount": 7
+    "productCount": 7,
+    "subcategories": [
+      { "id": "skincare", "name": "Skincare" },
+      { "id": "makeup", "name": "Makeup" },
+      { "id": "hair-care", "name": "Hair Care" },
+      { "id": "fragrance", "name": "Fragrance" }
+    ]
   }
 ]

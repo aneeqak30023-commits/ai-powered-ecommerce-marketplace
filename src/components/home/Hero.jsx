@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 const C = {
   primary: '#6366F1',
@@ -29,52 +30,23 @@ function SparkleIcon({ size = 20 }) {
   )
 }
 
-function AIVisualPanel() {
-  return (
-    <div className="ai-visual-panel" style={{ minHeight: 420 }}>
-      <div className="gradient-orb" style={{ width: 200, height: 200, background: 'rgba(99, 102, 241, 0.4)', top: -50, right: -50 }} />
-      <div className="gradient-orb" style={{ width: 150, height: 150, background: 'rgba(139, 92, 246, 0.3)', bottom: 30, left: -30 }} />
-
-      <div style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div className="chat-bubble" style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg, #6366F1, #8B5CF6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <SparkleIcon size={14} />
-            </div>
-            <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: 13, fontWeight: 600 }}>NexMart AI</span>
-          </div>
-          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-            I found 3 wireless headphones under $80 with 4.5+ ratings. Would you like to compare them?
-          </p>
-        </div>
-
-        <div className="chat-bubble" style={{ alignSelf: 'flex-end', maxWidth: '75%', background: 'rgba(255,255,255,0.15)' }}>
-          <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: 14, lineHeight: 1.5, margin: 0 }}>
-            Show me the best one for gaming
-          </p>
-        </div>
-
-        <div className="floating-card" style={{ position: 'absolute', bottom: 20, left: 20, right: 20, animationDelay: '0.5s' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>
-              🎧
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>Sony WH-1000XM4</div>
-              <div style={{ fontSize: 12, color: '#6366F1', fontWeight: 600 }}>98% AI Match · $74.99</div>
-            </div>
-            <div style={{ padding: '6px 12px', borderRadius: 8, background: '#10B981', color: 'white', fontSize: 11, fontWeight: 700 }}>
-              BEST
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function Hero() {
   const navigate = useNavigate()
+  const [Hero3D, setHero3D] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    import('./Hero3D.jsx').then((mod) => {
+      if (!cancelled) {
+        setHero3D(() => mod.default)
+      }
+    }).catch(() => {
+      // 3D failed to load; keep UI functional without it
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleQuickSearch = (term) => {
     navigate(`/products?search=${encodeURIComponent(term)}`)
@@ -187,16 +159,16 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="hero-ai-panel">
-            <AIVisualPanel />
+          <div className="hero-3d-panel">
+            {Hero3D ? <Hero3D /> : null}
           </div>
         </div>
       </div>
 
       <style>{`
-        .hero-ai-panel { display: none; }
+        .hero-3d-panel { display: none; }
         @media (min-width: 1024px) {
-          .hero-ai-panel { display: block; }
+          .hero-3d-panel { display: block; }
         }
       `}</style>
     </section>
