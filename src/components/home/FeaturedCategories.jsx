@@ -154,104 +154,105 @@ export default function FeaturedCategories({ categories: catsProp }) {
               const isExpanded = expandedCategory === cat.id
               const hasSubcategories = cat.subcategories && cat.subcategories.length > 0
 
-              return (
-                <div
-                  key={cat.id}
-                  style={{ position: 'relative', scrollSnapAlign: 'start', flexShrink: 0 }}
-                >
-                  <Link
-                    to={`/products?category=${cat.id}`}
-                    className="category-card-visual"
-                    style={{
-                      background: colors.bg,
-                      border: `1px solid ${colors.accent}25`,
-                      borderRadius: 20,
-                      padding: '28px 24px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 12,
-                      minWidth: 160,
-                      width: 180,
-                      textDecoration: 'none',
-                      transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease',
-                      cursor: hasSubcategories ? 'pointer' : 'pointer'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-8px)'
-                      e.currentTarget.style.boxShadow = `0 20px 40px -10px ${colors.accent}30`
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
-                    onClick={(e) => {
-                      if (hasSubcategories) {
-                        e.preventDefault()
-                        setExpandedCategory(isExpanded ? null : cat.id)
-                      }
-                    }}
-                  >
-                    <div style={{
-                      width: 72,
-                      height: 72,
-                      borderRadius: 20,
-                      background: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 36,
-                      boxShadow: `0 8px 20px ${colors.accent}15`
-                    }}>
-                      {CATEGORY_ICONS[cat.id] || cat.icon || '🛍️'}
-                    </div>
-                    <span style={{ fontSize: 16, fontWeight: 700, color: C.text, textAlign: 'center', letterSpacing: '-0.01em' }}>{cat.name}</span>
-                    <span style={{ fontSize: 13, color: C.textSecondary }}>{cat.productCount} products</span>
-                  </Link>
+                   return (
+                     <div
+                       key={cat.id}
+                       style={{ position: 'relative', scrollSnapAlign: 'start', flexShrink: 0 }}
+                       onMouseEnter={() => setExpandedCategory(cat.id)}
+                       onMouseLeave={() => setExpandedCategory(null)}
+                     >
+                       <Link
+                         to={`/products?category=${cat.id}`}
+                         className="category-card-visual"
+                         style={{
+                           background: colors.bg,
+                           border: `1px solid ${colors.accent}25`,
+                           borderRadius: 20,
+                           padding: '28px 24px',
+                           display: 'flex',
+                           flexDirection: 'column',
+                           alignItems: 'center',
+                           gap: 12,
+                           minWidth: 160,
+                           width: 180,
+                           textDecoration: 'none',
+                           transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease',
+                           cursor: 'pointer'
+                         }}
+                         onMouseEnter={(e) => {
+                           e.currentTarget.style.transform = 'translateY(-8px)'
+                           e.currentTarget.style.boxShadow = `0 20px 40px -10px ${colors.accent}30`
+                         }}
+                         onMouseLeave={(e) => {
+                           e.currentTarget.style.transform = 'translateY(0)'
+                           e.currentTarget.style.boxShadow = 'none'
+                         }}
+                       >
+                         <div style={{
+                           width: 72,
+                           height: 72,
+                           borderRadius: 20,
+                           background: 'white',
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center',
+                           fontSize: 36,
+                           boxShadow: `0 8px 20px ${colors.accent}15`
+                         }}>
+                           {CATEGORY_ICONS[cat.id] || cat.icon || '🛍️'}
+                         </div>
+                         <span style={{ fontSize: 16, fontWeight: 700, color: C.text, textAlign: 'center', letterSpacing: '-0.01em' }}>{cat.name}</span>
+                         <span style={{ fontSize: 13, color: C.textSecondary }}>{cat.productCount} products</span>
+                       </Link>
 
-                  {/* Subcategories dropdown */}
-                  {hasSubcategories && isExpanded && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      marginTop: 12,
-                      background: C.surface,
-                      border: `1px solid ${C.border}`,
-                      borderRadius: 16,
-                      padding: 12,
-                      boxShadow: '0 20px 40px -10px rgba(0,0,0,0.12)',
-                      zIndex: 50,
-                      minWidth: 180,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 4
-                    }}>
-                      {cat.subcategories.map((sub) => (
-                        <Link
-                          key={sub.id}
-                          to={`/products?category=${cat.id}`}
-                          style={{
-                            padding: '10px 14px',
-                            borderRadius: 10,
-                            color: C.text,
-                            textDecoration: 'none',
-                            fontSize: 14,
-                            fontWeight: 500,
-                            transition: 'background 0.15s ease'
-                          }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryLight }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
+                       {/* Subcategories dropdown */}
+                       {hasSubcategories && isExpanded && (
+                         <div
+                           style={{
+                             position: 'absolute',
+                             top: '100%',
+                             left: '50%',
+                             transform: 'translateX(-50%)',
+                             marginTop: 12,
+                             background: C.surface,
+                             border: `1px solid ${C.border}`,
+                             borderRadius: 16,
+                             padding: 12,
+                             boxShadow: '0 20px 40px -10px rgba(0,0,0,0.12)',
+                             zIndex: 50,
+                             minWidth: 180,
+                             display: 'flex',
+                             flexDirection: 'column',
+                             gap: 4
+                           }}
+                           onMouseEnter={() => setExpandedCategory(cat.id)}
+                           onMouseLeave={() => setExpandedCategory(null)}
+                         >
+                           {cat.subcategories.map((sub) => (
+                             <Link
+                               key={sub.id}
+                               to={`/products?category=${cat.id}&subcategory=${sub.id}`}
+                               style={{
+                                 padding: '10px 14px',
+                                 borderRadius: 10,
+                                 color: C.text,
+                                 textDecoration: 'none',
+                                 fontSize: 14,
+                                 fontWeight: 500,
+                                 transition: 'background 0.15s ease'
+                               }}
+                               onClick={(e) => e.stopPropagation()}
+                               onMouseEnter={(e) => { e.currentTarget.style.background = C.primaryLight }}
+                               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                             >
+                               {sub.name}
+                             </Link>
+                           ))}
+                         </div>
+                        )}
+                      </div>
+                    )
+                  })}
           </div>
         </div>
       </div>
