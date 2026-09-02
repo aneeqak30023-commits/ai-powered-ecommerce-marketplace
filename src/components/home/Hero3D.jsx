@@ -1,5 +1,333 @@
 import { useState, useEffect, useRef } from 'react'
 
+const COLORS = {
+  blue: '#3B82F6',
+  purple: '#8B5CF6',
+  pink: '#EC4899',
+  cyan: '#06B6D4',
+  violet: '#A855F7',
+  fuchsia: '#D946EF',
+  indigo: '#6366F1'
+}
+
+function darken(hex, amount) {
+  const num = parseInt(hex.slice(1), 16)
+  const r = Math.max(0, ((num >> 16) & 0xff) - Math.round(255 * amount))
+  const g = Math.max(0, ((num >> 8) & 0xff) - Math.round(255 * amount))
+  const b = Math.max(0, (num & 0xff) - Math.round(255 * amount))
+  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`
+}
+
+// 3D Headphone component
+function Headphone3D({ parallaxX, parallaxY, delay = 0 }) {
+  return (
+    <div
+      className="floating-product"
+      style={{
+        position: 'absolute',
+        top: '30%',
+        left: '15%',
+        zIndex: 7,
+        animation: `float-prod-1 4s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+        transform: `translate(${parallaxX * 0.5}px, ${parallaxY * 0.5}px)`
+      }}
+    >
+      <div style={{
+        width: 56,
+        height: 56,
+        borderRadius: '50% 50% 50% 50%',
+        background: 'linear-gradient(135deg, #CBD5E1 0%, #94A3B8 50%, #CBD5E1 100%)',
+        border: '1px solid rgba(255,255,255,0.5)',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.4)',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 6px'
+      }}>
+        {/* Left ear cup */}
+        <div style={{
+          width: 24,
+          height: 44,
+          borderRadius: '50% 0 0 50%',
+          background: 'radial-gradient(circle, #60A5FA 0%, #3B82F6 70%, #1D4ED8 100%)',
+          border: '1px solid rgba(255,255,255,0.3)',
+          boxShadow: `0 0 15px ${COLORS.blue}`
+        }} />
+        {/* Right ear cup */}
+        <div style={{
+          width: 24,
+          height: 44,
+          borderRadius: '0 50% 50% 0',
+          background: 'radial-gradient(circle, #60A5FA 0%, #3B82F6 70%, #1D4ED8 100%)',
+          border: '1px solid rgba(255,255,255,0.3)',
+          boxShadow: `0 0 15px ${COLORS.blue}`
+        }} />
+        {/* Headband middle */}
+        <div style={{
+          position: 'absolute',
+          top: 10,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 8,
+          height: 28,
+          background: 'linear-gradient(180deg, #CBD5E1 0%, #94A3B8 50%, #CBD5E1 100%)',
+          borderRadius: 4
+        }} />
+      </div>
+    </div>
+  )
+}
+
+// 3D Sneaker component
+function Sneaker3D({ parallaxX, parallaxY, delay = 0 }) {
+  return (
+    <div
+      className="floating-product"
+      style={{
+        position: 'absolute',
+        top: '65%',
+        left: '15%',
+        zIndex: 7,
+        animation: `float-prod-2 5s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+        transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px) rotate(-5deg)`
+      }}
+    >
+      <div style={{
+        width: 48,
+        height: 24,
+        borderRadius: '50% 50% 40% 40% / 40% 40% 60% 60%',
+        background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)',
+        border: '1px solid rgba(255,255,255,0.4)',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.4)',
+        position: 'relative'
+      }}>
+        {/* Shoelace holes */}
+        <div style={{ position: 'absolute', top: 4, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 4 }}>
+          <div style={{ width: 3, height: 3, background: '#92400E', borderRadius: '50%' }} />
+          <div style={{ width: 3, height: 3, background: '#92400E', borderRadius: '50%' }} />
+          <div style={{ width: 3, height: 3, background: '#92400E', borderRadius: '50%' }} />
+          <div style={{ width: 3, height: 3, background: '#92400E', borderRadius: '50%' }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// 3D Laptop component
+function Laptop3D({ parallaxX, parallaxY, delay = 0 }) {
+  return (
+    <div
+      className="floating-product"
+      style={{
+        position: 'absolute',
+        top: '45%',
+        left: '25%',
+        zIndex: 7,
+        animation: `float-prod-3 5.5s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+        transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px)`
+      }}
+    >
+      <div style={{
+        width: 52,
+        height: 36,
+        borderRadius: '4px 4px 0 0',
+        background: 'linear-gradient(135deg, #CBD5E1 0%, #94A3B8 100%)',
+        border: '2px solid #64748B',
+        position: 'relative',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.3)'
+      }}>
+        {/* Screen */}
+        <div style={{
+          position: 'absolute',
+          inset: 4,
+          borderRadius: 2,
+          background: 'linear-gradient(135deg, #1E293B 0%, #334155 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            width: 12,
+            height: 12,
+            borderRadius: '50%',
+            background: COLORS.blue,
+            boxShadow: `0 0 8px ${COLORS.blue}`
+          }} />
+        </div>
+      </div>
+      {/* Laptop base */}
+      <div style={{
+        width: 44,
+        height: 8,
+        background: 'linear-gradient(135deg, #94A3B8 0%, #64748B 100%)',
+        borderRadius: '0 0 4px 4px',
+        margin: '0 auto',
+        boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+      }} />
+    </div>
+  )
+}
+
+// 3D Smartphone component
+function Smartphone3D({ parallaxX, parallaxY, delay = 0 }) {
+  return (
+    <div
+      className="floating-product"
+      style={{
+        position: 'absolute',
+        top: '35%',
+        right: '25%',
+        zIndex: 7,
+        animation: `float-prod-2 4.5s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+        transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px)`
+      }}
+    >
+      <div style={{
+        width: 40,
+        height: 28,
+        borderRadius: 5,
+        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        boxShadow: `0 0 15px ${COLORS.blue}, 0 6px 15px rgba(0,0,0,0.3)`,
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}>
+        {/* Screen */}
+        <div style={{
+          width: 34,
+          height: 20,
+          borderRadius: 3,
+          background: '#0EA5E9',
+          marginTop: 4,
+          position: 'relative'
+        }}>
+          {/* Screen content */}
+          <div style={{
+            position: 'absolute',
+            top: 2,
+            left: 2,
+            right: 2,
+            height: 16,
+            background: '#0284C7',
+            borderRadius: 2
+          }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// 3D Smartwatch component
+function Smartwatch3D({ parallaxX, parallaxY, delay = 0 }) {
+  return (
+    <div
+      className="floating-product"
+      style={{
+        position: 'absolute',
+        top: '65%',
+        right: '30%',
+        zIndex: 7,
+        animation: `float-prod-1 5s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+        transform: `translate(${parallaxX * 0.6}px, ${parallaxY * 0.6}px) rotate(10deg)`
+      }}
+    >
+      <div style={{
+        width: 36,
+        height: 26,
+        borderRadius: 6,
+        background: 'linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 50%, #F1F5F9 100%)',
+        border: '1px solid rgba(255,255,255,0.5)',
+        boxShadow: `0 0 12px ${COLORS.purple}, 0 6px 12px rgba(0,0,0,0.25)`,
+        position: 'relative'
+      }}>
+        {/* Screen */}
+        <div style={{
+          position: 'absolute',
+          inset: 4,
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            width: 10,
+            height: 10,
+            borderRadius: '50%',
+            background: COLORS.cyan,
+            boxShadow: `0 0 6px ${COLORS.cyan}`
+          }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// 3D Shopping Bag component
+function ShoppingBag3D({ color, parallaxX, parallaxY, pos, delay = 0, rot = 0 }) {
+  return (
+    <div
+      className="floating-product"
+      style={{
+        position: 'absolute',
+        ...pos,
+        zIndex: 7,
+        animation: `float-prod-3 4.8s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+        transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px) rotate(${rot}deg)`
+      }}
+    >
+      <div style={{
+        width: 32,
+        height: 36,
+        background: color,
+        borderRadius: '6px 6px 0 0',
+        border: '1px solid rgba(0,0,0,0.15)',
+        boxShadow: '0 8px 18px rgba(0,0,0,0.25)',
+        position: 'relative'
+      }}>
+        {/* Bag handles */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 26,
+          height: 10,
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{
+            width: 6,
+            height: 10,
+            border: `2px solid ${darken(color, 0.1)}`,
+            borderTop: 'none',
+            borderRight: 'none',
+            borderRadius: '0 4px 4px 0'
+          }} />
+          <div style={{
+            width: 6,
+            height: 10,
+            border: `2px solid ${darken(color, 0.1)}`,
+            borderTop: 'none',
+            borderLeft: 'none',
+            borderRadius: '4px 0 0 4px'
+          }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Hero3D() {
   const containerRef = useRef(null)
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 })
@@ -22,21 +350,6 @@ export default function Hero3D() {
 
   const parallaxX = (mousePos.x - 0.5) * 30
   const parallaxY = (mousePos.y - 0.5) * 30
-
-  // Product card data matching the reference composition
-  const productCards = [
-    { emoji: '🎧', label: 'Smart Headphones', price: '$79.99', color: '#06B6D4' },
-    { emoji: '💻', label: 'Gaming Laptop', price: '$899.99', color: '#8B5CF6' },
-    { emoji: '👟', label: 'Running Sneakers', price: '$129.99', color: '#F59E0B' },
-    { emoji: '⌚', label: 'Smart Watch', price: '$199.99', color: '#EC4899' }
-  ]
-
-  // Floating individual products
-  const floatingProducts = [
-    { emoji: '📱', label: 'Smartphone', color: '#3B82F6' },
-    { emoji: '🎮', label: 'Gaming Controller', color: '#8B5CF6' },
-    { emoji: '📷', label: 'Camera', color: '#EC4899' }
-  ]
 
   return (
     <div
@@ -90,7 +403,7 @@ export default function Hero3D() {
             borderRadius: '50%',
             background: 'linear-gradient(90deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.4) 100%)',
             bottom: -8,
-            boxShadow: '0 0 30px rgba(6,172,214,0.4)'
+            boxShadow: `0 0 30px ${COLORS.cyan}40`
           }} />
 
           {/* Platform reflection */}
@@ -377,351 +690,140 @@ export default function Hero3D() {
             zIndex: -1
           }} />
         </div>
-      </div>
 
-      {/* Floating product cards - left side */}
-      {productCards.map((product, idx) => {
-        const positions = [
-          { top: '20%', left: '10%' },
-          { top: '65%', left: '10%' },
-          { top: '15%', right: '45%' },
-          { top: '70%', right: '45%' }
-        ]
-        const pos = positions[idx]
-        return (
-          <div
-            key={`card-${idx}`}
-            className="floating-card"
-            style={{
-              position: 'absolute',
-              ...pos,
-              transform: `translate(${parallaxX * (0.5 + idx * 0.2)}px, ${parallaxY * (0.5 + idx * 0.2)}px)`,
-              width: 160,
-              zIndex: 8,
-              animation: `float-card-${idx + 1} ${5 + idx}s ease-in-out infinite`
-            }}
-          >
-            <div style={{
-              width: '100%',
-              height: 180,
-              background: 'linear-gradient(145deg, #1E293B 0%, #334155 100%)',
-              borderRadius: 16,
-              border: '1px solid rgba(255,255,255,0.1)',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 12
-            }}>
-              <div style={{ fontSize: 36, marginBottom: 8 }}>{product.emoji}</div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#FFFFFF', textAlign: 'center', marginBottom: 4 }}>{product.label}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: product.color }}>{product.price}</div>
-            </div>
-          </div>
-        )
-      })}
+        {/* Floating 3D product objects */}
+        {/* 3D Headphone above-left */}
+        <Headphone3D parallaxX={parallaxX} parallaxY={parallaxY} />
 
-      {/* Floating individual products */}
-      {floatingProducts.map((product, idx) => {
-        const positions = [
-          { top: '35%', left: '30%' },
-          { top: '55%', left: '35%' },
-          { top: '50%', left: '30%' }
-        ]
-        const pos = positions[idx]
-        const icons = ['📱', '🎮', '📷']
-        return (
-          <div
-            key={`prod-${idx}`}
-            className="floating-product"
-            style={{
-              position: 'absolute',
-              ...pos,
-              transform: `translate(${parallaxX * (0.4 + idx * 0.3)}px, ${parallaxY * (0.4 + idx * 0.3)}px)`,
-              zIndex: 7,
-              animation: `float-prod-${idx + 1} ${4 + idx * 0.5}s ease-in-out infinite`
-            }}
-          >
-            <div style={{
-              width: 50,
-              height: 50,
-              borderRadius: '50%',
-              background: `linear-gradient(135deg, ${product.color} 0%, ${product.color} 50%, ${darken(product.color, 0.2)} 100%)`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: `0 0 20px ${product.color}, 0 8px 25px rgba(0,0,0,0.3)`,
-              fontSize: 24
-            }}>{icons[idx]}</div>
-          </div>
-        )
-      })}
+        {/* 3D Sneakers below-left */}
+        <Sneaker3D parallaxX={parallaxX} parallaxY={parallaxY} />
 
-      {/* Blue gift box above robot */}
-      <div className="gift-box" style={{
-        position: 'absolute',
-        top: '15%',
-        left: '60%',
-        transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px)`,
-        zIndex: 9,
-        animation: 'pulse-gift 4s ease-in-out infinite'
-      }}>
-        <div style={{
-          width: 50,
-          height: 50,
-          background: COLORS.blue,
-          borderRadius: 10,
-          boxShadow: '0 8px 20px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.3)'
-        }}>
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: 0,
-            right: 0,
-            height: 8,
-            background: COLORS.fuchsia,
-            transform: 'translateY(-50%)'
-          }} />
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: '50%',
-            width: 8,
-            background: COLORS.fuchsia,
-            transform: 'translateX(-50%)'
-          }} />
-        </div>
-      </div>
+        {/* 3D Laptop */}
+        <Laptop3D parallaxX={parallaxX} parallaxY={parallaxY} delay={0.5} />
 
-      {/* Blue gift box near bottom-left of cart */}
-      <div className="gift-box" style={{
-        position: 'absolute',
-        top: '75%',
-        left: '15%',
-        transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px) rotate(15deg)`,
-        zIndex: 8,
-        animation: 'pulse-gift 4s ease-in-out infinite 0.5s'
-      }}>
-        <div style={{
-          width: 40,
-          height: 40,
-          background: COLORS.blue,
-          borderRadius: 8,
-          boxShadow: '0 6px 15px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.3)'
-        }} />
-      </div>
+        {/* 3D Smartphone above-right */}
+        <Smartphone3D parallaxX={parallaxX} parallaxY={parallaxY} delay={0.3} />
 
-      {/* Pink percentage discount tag */}
-      <div style={{
-        position: 'absolute',
-        top: '10%',
-        left: '25%',
-        transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px)`,
-        zIndex: 11,
-        background: 'conic-gradient(from 0deg, #F59E0B, #EF4444, #EC4899, #F59E0B)',
-        borderRadius: '50%',
-        padding: 3,
-        animation: 'pulse-tag 2.5s ease-in-out infinite'
-      }}>
-        <div style={{
-          width: 60,
-          height: 60,
-          borderRadius: 'inherit',
-          background: 'linear-gradient(135deg, #EF4444 0%, #EC4899 100%)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontWeight: 700,
-          fontSize: 11,
-          boxShadow: `0 0 15px ${COLORS.pink}, 0 8px 20px rgba(0,0,0,0.3)`
-        }}>
-          <span style={{ fontSize: 14 }}>50%</span>
-          <span>OFF</span>
-        </div>
-      </div>
+        {/* 3D Smartwatch below-right */}
+        <Smartwatch3D parallaxX={parallaxX} parallaxY={parallaxY} delay={0.7} />
 
-      {/* Additional small floating shopping elements */}
-      <div style={{
-        position: 'absolute',
-        top: '60%',
-        left: '40%',
-        width: 32,
-        height: 32,
-        background: COLORS.purple,
-        borderRadius: '50%',
-        zIndex: 8,
-        boxShadow: `0 0 12px ${COLORS.purple}`,
-        animation: 'sparkle 3s infinite',
-        transform: `translate(${parallaxX * 0.5}px, ${parallaxY * 0.5}px)`
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '30%',
-        left: '50%',
-        width: 24,
-        height: 24,
-        background: COLORS.pink,
-        borderRadius: '50%',
-        zIndex: 7,
-        boxShadow: `0 0 10px ${COLORS.pink}`,
-        animation: 'sparkle 2.5s infinite 0.5s',
-        transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px)`
-      }} />
+        {/* Floating shopping bags around the scene */}
+        <ShoppingBag3D color="#F59E0B" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '20%', left: '30%' }} delay={0.2} rot={-10} />
+        <ShoppingBag3D color="#EC4899" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '50%', left: '40%' }} delay={0.4} rot={5} />
+        <ShoppingBag3D color="#3B82F6" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '60%', right: '20%' }} delay={0.6} rot={-5} />
+        <ShoppingBag3D color="#A855F7" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '35%', right: '15%' }} delay={0.8} rot={15} />
 
-      {/* AI Speech bubble - upper right */}
-      <div style={{
-        position: 'absolute',
-        top: '15%',
-        right: '15%',
-        zIndex: 15,
-        animation: 'pulse-bubble 3s ease-in-out infinite'
-      }}>
-        <div style={{
-          background: `linear-gradient(135deg, ${COLORS.blue} 0%, ${COLORS.purple} 50%, ${COLORS.pink} 100%)`,
-          borderRadius: 20,
-          padding: '12px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          boxShadow: `0 0 25px ${COLORS.blue}40, 0 0 40px ${COLORS.purple}40`,
-          border: '1px solid rgba(255,255,255,0.2)'
-        }}>
-          <span style={{
-            color: '#fff',
-            fontSize: 14,
-            fontWeight: 600,
-            whiteSpace: 'nowrap'
-          }}>Ask me anything!</span>
-          <div style={{ display: 'flex', gap: 2 }}>
-            <span style={{ fontSize: 12 }}>✨</span>
-            <span style={{ fontSize: 12 }}>✨</span>
-          </div>
-        </div>
-
-        {/* Speech bubble tail */}
+        {/* Soft neon light streaks for colorful lighting */}
         <div style={{
           position: 'absolute',
-          bottom: -10,
-          right: 12,
-          width: 0,
-          height: 0,
-          borderLeft: '10px solid transparent',
-          borderRight: '10px solid transparent',
-          borderTop: '10px solid #8B5CF6'
+          top: '25%',
+          left: '20%',
+          width: 200,
+          height: 3,
+          background: `linear-gradient(90deg, transparent, ${COLORS.pink}40, transparent)`,
+          borderRadius: 2,
+          zIndex: 3,
+          animation: 'light-streak 6s ease-in-out infinite'
         }} />
+        <div style={{
+          position: 'absolute',
+          top: '55%',
+          left: '25%',
+          width: 150,
+          height: 3,
+          background: `linear-gradient(90deg, transparent, ${COLORS.cyan}40, transparent)`,
+          borderRadius: 2,
+          zIndex: 3,
+          animation: 'light-streak 8s ease-in-out infinite 1s'
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: '40%',
+          right: '30%',
+          width: 120,
+          height: 3,
+          background: `linear-gradient(90deg, transparent, ${COLORS.blue}40, transparent)`,
+          borderRadius: 2,
+          zIndex: 3,
+          animation: 'light-streak 5s ease-in-out infinite 2s'
+        }} />
+
+        {/* Floating sparkle particles */}
+        <div style={{
+          position: 'absolute',
+          top: '15%',
+          left: '40%',
+          width: 12,
+          height: 12,
+          background: COLORS.pink,
+          borderRadius: '50%',
+          zIndex: 6,
+          boxShadow: `0 0 10px ${COLORS.pink}`,
+          animation: 'sparkle 3s infinite'
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          right: '35%',
+          width: 10,
+          height: 10,
+          background: COLORS.cyan,
+          borderRadius: '50%',
+          zIndex: 6,
+          boxShadow: `0 0 8px ${COLORS.cyan}`,
+          animation: 'sparkle 2.5s infinite 0.5s'
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: '75%',
+          left: '50%',
+          width: 14,
+          height: 14,
+          background: COLORS.blue,
+          borderRadius: '50%',
+          zIndex: 6,
+          boxShadow: `0 0 12px ${COLORS.blue}`,
+          animation: 'sparkle 4s infinite 1s'
+        }} />
+
       </div>
 
-      {/* Soft neon light streaks */}
-      <div style={{
-        position: 'absolute',
-        top: '25%',
-        left: '20%',
-        width: 200,
-        height: 3,
-        background: `linear-gradient(90deg, transparent, ${COLORS.pink}40, transparent)`,
-        borderRadius: 2,
-        zIndex: 3,
-        animation: 'light-streak 6s ease-in-out infinite'
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '55%',
-        left: '25%',
-        width: 150,
-        height: 3,
-        background: `linear-gradient(90deg, transparent, ${COLORS.cyan}40, transparent)`,
-        borderRadius: 2,
-        zIndex: 3,
-        animation: 'light-streak 8s ease-in-out infinite 1s'
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '40%',
-        right: '30%',
-        width: 120,
-        height: 3,
-        background: `linear-gradient(90deg, transparent, ${COLORS.blue}40, transparent)`,
-        borderRadius: 2,
-        zIndex: 3,
-        animation: 'light-streak 5s ease-in-out infinite 2s'
-      }} />
-
       <style>{`
-        @keyframes float-card-1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          25% { transform: translate(5px, -8px) scale(1.02); }
-          50% { transform: translate(0, -5px) scale(1); }
-          75% { transform: translate(-5px, -3px) scale(1.01); }
-        }
-        @keyframes float-card-2 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          25% { transform: translate(-8px, -6px) scale(1.02); }
-          50% { transform: translate(-3px, -10px) scale(1); }
-          75% { transform: translate(5px, -4px) scale(1.01); }
-        }
-        @keyframes float-card-3 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          25% { transform: translate(6px, -5px) scale(1.02); }
-          50% { transform: translate(0, -12px) scale(1); }
-          75% { transform: translate(-6px, -2px) scale(1.01); }
-        }
-        @keyframes float-card-4 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          25% { transform: translate(-6px, -4px) scale(1.02); }
-          50% { transform: translate(0, -8px) scale(1); }
-          75% { transform: translate(4px, -2px) scale(1.01); }
-        }
         @keyframes float-cart {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-6px); }
         }
-        @keyframes pulse-gift {
-          0%, 100% { opacity: 0.8; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.05); }
+        @keyframes rotateRing {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
-        @keyframes sparkle {
-          0%, 100% { opacity: 0.3; transform: scale(0.8); }
-          50% { opacity: 0.8; transform: scale(1.1); }
+        @keyframes float-prod-1 {
+          0%, 100% { transform: translate(0, 0) rotate(0); }
+          25% { transform: translate(5px, -8px) rotate(2deg); }
+          50% { transform: translate(0, -5px) rotate(0); }
+          75% { transform: translate(-5px, -3px) rotate(-2deg); }
         }
-        @keyframes pulse-tag {
-          0%, 100% { transform: scale(1); opacity: 0.9; }
-          50% { transform: scale(1.1); opacity: 1; }
+        @keyframes float-prod-2 {
+          0%, 100% { transform: translate(0, 0) rotate(0); }
+          25% { transform: translate(-8px, -6px) rotate(-2deg); }
+          50% { transform: translate(-3px, -10px) rotate(0); }
+          75% { transform: translate(5px, -4px) rotate(2deg); }
         }
-        @keyframes pulse-bubble {
-          0%, 100% { opacity: 0.9; }
-          50% { opacity: 1; }
+        @keyframes float-prod-3 {
+          0%, 100% { transform: translate(0, 0) rotate(0); }
+          25% { transform: translate(6px, -5px) rotate(2deg); }
+          50% { transform: translate(0, -12px) rotate(0); }
+          75% { transform: translate(-6px, -2px) rotate(-2deg); }
         }
         @keyframes light-streak {
           0%, 100% { opacity: 0.3; }
           50% { opacity: 0.6; }
         }
-        .floating-card, .floating-product {
-          transition: transform 0.1s ease;
+        @keyframes sparkle {
+          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 0.8; transform: scale(1.2); }
         }
       `}</style>
     </div>
   )
-}
-
-// Helper function for color darkening
-function darken(hex, amount) {
-  const num = parseInt(hex.slice(1), 16)
-  const r = Math.max(0, ((num >> 16) & 0xff) - Math.round(255 * amount))
-  const g = Math.max(0, ((num >> 8) & 0xff) - Math.round(255 * amount))
-  const b = Math.max(0, (num & 0xff) - Math.round(255 * amount))
-  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`
-}
-
-const COLORS = {
-  blue: '#3B82F6',
-  purple: '#8B5CF6',
-  pink: '#EC4899',
-  cyan: '#06B6D4',
-  violet: '#A855F7',
-  fuchsia: '#D946EF',
-  indigo: '#6366F1'
 }
