@@ -8,7 +8,9 @@ const C = {
   surface: '#FFFFFF',
   text: '#0F172A',
   textSecondary: '#475569',
-  primaryLight: '#EEF2FF'
+  border: '#E2E8F0',
+  primaryLight: '#EEF2FF',
+  gradient: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)'
 }
 
 const QUICK_SEARCHES = ['Headphones under $80', 'Best watches', 'Products for studying', 'Gaming accessories']
@@ -60,10 +62,9 @@ export default function Hero() {
       minHeight: '100vh',
       maxHeight: '100vh',
       overflow: 'hidden',
-      background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
+      background: 'radial-gradient(ellipse at 30% 40%, #1E293B 0%, #0F172A 50%, #111827 100%)',
       display: 'flex',
-      alignItems: 'center',
-      padding: 'clamp(48px, 8vw, 96px) 24px'
+      alignItems: 'center'
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1, width: '100%' }}>
         <div className="hero-grid" style={{
@@ -74,17 +75,17 @@ export default function Hero() {
           width: '100%'
         }}>
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 9999, background: C.primaryLight, color: C.primary, fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 9999, background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)', color: '#ffffff', fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
               <SparkleIcon size={14} />
               AI-Powered Shopping
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
-              <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.04em', color: C.text }}>NexMart</span>
+              <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.04em', color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>NexMart</span>
             </div>
-            <h1 style={{ margin: 0, fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1, color: C.text }}>
+            <h1 style={{ margin: 0, fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1, color: '#ffffff', textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
               Shop Smarter with AI
             </h1>
-            <p style={{ margin: '20px 0 0', maxWidth: 480, fontSize: 'clamp(15px, 2vw, 18px)', color: C.textSecondary, lineHeight: 1.7, fontWeight: 400 }}>
+            <p style={{ margin: '20px 0 0', maxWidth: 480, fontSize: 'clamp(15px, 2vw, 18px)', color: '#E2E4EB', lineHeight: 1.7, fontWeight: 400 }}>
               Find, compare and choose the right products in seconds. Ask our AI assistant in natural language.
             </p>
 
@@ -94,7 +95,7 @@ export default function Hero() {
                 background: C.surface,
                 borderRadius: 9999,
                 border: '1px solid #E2E8F0',
-                boxShadow: '0 20px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
+                boxShadow: '0 20px 40px -10px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.03)',
                 padding: '5px 5px 5px 22px',
                 display: 'flex',
                 alignItems: 'center',
@@ -102,7 +103,7 @@ export default function Hero() {
                 transition: 'box-shadow 0.2s ease, border-color 0.2s ease'
               }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.1), 0 0 0 3px rgba(99,102,241,0.08)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.03)' }}
               >
                 <SearchIcon size={20} />
                 <input
@@ -136,7 +137,7 @@ export default function Hero() {
                     padding: '12px 24px',
                     borderRadius: 9999,
                     border: 'none',
-                    background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                    background: C.gradient,
                     color: '#fff',
                     fontWeight: 600,
                     fontSize: 14,
@@ -153,7 +154,7 @@ export default function Hero() {
             </div>
 
             <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 13, color: C.textSecondary, fontWeight: 500 }}>Try:</span>
+              <span style={{ fontSize: 13, color: '#94A3B8', fontWeight: 500 }}>Try:</span>
               {QUICK_SEARCHES.map((term) => (
                 <button
                   key={term}
@@ -162,16 +163,17 @@ export default function Hero() {
                   style={{
                     padding: '8px 14px',
                     borderRadius: 9999,
-                    border: '1px solid #E2E8F0',
-                    background: C.surface,
-                    color: C.textSecondary,
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    background: 'rgba(255,255,255,0.1)',
+                    backdropFilter: 'blur(8px)',
+                    color: '#E2E4EB',
                     fontSize: 13,
                     fontWeight: 500,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.color = C.primary; e.currentTarget.style.background = C.primaryLight }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = C.textSecondary; e.currentTarget.style.background = C.surface }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#60A5FA'; e.currentTarget.style.color = '#60A5FA'; e.currentTarget.style.background = 'rgba(96,165,250,0.15)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = '#E2E4EB'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
                 >
                   {term}
                 </button>
@@ -186,7 +188,32 @@ export default function Hero() {
             height: '100%',
             maxHeight: 'calc(100vh - 120px)'
           }}>
-            {Hero3D ? <Hero3D /> : null}
+            {Hero3D ? <Hero3D /> : (
+              <div style={{
+                width: 300,
+                height: 300,
+                borderRadius: 24,
+                background: 'radial-gradient(ellipse at 30% 40%, #4F46E5 0%, #1E293B 50%, #0F172A 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 24,
+                  boxShadow: '0 0 30px rgba(99,102,241,0.5)',
+                  animation: 'pulse 2s infinite'
+                }}>✨</div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -206,6 +233,10 @@ export default function Hero() {
         .hero-3d-panel { display: none; }
         @media (min-width: 768px) {
           .hero-3d-panel { display: flex; }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 0.9; }
+          50% { transform: scale(1.1); opacity: 1; }
         }
       `}</style>
     </section>
