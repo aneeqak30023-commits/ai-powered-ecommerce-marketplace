@@ -62,7 +62,7 @@ export default function Hero() {
       minHeight: '100vh',
       maxHeight: '100vh',
       overflow: 'hidden',
-      background: 'radial-gradient(ellipse at 30% 40%, #1E293B 0%, #0F172A 50%, #111827 100%)',
+      background: 'radial-gradient(ellipse at 30% 40%, #E0F2FE 0%, #F0F9FF 30%, #FFFFFF 60%, #F0F9FF 100%)',
       display: 'flex',
       alignItems: 'center'
     }}>
@@ -75,17 +75,17 @@ export default function Hero() {
           width: '100%'
         }}>
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 9999, background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)', color: '#ffffff', fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 9999, background: C.primaryLight, color: C.primary, fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
               <SparkleIcon size={14} />
               AI-Powered Shopping
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
-              <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.04em', color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>NexMart</span>
+              <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.04em', color: C.text }}>NexMart</span>
             </div>
-            <h1 style={{ margin: 0, fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1, color: '#ffffff', textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
+            <h1 style={{ margin: 0, fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1, color: C.text }}>
               Shop Smarter with AI
             </h1>
-            <p style={{ margin: '20px 0 0', maxWidth: 480, fontSize: 'clamp(15px, 2vw, 18px)', color: '#E2E4EB', lineHeight: 1.7, fontWeight: 400 }}>
+            <p style={{ margin: '20px 0 0', maxWidth: 480, fontSize: 'clamp(15px, 2vw, 18px)', color: C.textSecondary, lineHeight: 1.7, fontWeight: 400 }}>
               Find, compare and choose the right products in seconds. Ask our AI assistant in natural language.
             </p>
 
@@ -95,7 +95,7 @@ export default function Hero() {
                 background: C.surface,
                 borderRadius: 9999,
                 border: '1px solid #E2E8F0',
-                boxShadow: '0 20px 40px -10px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.03)',
+                boxShadow: '0 20px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
                 padding: '5px 5px 5px 22px',
                 display: 'flex',
                 alignItems: 'center',
@@ -103,7 +103,7 @@ export default function Hero() {
                 transition: 'box-shadow 0.2s ease, border-color 0.2s ease'
               }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.1), 0 0 0 3px rgba(99,102,241,0.08)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.03)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)' }}
               >
                 <SearchIcon size={20} />
                 <input
@@ -154,7 +154,7 @@ export default function Hero() {
             </div>
 
             <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 13, color: '#94A3B8', fontWeight: 500 }}>Try:</span>
+              <span style={{ fontSize: 13, color: C.textSecondary, fontWeight: 500 }}>Try:</span>
               {QUICK_SEARCHES.map((term) => (
                 <button
                   key={term}
@@ -163,17 +163,16 @@ export default function Hero() {
                   style={{
                     padding: '8px 14px',
                     borderRadius: 9999,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    background: 'rgba(255,255,255,0.1)',
-                    backdropFilter: 'blur(8px)',
-                    color: '#E2E4EB',
+                    border: '1px solid #E2E8F0',
+                    background: C.surface,
+                    color: C.textSecondary,
                     fontSize: 13,
                     fontWeight: 500,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#60A5FA'; e.currentTarget.style.color = '#60A5FA'; e.currentTarget.style.background = 'rgba(96,165,250,0.15)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = '#E2E4EB'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.color = C.primary; e.currentTarget.style.background = C.primaryLight }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = C.textSecondary; e.currentTarget.style.background = C.surface }}
                 >
                   {term}
                 </button>

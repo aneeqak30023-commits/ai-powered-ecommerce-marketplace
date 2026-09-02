@@ -23,16 +23,20 @@ export default function Hero3D() {
   const parallaxX = (mousePos.x - 0.5) * 30
   const parallaxY = (mousePos.y - 0.5) * 30
 
-  // Colorful gradient palette for the scene
-  const COLORS = {
-    blue: '#3B82F6',
-    purple: '#8B5CF6',
-    pink: '#EC4899',
-    cyan: '#06B6D4',
-    violet: '#A855F7',
-    fuchsia: '#D946EF',
-    indigo: '#6366F1'
-  }
+  // Product card data matching the reference composition
+  const productCards = [
+    { emoji: '🎧', label: 'Smart Headphones', price: '$79.99', color: '#06B6D4' },
+    { emoji: '💻', label: 'Gaming Laptop', price: '$899.99', color: '#8B5CF6' },
+    { emoji: '👟', label: 'Running Sneakers', price: '$129.99', color: '#F59E0B' },
+    { emoji: '⌚', label: 'Smart Watch', price: '$199.99', color: '#EC4899' }
+  ]
+
+  // Floating individual products
+  const floatingProducts = [
+    { emoji: '📱', label: 'Smartphone', color: '#3B82F6' },
+    { emoji: '🎮', label: 'Gaming Controller', color: '#8B5CF6' },
+    { emoji: '📷', label: 'Camera', color: '#EC4899' }
+  ]
 
   return (
     <div
@@ -41,619 +45,683 @@ export default function Hero3D() {
         position: 'relative',
         width: '100%',
         height: '100%',
-        minHeight: 420,
-        borderRadius: 24,
-        overflow: 'hidden',
-        background: 'radial-gradient(ellipse at 30% 40%, #1E293B 0%, #0F172A 50%, #111827 100%)',
-        border: '1px solid rgba(99,102,241,0.15)'
+        minHeight: 500,
+        perspective: 1200,
+        overflow: 'visible'
       }}
     >
-      {/* Colorful background gradient orbs */}
+      {/* Scene container - right side content */}
       <div style={{
         position: 'absolute',
-        width: 320,
-        height: 320,
-        borderRadius: '50%',
-        background: `radial-gradient(circle, ${COLORS.blue}30 0%, ${COLORS.purple}30 50%, transparent 70%)`,
-        top: '10%',
-        left: '5%',
-        filter: 'blur(60px)',
-        transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px)`,
-        animation: 'pulse-blue 8s ease-in-out infinite',
-        zIndex: 1
-      }} />
-
-      <div style={{
-        position: 'absolute',
-        width: 280,
-        height: 280,
-        borderRadius: '50%',
-        background: `radial-gradient(circle, ${COLORS.pink}30 0%, ${COLORS.cyan}30 50%, transparent 70%)`,
-        top: '60%',
-        right: '10%',
-        filter: 'blur(60px)',
-        transform: `translate(${parallaxX * -0.3}px, ${parallaxY * -0.3}px)`,
-        animation: 'pulse-pink 10s ease-in-out infinite',
-        zIndex: 1
-      }} />
-
-      <div style={{
-        position: 'absolute',
-        width: 240,
-        height: 240,
-        borderRadius: '50%',
-        background: `radial-gradient(circle, ${COLORS.purple}25 0%, ${COLORS.indigo}30 50%, transparent 70%)`,
-        bottom: '15%',
-        left: '20%',
-        filter: 'blur(50px)',
-        transform: `translate(${parallaxX * 0.2}px, ${parallaxY * -0.2}px)`,
-        animation: 'pulse-purple 12s ease-in-out infinite',
-        zIndex: 1
-      }} />
-
-      {/* AI Neural grid overlay */}
-      <svg
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          opacity: 0.2,
-          pointerEvents: 'none',
-          zIndex: 2
-        }}
-      >
-        <defs>
-          <pattern id="neural-grid" width="50" height="50" patternUnits="userSpaceOnUse">
-            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(99,102,241,0.15)" strokeWidth="1" />
-          </pattern>
-          <linearGradient id="gradient-line" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={COLORS.blue} stopOpacity="0.6" />
-            <stop offset="100%" stopColor={COLORS.purple} stopOpacity="0.4" />
-          </linearGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#neural-grid)" />
-        <line x1="20%" y1="30%" x2="80%" y2="30%" stroke="url(#gradient-line)" strokeWidth="0.5" />
-        <line x1="20%" y1="50%" x2="80%" y2="50%" stroke="url(#gradient-line)" strokeWidth="0.5" />
-        <line x1="50%" y1="10%" x2="50%" y2="90%" stroke="url(#gradient-line)" strokeWidth="0.5" />
-        <line x1="20%" y1="30%" x2="50%" y2="10%" stroke="url(#gradient-line)" strokeWidth="0.5" />
-        <line x1="80%" y1="30%" x2="50%" y2="10%" stroke="url(#gradient-line)" strokeWidth="0.5" />
-        <line x1="20%" y1="50%" x2="50%" y2="70%" stroke="url(#gradient-line)" strokeWidth="0.5" />
-        <line x1="80%" y1="50%" x2="50%" y2="70%" stroke="url(#gradient-line)" strokeWidth="0.5" />
-        <circle cx="50%" cy="40%" r="1.5" fill={COLORS.blue} opacity="0.5" />
-        <circle cx="30%" cy="60%" r="1.8" fill={COLORS.pink} opacity="0.4" />
-        <circle cx="70%" cy="65%" r="1.2" fill={COLORS.cyan} opacity="0.45" />
-        <circle cx="50%" cy="70%" r="2" fill={COLORS.purple} opacity="0.35" />
-      </svg>
-
-      {/* 3D AI Shopping Robot - center stage */}
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: `translate(calc(-50% + ${parallaxX * 0.3}px), calc(-50% + ${parallaxY * 0.3}px))`,
-        zIndex: 10,
+        inset: 0,
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        pointerEvents: 'none'
       }}>
-        {/* Robot head */}
+        {/* Glossy futuristic platform with cyan ring */}
         <div style={{
           position: 'relative',
-          width: 80,
-          height: 80,
-          borderRadius: '50%',
-          background: 'linear-gradient(145deg, #E5E7EB 0%, #F3F4F6 50%, #E5E7EB 100%)',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.3), inset 0 4px 8px rgba(255,255,255,0.8), 0 0 30px rgba(99,102,241,0.5)',
-          border: '2px solid rgba(255,255,255,0.6)',
+          width: 340,
+          height: 140,
+          bottom: -30,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          animation: 'float 4s ease-in-out infinite'
+          transform: `translate(${parallaxX * 0.2}px, ${parallaxY * 0.2}px)`
         }}>
-          {/* Eyes */}
-          <div style={{ display: 'flex', gap: 12 }}>
+          {/* Cyan glowing ring */}
+          <div style={{
+            position: 'absolute',
+            width: 260,
+            height: 260,
+            borderRadius: '50%',
+            border: `3px solid ${COLORS.cyan}`,
+            boxShadow: `0 0 25px ${COLORS.cyan}, 0 0 50px ${COLORS.cyan}40`,
+            top: -60,
+            animation: 'rotateRing 12s linear infinite'
+          }} />
+
+          {/* Platform surface */}
+          <div style={{
+            position: 'absolute',
+            width: 280,
+            height: 12,
+            borderRadius: '50%',
+            background: 'linear-gradient(90deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.4) 100%)',
+            bottom: -8,
+            boxShadow: '0 0 30px rgba(6,172,214,0.4)'
+          }} />
+
+          {/* Platform reflection */}
+          <div style={{
+            position: 'absolute',
+            width: 260,
+            height: 24,
+            borderRadius: '50%',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%)',
+            bottom: -18,
+            filter: 'blur(2px)',
+            opacity: 0.6
+          }} />
+        </div>
+
+        {/* Shopping cart */}
+        <div style={{
+          position: 'relative',
+          width: 220,
+          height: 300,
+          transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px)`,
+          zIndex: 5,
+          animation: 'float-cart 5s ease-in-out infinite'
+        }}>
+          {/* Cart basket */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 200,
+            height: 200,
+            borderRadius: '0 0 12px 12px',
+            background: 'linear-gradient(145deg, #CBD5E1 0%, #94A3B8 50%, #CBD5E1 100%)',
+            border: '2px solid #94A3B8',
+            boxShadow: '0 15px 40px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.4)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            padding: 12,
+            overflow: 'hidden'
+          }}>
+            {/* Basket wire pattern */}
+            <div style={{ position: 'absolute', inset: 8, border: '1px dashed rgba(148,165,177,0.5)', borderRadius: 8 }} />
+
+            {/* Brown NexMart box */}
             <div style={{
-              width: 14,
-              height: 14,
-              borderRadius: '50%',
-              background: COLORS.blue,
-              boxShadow: `0 0 15px ${COLORS.blue}, 0 0 30px ${COLORS.blue}`,
-              animation: 'blink 6s infinite'
-            }} />
+              width: 70,
+              height: 60,
+              background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
+              borderRadius: 6,
+              marginBottom: 6,
+              boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 8,
+              fontWeight: 700,
+              color: '#fff'
+            }}>NEXMART</div>
+
+            {/* Colorful shopping bags in cart */}
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div style={{ width: 24, height: 20, background: '#F59E0B', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+              <div style={{ width: 24, height: 20, background: '#3B82F6', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+              <div style={{ width: 24, height: 20, background: '#EAB308', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+              <div style={{ width: 24, height: 20, background: '#EC4899', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+            </div>
+          </div>
+
+          {/* Cart handles */}
+          <div style={{
+            position: 'absolute',
+            top: 10,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 200,
+            height: 16,
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '0 8px',
+            boxSizing: 'border-box'
+          }}>
+            <div style={{ width: 8, height: 16, background: '#CBD5E1', borderRadius: 2, boxShadow: '0 0 5px rgba(0,0,0,0.3)' }} />
+            <div style={{ width: 8, height: 16, background: '#CBD5E1', borderRadius: 2, boxShadow: '0 0 5px rgba(0,0,0,0.3)' }} />
+          </div>
+
+          {/* Cart wheel */}
+          <div style={{
+            position: 'absolute',
+            top: 200,
+            left: '50%',
+            transform: 'translateX(-50%) rotate(15deg)',
+            width: 180,
+            height: 8,
+            border: '2px solid #94A3B8',
+            borderRadius: '50% 50% 0 0',
+            borderTop: 'none',
+            borderBottom: 'none'
+          }}>
             <div style={{
-              width: 14,
-              height: 14,
-              borderRadius: '50%',
-              background: COLORS.purple,
-              boxShadow: `0 0 15px ${COLORS.purple}, 0 0 30px ${COLORS.purple}`,
-              animation: 'blink 6s infinite 0.3s'
+              position: 'absolute',
+              width: 8,
+              height: 40,
+              background: '#94A3B8',
+              left: '25%',
+              top: -16,
+              borderRadius: 4
             }} />
           </div>
-          {/* Antenna */}
-          <div style={{
-            position: 'absolute',
-            top: -20,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 4,
-            height: 16,
-            background: 'linear-gradient(180deg, #CBD5E1, #94A3B8)',
-            borderRadius: 2
-          }} />
-          <div style={{
-            position: 'absolute',
-            top: -28,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            background: COLORS.cyan,
-            boxShadow: `0 0 10px ${COLORS.cyan}`,
-            animation: 'pulse-cyan 2s infinite'
-          }} />
         </div>
 
-        {/* Robot body */}
+        {/* AI Robot - sitting/standing behind cart, pointing left */}
         <div style={{
-          width: 64,
-          height: 80,
-          background: 'linear-gradient(145deg, #9CA3AF 0%, #6B7280 50%, #9CA3AF 100%)',
-          borderRadius: '50% 50% 0 0 / 60% 60% 0 0',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.25), inset 0 4px 8px rgba(255,255,255,0.3), 0 0 20px rgba(139,92,246,0.3)',
-          border: '2px solid rgba(255,255,255,0.4)',
-          marginTop: -6,
-          position: 'relative'
-        }}>
-          {/* Chest display */}
-          <div style={{
-            position: 'absolute',
-            top: 20,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 20,
-            height: 20,
-            borderRadius: 4,
-            background: COLORS.pink,
-            boxShadow: `0 0 15px ${COLORS.pink}, 0 0 30px ${COLORS.pink}`,
-            animation: 'pulse-pink-eyes 3s infinite'
-          }} />
-        </div>
-      </div>
-
-      {/* Floating Product Cards */}
-      <div
-        className="floating-card"
-        style={{
-          position: 'absolute',
-          top: '20%',
-          left: '10%',
-          transform: `translate(${parallaxX * 0.5}px, ${parallaxY * 0.5}px)`,
-          width: 120,
-          perspective: 800,
-          zIndex: 5,
-          animation: 'float-card-1 6s ease-in-out infinite'
-        }}
-      >
-        <div style={{
-          width: '100%',
-          height: 140,
-          background: 'linear-gradient(135deg, #1E293B 0%, #334155 100%)',
-          borderRadius: 16,
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 12px 30px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.1)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 12
-        }}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>🎧</div>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#FFFFFF', textAlign: 'center' }}>Smart Headphones</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.cyan, marginTop: 4 }}>$79.99 ★4.8</div>
-        </div>
-      </div>
-
-      <div
-        className="floating-card"
-        style={{
-          position: 'absolute',
-          top: '30%',
-          right: '10%',
-          transform: `translate(${parallaxX * -0.4}px, ${parallaxY * 0.4}px)`,
-          width: 110,
-          perspective: 800,
-          zIndex: 5,
-          animation: 'float-card-2 7s ease-in-out infinite'
-        }}
-      >
-        <div style={{
-          width: '100%',
-          height: 130,
-          background: 'linear-gradient(135deg, #1E293B 0%, #334155 100%)',
-          borderRadius: 16,
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 12px 30px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.1)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 12
-        }}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>⌚</div>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#FFFFFF', textAlign: 'center' }}>Smart Watch Pro</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.purple, marginTop: 4 }}>$199.99 ★4.7</div>
-        </div>
-      </div>
-
-      <div
-        className="floating-card"
-        style={{
-          position: 'absolute',
-          bottom: '25%',
-          left: '15%',
-          transform: `translate(${parallaxX * 0.6}px, ${parallaxY * -0.3}px)`,
-          width: 100,
-          perspective: 800,
-          zIndex: 5,
-          animation: 'float-card-3 5s ease-in-out infinite'
-        }}
-      >
-        <div style={{
-          width: '100%',
-          height: 120,
-          background: 'linear-gradient(135deg, #1E293B 0%, #334155 100%))',
-          borderRadius: 16,
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 12px 30px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.1)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 12
-        }}>
-          <div style={{ fontSize: 30, marginBottom: 8 }}>💻</div>
-          <div style={{ fontSize: 10, fontWeight: 600, color: '#FFFFFF', textAlign: 'center' }}>Gaming Laptop</div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: COLORS.blue, marginTop: 4 }}>$899.99 ★4.9</div>
-        </div>
-      </div>
-
-      {/* Colorful shopping bags */}
-      <div
-        className="shopping-bag"
-        style={{
-          position: 'absolute',
-          top: '15%',
-          right: '25%',
-          transform: `translate(${parallaxX * -0.5}px, ${parallaxY * 0.3}px) rotate(15deg)`,
-          zIndex: 6,
-          animation: 'bounce-bag 5s ease-in-out infinite'
-        }}
-      >
-        <div style={{
-          width: 80,
-          height: 80,
-          background: COLORS.pink,
-          borderRadius: '8px 8px 0 0',
-          boxShadow: '0 8px 20px rgba(0,0,0,0.25)',
           position: 'relative',
-          border: '1px solid rgba(255,255,255,0.3)'
+          width: 200,
+          height: 320,
+          left: 60,
+          top: -30,
+          transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px)`,
+          zIndex: 10
         }}>
+          {/* Robot legs */}
           <div style={{
             position: 'absolute',
-            top: -15,
+            bottom: 0,
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 30,
-            height: 15,
-            background: COLORS.pink,
-            borderRadius: '0 0 50% 50%',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-          }} />
-          <div style={{
-            position: 'absolute',
-            top: -10,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 24,
-            height: 10,
-            background: COLORS.pink,
-            borderRadius: '50%'
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: 20,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: 14,
-            fontWeight: 700,
-            color: 'white',
-            textShadow: '0 1px 2px rgba(0,0,0,0.3)'
-          }}>SALE</div>
-        </div>
-      </div>
+            width: 60,
+            height: 80,
+            display: 'flex',
+            gap: 10
+          }}>
+            <div style={{
+              width: 25,
+              height: 80,
+              background: 'linear-gradient(145deg, #F1F5F9 0%, #CBD5E1 100%)',
+              borderRadius: '12px 12px 40px 40px',
+              boxShadow: '0 12px 25px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.5)'
+            }} />
+            <div style={{
+              width: 25,
+              height: 80,
+              background: 'linear-gradient(145deg, #F1F5F9 0%, #CBD5E1 100%)',
+              borderRadius: '12px 12px 40px 40px',
+              boxShadow: '0 12px 25px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.5)'
+            }} />
+          </div>
 
-      <div
-        className="shopping-bag"
-        style={{
-          position: 'absolute',
-          bottom: '15%',
-          right: '30%',
-          transform: `translate(${parallaxX * 0.4}px, ${parallaxY * -0.2}px) rotate(-10deg)`,
-          zIndex: 6,
-          animation: 'bounce-bag 5s ease-in-out infinite 0.5s'
-        }}
-      >
-        <div style={{
-          width: 70,
-          height: 70,
-          background: COLORS.cyan,
-          borderRadius: '8px 8px 0 0',
-          boxShadow: '0 8px 20px rgba(0,0,0,0.25)',
-          position: 'relative',
-          border: '1px solid rgba(255,255,255,0.3)'
-        }}>
+          {/* Robot body */}
           <div style={{
             position: 'absolute',
-            top: -12,
+            bottom: 80,
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 26,
+            width: 120,
+            height: 140,
+            background: 'linear-gradient(145deg, #F8FAFC 0%, #E2E8F0 30%, #F8FAFC 70%, #E2E8F0 100%)',
+            borderRadius: '50% 50% 30px 30px',
+            border: '2px solid rgba(255,255,255,0.6)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.25), inset 0 4px 8px rgba(255,255,255,0.5), 0 0 20px rgba(139,92,246,0.3)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}>
+            {/* AI badge on chest */}
+            <div style={{
+              marginTop: 20,
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: `0 0 15px ${COLORS.blue}, 0 0 30px ${COLORS.blue}40`
+            }}>
+              <span style={{ color: '#fff', fontSize: 16, fontWeight: 700 }}>AI</span>
+            </div>
+
+            {/* Chest line */}
+            <div style={{
+              marginTop: 12,
+              width: 60,
+              height: 2,
+              background: 'rgba(0,0,0,0.1)',
+              borderRadius: 1
+            }} />
+          </div>
+
+          {/* Robot head - rounded with dark face */}
+          <div style={{
+            position: 'relative',
+            bottom: 215,
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}>
+            {/* Headphones/ear pieces */}
+            <div style={{
+              position: 'absolute',
+              top: 20,
+              left: 8,
+              width: 22,
+              height: 40,
+              background: `linear-gradient(135deg, ${COLORS.purple} 0%, ${COLORS.blue} 100%)`,
+              borderRadius: 8,
+              border: '1px solid rgba(0,0,0,0.1)'
+            }} />
+            <div style={{
+              position: 'absolute',
+              top: 20,
+              right: 8,
+              width: 22,
+              height: 40,
+              background: `linear-gradient(135deg, ${COLORS.purple} 0%, ${COLORS.blue} 100%)`,
+              borderRadius: 8,
+              border: '1px solid rgba(0,0,0,0.1)'
+            }} />
+
+            {/* Dark face screen */}
+            <div style={{
+              position: 'absolute',
+              top: 28,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 60,
+              height: 40,
+              background: 'linear-gradient(145deg, #1E293B 0%, #0F172A 50%, #1E293B 100%)',
+              borderRadius: 12,
+              border: '2px solid rgba(255,255,255,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.1)'
+            }}>
+              {/* Glowing cyan smiling eyes */}
+              <div style={{
+                display: 'flex',
+                gap: 8
+              }}>
+                <div style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: COLORS.cyan,
+                  boxShadow: `0 0 8px ${COLORS.cyan}, 0 0 15px ${COLORS.cyan}`
+                }} />
+                <div style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: COLORS.cyan,
+                  boxShadow: `0 0 8px ${COLORS.cyan}, 0 0 15px ${COLORS.cyan}`
+                }} />
+              </div>
+            </div>
+
+            {/* Smile */}
+            <div style={{
+              position: 'absolute',
+              bottom: 24,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 24,
+              height: 12,
+              borderBottom: `2px solid ${COLORS.cyan}`,
+              borderRadius: '0 0 50% 50%',
+              boxShadow: `0 0 5px ${COLORS.cyan}`
+            }} />
+          </div>
+
+          {/* Robot arm pointing left */}
+          <div style={{
+            position: 'absolute',
+            top: 200,
+            left: -20,
+            width: 40,
             height: 12,
-            background: COLORS.cyan,
-            borderRadius: '0 0 50% 50%',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+            background: 'linear-gradient(145deg, #F8FAFC 0%, #E2E8F0 100%)',
+            borderRadius: 6,
+            transform: 'rotate(-20deg)',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+            zIndex: -1
           }} />
-          <div style={{
-            position: 'absolute',
-            top: -8,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 20,
-            height: 8,
-            background: COLORS.cyan,
-            borderRadius: '50%'
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: 18,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: 13,
-            fontWeight: 700,
-            color: 'white',
-            textShadow: '0 1px 2px rgba(0,0,0,0.3)'
-          }}>NEW</div>
         </div>
       </div>
 
-      {/* Gift box */}
-      <div
-        className="gift-box"
-        style={{
-          position: 'absolute',
-          top: '40%',
-          left: '5%',
-          transform: `translate(${parallaxX * 0.5}px, ${parallaxY * 0.5}px)`,
-          zIndex: 6,
-          animation: 'pulse-gift 6s ease-in-out infinite'
-        }}
-      >
+      {/* Floating product cards - left side */}
+      {productCards.map((product, idx) => {
+        const positions = [
+          { top: '20%', left: '10%' },
+          { top: '65%', left: '10%' },
+          { top: '15%', right: '45%' },
+          { top: '70%', right: '45%' }
+        ]
+        const pos = positions[idx]
+        return (
+          <div
+            key={`card-${idx}`}
+            className="floating-card"
+            style={{
+              position: 'absolute',
+              ...pos,
+              transform: `translate(${parallaxX * (0.5 + idx * 0.2)}px, ${parallaxY * (0.5 + idx * 0.2)}px)`,
+              width: 160,
+              zIndex: 8,
+              animation: `float-card-${idx + 1} ${5 + idx}s ease-in-out infinite`
+            }}
+          >
+            <div style={{
+              width: '100%',
+              height: 180,
+              background: 'linear-gradient(145deg, #1E293B 0%, #334155 100%)',
+              borderRadius: 16,
+              border: '1px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 12
+            }}>
+              <div style={{ fontSize: 36, marginBottom: 8 }}>{product.emoji}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#FFFFFF', textAlign: 'center', marginBottom: 4 }}>{product.label}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: product.color }}>{product.price}</div>
+            </div>
+          </div>
+        )
+      })}
+
+      {/* Floating individual products */}
+      {floatingProducts.map((product, idx) => {
+        const positions = [
+          { top: '35%', left: '30%' },
+          { top: '55%', left: '35%' },
+          { top: '50%', left: '30%' }
+        ]
+        const pos = positions[idx]
+        const icons = ['📱', '🎮', '📷']
+        return (
+          <div
+            key={`prod-${idx}`}
+            className="floating-product"
+            style={{
+              position: 'absolute',
+              ...pos,
+              transform: `translate(${parallaxX * (0.4 + idx * 0.3)}px, ${parallaxY * (0.4 + idx * 0.3)}px)`,
+              zIndex: 7,
+              animation: `float-prod-${idx + 1} ${4 + idx * 0.5}s ease-in-out infinite`
+            }}
+          >
+            <div style={{
+              width: 50,
+              height: 50,
+              borderRadius: '50%',
+              background: `linear-gradient(135deg, ${product.color} 0%, ${product.color} 50%, ${darken(product.color, 0.2)} 100%)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: `0 0 20px ${product.color}, 0 8px 25px rgba(0,0,0,0.3)`,
+              fontSize: 24
+            }}>{icons[idx]}</div>
+          </div>
+        )
+      })}
+
+      {/* Blue gift box above robot */}
+      <div className="gift-box" style={{
+        position: 'absolute',
+        top: '15%',
+        left: '60%',
+        transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px)`,
+        zIndex: 9,
+        animation: 'pulse-gift 4s ease-in-out infinite'
+      }}>
         <div style={{
-          width: 60,
-          height: 60,
-          background: COLORS.purple,
-          borderRadius: 8,
-          boxShadow: '0 10px 25px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.2)',
-          position: 'relative',
-          border: '1px solid rgba(255,255,255,0.3)'
+          width: 50,
+          height: 50,
+          background: COLORS.blue,
+          borderRadius: 10,
+          boxShadow: '0 8px 20px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.3)'
         }}>
           <div style={{
             position: 'absolute',
             top: '50%',
             left: 0,
             right: 0,
-            height: 12,
+            height: 8,
             background: COLORS.fuchsia,
-            boxShadow: `0 0 10px ${COLORS.fuchsia}`
+            transform: 'translateY(-50%)'
           }} />
           <div style={{
             position: 'absolute',
             top: 0,
             bottom: 0,
             left: '50%',
-            width: 12,
+            width: 8,
             background: COLORS.fuchsia,
-            boxShadow: `0 0 10px ${COLORS.fuchsia}`
-          }} />
-          <div style={{
-            position: 'absolute',
-            top: -6,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 20,
-            height: 6,
-            background: COLORS.fuchsia,
-            borderRadius: '50%'
+            transform: 'translateX(-50%)'
           }} />
         </div>
       </div>
 
-      {/* Discount badge */}
-      <div
-        className="discount-badge"
-        style={{
-          position: 'absolute',
-          top: '20%',
-          right: '5%',
-          transform: `translate(${parallaxX * -0.3}px, ${parallaxY * 0.3}px)`,
-          zIndex: 8,
-          animation: 'pulse-badge 3s ease-in-out infinite'
-        }}
-      >
+      {/* Blue gift box near bottom-left of cart */}
+      <div className="gift-box" style={{
+        position: 'absolute',
+        top: '75%',
+        left: '15%',
+        transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px) rotate(15deg)`,
+        zIndex: 8,
+        animation: 'pulse-gift 4s ease-in-out infinite 0.5s'
+      }}>
         <div style={{
-          width: 80,
-          height: 80,
-          borderRadius: '50%',
-          background: 'conic-gradient(from 0deg, #F59E0B, #EF4444, #F59E0B, #10B981, #F59E0B)',
-          padding: 4,
-          boxShadow: `0 0 30px ${COLORS.pink}, 0 0 50px ${COLORS.purple}`
+          width: 40,
+          height: 40,
+          background: COLORS.blue,
+          borderRadius: 8,
+          boxShadow: '0 6px 15px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.3)'
+        }} />
+      </div>
+
+      {/* Pink percentage discount tag */}
+      <div style={{
+        position: 'absolute',
+        top: '10%',
+        left: '25%',
+        transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px)`,
+        zIndex: 11,
+        background: 'conic-gradient(from 0deg, #F59E0B, #EF4444, #EC4899, #F59E0B)',
+        borderRadius: '50%',
+        padding: 3,
+        animation: 'pulse-tag 2.5s ease-in-out infinite'
+      }}>
+        <div style={{
+          width: 60,
+          height: 60,
+          borderRadius: 'inherit',
+          background: 'linear-gradient(135deg, #EF4444 0%, #EC4899 100%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontWeight: 700,
+          fontSize: 11,
+          boxShadow: `0 0 15px ${COLORS.pink}, 0 8px 20px rgba(0,0,0,0.3)`
         }}>
-          <div style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #F59E0B 0%, #EF4444 50%, #F59E0B 100%)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 700,
-            fontSize: 11
-          }}>
-            <span style={{ fontSize: 16 }}>50%</span>
-            <span>OFF</span>
+          <span style={{ fontSize: 14 }}>50%</span>
+          <span>OFF</span>
+        </div>
+      </div>
+
+      {/* Additional small floating shopping elements */}
+      <div style={{
+        position: 'absolute',
+        top: '60%',
+        left: '40%',
+        width: 32,
+        height: 32,
+        background: COLORS.purple,
+        borderRadius: '50%',
+        zIndex: 8,
+        boxShadow: `0 0 12px ${COLORS.purple}`,
+        animation: 'sparkle 3s infinite',
+        transform: `translate(${parallaxX * 0.5}px, ${parallaxY * 0.5}px)`
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: '30%',
+        left: '50%',
+        width: 24,
+        height: 24,
+        background: COLORS.pink,
+        borderRadius: '50%',
+        zIndex: 7,
+        boxShadow: `0 0 10px ${COLORS.pink}`,
+        animation: 'sparkle 2.5s infinite 0.5s',
+        transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px)`
+      }} />
+
+      {/* AI Speech bubble - upper right */}
+      <div style={{
+        position: 'absolute',
+        top: '15%',
+        right: '15%',
+        zIndex: 15,
+        animation: 'pulse-bubble 3s ease-in-out infinite'
+      }}>
+        <div style={{
+          background: `linear-gradient(135deg, ${COLORS.blue} 0%, ${COLORS.purple} 50%, ${COLORS.pink} 100%)`,
+          borderRadius: 20,
+          padding: '12px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          boxShadow: `0 0 25px ${COLORS.blue}40, 0 0 40px ${COLORS.purple}40`,
+          border: '1px solid rgba(255,255,255,0.2)'
+        }}>
+          <span style={{
+            color: '#fff',
+            fontSize: 14,
+            fontWeight: 600,
+            whiteSpace: 'nowrap'
+          }}>Ask me anything!</span>
+          <div style={{ display: 'flex', gap: 2 }}>
+            <span style={{ fontSize: 12 }}>✨</span>
+            <span style={{ fontSize: 12 }}>✨</span>
           </div>
         </div>
+
+        {/* Speech bubble tail */}
+        <div style={{
+          position: 'absolute',
+          bottom: -10,
+          right: 12,
+          width: 0,
+          height: 0,
+          borderLeft: '10px solid transparent',
+          borderRight: '10px solid transparent',
+          borderTop: '10px solid #8B5CF6'
+        }} />
       </div>
 
-      {/* Floating sparkles */}
-      <div style={{
-        position: 'absolute',
-        top: '35%',
-        left: '35%',
-        zIndex: 4,
-        animation: 'sparkle 4s infinite'
-      }}><div style={{ width: 8, height: 8, background: COLORS.pink, borderRadius: '50%', boxShadow: `0 0 10px ${COLORS.pink}` }} /></div>
-      <div style={{
-        position: 'absolute',
-        top: '55%',
-        left: '70%',
-        zIndex: 4,
-        animation: 'sparkle 5s infinite 0.5s'
-      }}><div style={{ width: 6, height: 6, background: COLORS.cyan, borderRadius: '50%', boxShadow: `0 0 8px ${COLORS.cyan}` }} /></div>
+      {/* Soft neon light streaks */}
       <div style={{
         position: 'absolute',
         top: '25%',
-        left: '65%',
-        zIndex: 4,
-        animation: 'sparkle 3s infinite 1s'
-      }}><div style={{ width: 10, height: 10, background: COLORS.blue, borderRadius: '50%', boxShadow: `0 0 12px ${COLORS.blue}` }} /></div>
+        left: '20%',
+        width: 200,
+        height: 3,
+        background: `linear-gradient(90deg, transparent, ${COLORS.pink}40, transparent)`,
+        borderRadius: 2,
+        zIndex: 3,
+        animation: 'light-streak 6s ease-in-out infinite'
+      }} />
       <div style={{
         position: 'absolute',
-        top: '45%',
-        left: '20%',
-        zIndex: 4,
-        animation: 'sparkle 3.5s infinite 0.8s'
-      }}><div style={{ width: 7, height: 7, background: COLORS.purple, borderRadius: '50%', boxShadow: `0 0 10px ${COLORS.purple}` }} /></div>
-
-      {/* "Ask me anything!" AI chat hint bubble */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '10%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 20,
-          background: 'rgba(255,255,255,0.15)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.25)',
-          borderRadius: 20,
-          padding: '14px 24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          animation: 'pulse-bubble 4s ease-in-out infinite',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.15), 0 0 30px rgba(99,102,241,0.3)'
-        }}
-      >
-        <div style={{
-          width: 32,
-          height: 32,
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: `0 0 15px ${COLORS.indigo}`
-        }}>
-          <span style={{ fontSize: 16 }}>✨</span>
-        </div>
-        <span style={{
-          fontSize: 14,
-          fontWeight: 600,
-          color: '#FFFFFF',
-          whiteSpace: 'nowrap'
-        }}>Ask me anything about products!</span>
-      </div>
+        top: '55%',
+        left: '25%',
+        width: 150,
+        height: 3,
+        background: `linear-gradient(90deg, transparent, ${COLORS.cyan}40, transparent)`,
+        borderRadius: 2,
+        zIndex: 3,
+        animation: 'light-streak 8s ease-in-out infinite 1s'
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: '40%',
+        right: '30%',
+        width: 120,
+        height: 3,
+        background: `linear-gradient(90deg, transparent, ${COLORS.blue}40, transparent)`,
+        borderRadius: 2,
+        zIndex: 3,
+        animation: 'light-streak 5s ease-in-out infinite 2s'
+      }} />
 
       <style>{`
-        @keyframes pulse-blue {
-          0%, 100% { opacity: 0.4; filter: blur(60px) scale(1); }
-          50% { opacity: 0.6; filter: blur(65px) scale(1.05); }
-        }
-        @keyframes pulse-pink {
-          0%, 100% { opacity: 0.3; filter: blur(60px) scale(1); }
-          50% { opacity: 0.5; filter: blur(65px) scale(1.05); }
-        }
-        @keyframes pulse-purple {
-          0%, 100% { opacity: 0.35; filter: blur(50px) scale(1); }
-          50% { opacity: 0.55; filter: blur(55px) scale(1.03); }
-        }
-        @keyframes pulse-cyan {
-          0%, 100% { opacity: 0.6; filter: blur(0); }
-          50% { opacity: 0.9; filter: blur(0); }
-        }
-        @keyframes pulse-pink-eyes {
-          0%, 100% { opacity: 0.5; filter: blur(0); }
-          50% { opacity: 0.9; filter: blur(0); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
         @keyframes float-card-1 {
-          0%, 100% { transform: translate(${0}px, ${0}px); }
-          25% { transform: translate(5px, -8px); }
-          50% { transform: translate(0px, -5px); }
-          75% { transform: translate(-5px, -3px); }
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(5px, -8px) scale(1.02); }
+          50% { transform: translate(0, -5px) scale(1); }
+          75% { transform: translate(-5px, -3px) scale(1.01); }
         }
         @keyframes float-card-2 {
-          0%, 100% { transform: translate(0px, 0px); }
-          25% { transform: translate(-8px, -6px); }
-          50% { transform: translate(-3px, -10px); }
-          75% { transform: translate(5px, -4px); }
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(-8px, -6px) scale(1.02); }
+          50% { transform: translate(-3px, -10px) scale(1); }
+          75% { transform: translate(5px, -4px) scale(1.01); }
         }
         @keyframes float-card-3 {
-          0%, 100% { transform: translate(0px, 0px); }
-          25% { transform: translate(6px, -5px); }
-          50% { transform: translate(0px, -12px); }
-          75% { transform: translate(-6px, -2px); }
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(6px, -5px) scale(1.02); }
+          50% { transform: translate(0, -12px) scale(1); }
+          75% { transform: translate(-6px, -2px) scale(1.01); }
         }
-        @keyframes bounce-bag {
+        @keyframes float-card-4 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(-6px, -4px) scale(1.02); }
+          50% { transform: translate(0, -8px) scale(1); }
+          75% { transform: translate(4px, -2px) scale(1.01); }
+        }
+        @keyframes float-cart {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
+          50% { transform: translateY(-6px); }
         }
         @keyframes pulse-gift {
-          0%, 100% { opacity: 0.7; }
-          50% { opacity: 1; }
-        }
-        @keyframes pulse-badge {
-          0%, 100% { transform: scale(1); opacity: 0.9; }
-          50% { transform: scale(1.1); opacity: 1; }
+          0%, 100% { opacity: 0.8; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.05); }
         }
         @keyframes sparkle {
           0%, 100% { opacity: 0.3; transform: scale(0.8); }
-          50% { opacity: 0.8; transform: scale(1.2); }
+          50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        @keyframes pulse-tag {
+          0%, 100% { transform: scale(1); opacity: 0.9; }
+          50% { transform: scale(1.1); opacity: 1; }
         }
         @keyframes pulse-bubble {
           0%, 100% { opacity: 0.9; }
           50% { opacity: 1; }
         }
+        @keyframes light-streak {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.6; }
+        }
+        .floating-card, .floating-product {
+          transition: transform 0.1s ease;
+        }
       `}</style>
     </div>
   )
+}
+
+// Helper function for color darkening
+function darken(hex, amount) {
+  const num = parseInt(hex.slice(1), 16)
+  const r = Math.max(0, ((num >> 16) & 0xff) - Math.round(255 * amount))
+  const g = Math.max(0, ((num >> 8) & 0xff) - Math.round(255 * amount))
+  const b = Math.max(0, (num & 0xff) - Math.round(255 * amount))
+  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`
+}
+
+const COLORS = {
+  blue: '#3B82F6',
+  purple: '#8B5CF6',
+  pink: '#EC4899',
+  cyan: '#06B6D4',
+  violet: '#A855F7',
+  fuchsia: '#D946EF',
+  indigo: '#6366F1'
 }
