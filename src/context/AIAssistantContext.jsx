@@ -53,6 +53,7 @@ export function AIAssistantProvider({ children }) {
 
     try {
       let result
+
       const apiBase = import.meta.env.DEV
         ? '/api/chat'
         : 'https://ai-powered-ecommerce-marketplace.vercel.app/api/chat'
@@ -70,14 +71,23 @@ export function AIAssistantProvider({ children }) {
 
         if (response.ok) {
           const data = await response.json()
-          result = { text: data.text, products: data.products || [], intent: data.intent || null, intentConfidence: data.intentConfidence || null, entities: data.entities || null }
+          result = {
+            text: data.text,
+            products: data.products || [],
+            intent: data.intent || null,
+            intentConfidence: data.intentConfidence || null,
+            entities: data.entities || null,
+            recommendations: data.recommendations || null,
+            comparison: data.comparison || null
+          }
         } else {
           throw new Error('API not available')
         }
-      } catch {
-        const { processMessage } = await import('../services/aiService.js')
+      } catch (apiError) {
+        // Fallback to local AI service when API is unavailable
+        const { aiService } = await import('../services/aiService.js')
         const products = (await import('../data/products.json')).default
-        result = await processMessage(text, products)
+        result = await aiService.processMessage(text, products)
       }
 
       const assistantMessage = {
@@ -88,18 +98,21 @@ export function AIAssistantProvider({ children }) {
         products: result.products || [],
         intent: result.intent || null,
         intentConfidence: result.intentConfidence || null,
-        entities: result.entities || null
+        entities: result.entities || null,
+        recommendations: result.recommendations || null,
+        comparison: result.comparison || null
       }
 
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
-      const errorMessage = {
+      const assistantMessage = {
         id: (Date.now() + 1).toString(),
         sender: 'assistant',
-        text: "I'm sorry, I'm having trouble right now. Please try again in a moment.",
-        timestamp: Date.now()
+        text: "I'm sorry, I'm having trouble connecting to my services right now. Please try again in a moment, or rephrase your question.",
+        timestamp: Date.now(),
+        error: error?.message || 'Unknown error'
       }
-      setMessages(prev => [...prev, errorMessage])
+      setMessages(prev => [...prev, assistantMessage])
     } finally {
       setIsTyping(false)
     }

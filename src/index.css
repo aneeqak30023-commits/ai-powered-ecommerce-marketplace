@@ -872,7 +872,61 @@ textarea.form-input {
   }
 }
 
-/* Homepage snap sections (desktop only) */
+/* Homepage Horizontal Slide Container (desktop) */
+.homepage-horizontal-container {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 1024px) {
+  .homepage-horizontal-container {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+  }
+}
+
+/* Horizontal Slide (desktop) */
+.horizontal-slide {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+@media (min-width: 1024px) {
+  .horizontal-slide {
+    min-width: 100vw;
+    flex-shrink: 0;
+  }
+}
+
+/* Hide scrollbar for horizontal slides (desktop only) */
+@media (min-width: 1024px) {
+  .homepage-horizontal-container {
+    -ms-overflow-style: none;
+  }
+  .homepage-horizontal-container::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Horizontal navigation dots (desktop) */
+.horizontal-nav-dots {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .horizontal-nav-dots {
+    display: flex;
+  }
+}
+
+/* Homepage snap sections */
 .snap-section {
   scroll-snap-align: start;
 }

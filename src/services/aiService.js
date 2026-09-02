@@ -1,6 +1,6 @@
 import productsData from '../data/products.json'
 import categoriesData from '../data/categories.json'
-import { detectIntent } from './intentDetector.js'
+import { detectIntent, INTENTS } from './intentDetector.js'
 import { searchKnowledgeBase } from './knowledgeBase.js'
 import { searchProductsMultilingual } from './multilingualSearch.js'
 import { handleComparisonRequest } from './productComparison.js'
@@ -40,6 +40,9 @@ export const aiService = {
     }
 
     const text = message.toLowerCase().trim()
+    const intent = intentResult.intent
+    const confidence = intentResult.confidence
+    const entities = intentResult.entities
 
     if (/^(hi|hello|hey|good morning|good evening|good afternoon|how are you|what'?s up|howdy|greetings)/i.test(text)) {
       return {
@@ -50,7 +53,31 @@ export const aiService = {
       }
     }
 
-    if (/^(find|search|looking for|do you have|show me|i need|i want|looking to buy|i'?m searching)/i.test(text)) {
+    if (intent === INTENTS.PRODUCT_INFORMATION) {
+      const infoResults = searchProductsMultilingual(text, products, categories)
+      if (infoResults.length > 0) {
+        const p = infoResults[0]
+        const lines = [`**${p.name}**`, '', `Price: $${p.price.toFixed(2)}`, `Rating: ${p.rating}★ (${p.reviewCount || 0} reviews)`]
+        if (p.categoryName) lines.push(`Category: ${p.categoryName}`)
+        if (p.description) lines.push(`\n${p.description.slice(0, 200)}...`)
+        if (p.specifications) {
+          lines.push('\n**Specifications:**')
+          for (const [key, value] of Object.entries(p.specifications).slice(0, 6)) {
+            lines.push(`• ${key}: ${value}`)
+          }
+        }
+        if (p.tags && p.tags.length > 0) lines.push(`\nTags: ${p.tags.join(', ')}`)
+        return {
+          text: lines.join('\n'),
+          products: infoResults.slice(0, 3),
+          intent: intentResult.intent,
+          intentConfidence: intentResult.confidence,
+          entities: intentResult.entities
+        }
+      }
+    }
+
+    if (intent === INTENTS.PRODUCT_SEARCH || intent === INTENTS.PRODUCT_INFORMATION || (intent === INTENTS.GENERAL_INQUIRY && /^(find|search|looking for|do you have|show me|i need|i want|looking to buy|i'm searching)/i.test(text))) {
       const results = searchProductsMultilingual(text, products, categories)
       if (results.length > 0) {
         return {
@@ -69,7 +96,7 @@ export const aiService = {
       }
     }
 
-    if (/^(recommend|suggest|best|top|popular|what should i buy|what do you suggest|recommendation|advice)/i.test(text)) {
+    if (intent === INTENTS.PRODUCT_RECOMMENDATION || (intent === INTENTS.GENERAL_INQUIRY && /^(recommend|suggest|best|top|popular|what should i buy|what do you suggest|recommendation|advice)/i.test(text))) {
       const recommendationResult = generateRecommendations(message, products)
       return {
         text: recommendationResult.text,
@@ -81,7 +108,7 @@ export const aiService = {
       }
     }
 
-    if (/^(compare|difference|vs|versus|which is better|comparison)/i.test(text)) {
+    if (intent === INTENTS.PRODUCT_COMPARISON || (intent === INTENTS.GENERAL_INQUIRY && /^(compare|difference|vs|versus|which is better|comparison)/i.test(text))) {
       const comparisonResult = handleComparisonRequest(message, products)
       if (comparisonResult.comparison) {
         return {
@@ -95,6 +122,52 @@ export const aiService = {
       }
       return {
         text: comparisonResult.text,
+        intent: intentResult.intent,
+        intentConfidence: intentResult.confidence,
+        entities: intentResult.entities
+      }
+    }
+
+    if (intent === INTENTS.ORDER_STATUS) {
+      const orderId = entities.orderId
+      if (orderId) {
+        return {
+          text: `I can help track your order #${orderId}. We don't have real-time order tracking in this demo, but you can check your order status in the Orders section of your account. Is there anything else I can help you with?`,
+          intent: intentResult.intent,
+          intentConfidence: intentResult.confidence,
+          entities: intentResult.entities
+        }
+      }
+      return {
+        text: "I can help you track your order! Please provide your order number (e.g., 'Where is my order #12345?'). You can also check your order status in the Orders section of your account.",
+        intent: intentResult.intent,
+        intentConfidence: intentResult.confidence,
+        entities: intentResult.entities
+      }
+    }
+
+    if (intent === INTENTS.COMPLAINT) {
+      const complaintResults = searchProductsMultilingual(text, products, categories)
+      if (complaintResults.length > 0) {
+        return {
+          text: `I'm sorry to hear about the issue with ${complaintResults[0].name}. Please contact our support team at support@nexmart.com or call +1 (555) 123-4567 with your order number. We'll help you resolve this right away.`,
+          products: complaintResults.slice(0, 3),
+          intent: intentResult.intent,
+          intentConfidence: intentResult.confidence,
+          entities: intentResult.entities
+        }
+      }
+      return {
+        text: "I'm sorry to hear about your issue. Please contact our support team at support@nexmart.com or call +1 (555) 123-4567 with your order number and a description of the problem. We'll resolve it right away.",
+        intent: intentResult.intent,
+        intentConfidence: intentResult.confidence,
+        entities: intentResult.entities
+      }
+    }
+
+    if (intent === INTENTS.HUMAN_SUPPORT) {
+      return {
+        text: "I can connect you with a human agent. Please contact our customer support team at support@nexmart.com or call +1 (555) 123-4567. Our team is available Monday-Friday, 9am-6pm EST. Or let me know if there's something specific I can help you with first!",
         intent: intentResult.intent,
         intentConfidence: intentResult.confidence,
         entities: intentResult.entities

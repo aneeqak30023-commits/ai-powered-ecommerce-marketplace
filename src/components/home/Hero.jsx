@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 const C = {
   primary: '#6366F1',
   primaryDark: '#4F46E5',
-  secondary: '#0EA5E9',
+  secondary: '#0EA5E5',
   surface: '#FFFFFF',
   text: '#0F172A',
   textSecondary: '#475569',
@@ -53,15 +53,35 @@ export default function Hero() {
   }
 
   return (
-    <section style={{ position: 'relative', padding: 'clamp(48px, 8vw, 96px) 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)', overflow: 'hidden' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <div className="hero-grid">
+    <section style={{
+      position: 'relative',
+      width: '100%',
+      height: '100vh',
+      minHeight: '100vh',
+      maxHeight: '100vh',
+      overflow: 'hidden',
+      background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      padding: 'clamp(48px, 8vw, 96px) 24px'
+    }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1, width: '100%' }}>
+        <div className="hero-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 'clamp(32px, 8vw, 64px)',
+          alignItems: 'center',
+          width: '100%'
+        }}>
           <div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 9999, background: C.primaryLight, color: C.primary, fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
               <SparkleIcon size={14} />
               AI-Powered Shopping
             </div>
-            <h1 style={{ margin: 0, fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1, color: C.text }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
+              <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.04em', color: C.text }}>NexMart</span>
+            </div>
+            <h1 style={{ margin: 0, fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1, color: C.text }}>
               Shop Smarter with AI
             </h1>
             <p style={{ margin: '20px 0 0', maxWidth: 480, fontSize: 'clamp(15px, 2vw, 18px)', color: C.textSecondary, lineHeight: 1.7, fontWeight: 400 }}>
@@ -81,8 +101,8 @@ export default function Hero() {
                 gap: 10,
                 transition: 'box-shadow 0.2s ease, border-color 0.2s ease'
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.1), 0 0 0 3px rgba(99,102,241,0.08)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.1), 0 0 0 3px rgba(99,102,241,0.08)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)' }}
               >
                 <SearchIcon size={20} />
                 <input
@@ -159,16 +179,33 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="hero-3d-panel">
+          <div className="hero-3d-panel" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            maxHeight: 'calc(100vh - 120px)'
+          }}>
             {Hero3D ? <Hero3D /> : null}
           </div>
         </div>
       </div>
 
       <style>{`
-        .hero-3d-panel { display: none; }
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 32px;
+        }
         @media (min-width: 1024px) {
-          .hero-3d-panel { display: block; }
+          .hero-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+          }
+        }
+        .hero-3d-panel { display: none; }
+        @media (min-width: 768px) {
+          .hero-3d-panel { display: flex; }
         }
       `}</style>
     </section>

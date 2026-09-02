@@ -13,7 +13,7 @@ import { useWishlist } from '../context/WishlistContext.jsx'
 const C = {
   primary: '#6366F1',
   primaryDark: '#4F46E5',
-  secondary: '#0EA5E9',
+  secondary: '#0EA5E5',
   surface: '#FFFFFF',
   background: '#F8FAFC',
   text: '#0F172A',
@@ -48,21 +48,26 @@ export default function HomePage() {
   const { addToCart } = useCart()
   const { toggleWishlist } = useWishlist()
   const [activeSection, setActiveSection] = useState(0)
+  const containerRef = useRef(null)
   const sectionRefs = useRef([])
 
-  // Track active section on scroll (desktop only)
+  // Track active section on scroll (desktop - horizontal)
   useEffect(() => {
     const isDesktop = window.matchMedia('(min-width: 1024px)').matches
     if (!isDesktop) return
 
+    const container = containerRef.current
+    if (!container) return
+
     const updateActiveSection = () => {
-      const center = window.innerHeight / 2
+      const rect = container.getBoundingClientRect()
+      const center = rect.left + rect.width / 2
       let closest = 0
       let minDistance = Infinity
       sectionRefs.current.forEach((ref, i) => {
         if (!ref) return
-        const rect = ref.getBoundingClientRect()
-        const sectionCenter = rect.top + rect.height / 2
+        const sectionRect = ref.getBoundingClientRect()
+        const sectionCenter = sectionRect.left + sectionRect.width / 2
         const distance = Math.abs(sectionCenter - center)
         if (distance < minDistance) {
           minDistance = distance
@@ -72,17 +77,15 @@ export default function HomePage() {
       setActiveSection(closest)
     }
 
-    window.addEventListener('scroll', updateActiveSection, { passive: true })
+    container.addEventListener('scroll', updateActiveSection, { passive: true })
     updateActiveSection()
-    return () => window.removeEventListener('scroll', updateActiveSection)
+    return () => container.removeEventListener('scroll', updateActiveSection)
   }, [])
 
   const scrollToSection = (index) => {
     const ref = sectionRefs.current[index]
     if (ref) {
-      const offset = index === 0 ? 0 : 80
-      const top = ref.getBoundingClientRect().top + window.scrollY - offset
-      window.scrollTo({ top, behavior: 'smooth' })
+      ref.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' })
     }
   }
 
@@ -104,17 +107,22 @@ export default function HomePage() {
   }
 
   return (
-    <div style={{ background: C.background, minHeight: '100vh' }}>
-      {/* Navigation Dots (desktop only) */}
-      <nav className="nav-dots" style={{
+    <div className="homepage-horizontal-container" ref={containerRef}>
+      {/* Navigation Dots - bottom center for horizontal slide progress */}
+      <nav className="horizontal-nav-dots" style={{
         position: 'fixed',
-        right: 24,
-        top: '50%',
-        transform: 'translateY(-50%)',
+        bottom: 32,
+        left: '50%',
+        transform: 'translateX(-50%)',
         display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-        zIndex: 50
+        gap: 10,
+        zIndex: 50,
+        padding: '8px 16px',
+        borderRadius: 9999,
+        background: 'rgba(255, 255, 255, 0.75)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(226, 232, 240, 0.4)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.06)'
       }}>
         {SECTION_IDS.map((id, i) => {
           const isActive = activeSection === i
@@ -124,8 +132,8 @@ export default function HomePage() {
               onClick={() => scrollToSection(i)}
               title={SECTION_LABELS[i]}
               style={{
-                width: isActive ? 20 : 12,
-                height: 12,
+                width: isActive ? 24 : 10,
+                height: 10,
                 borderRadius: 9999,
                 border: 'none',
                 background: isActive
@@ -133,8 +141,7 @@ export default function HomePage() {
                   : 'rgba(99,102,241,0.3)',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                padding: 0,
-                position: 'relative'
+                padding: 0
               }}
               onMouseEnter={(e) => {
                 if (!isActive) e.currentTarget.style.background = 'rgba(99,102,241,0.6)'
@@ -147,48 +154,43 @@ export default function HomePage() {
         })}
       </nav>
 
-      {/* Hero Section */}
+      {/* All sections are horizontal slides */}
+      {/* Hero/Cover Slide */}
       <section
         ref={el => sectionRefs.current[0] = el}
         id="hero"
-        className="snap-section"
-        style={{ minHeight: '90vh' }}
+        className="horizontal-slide"
+        style={{ width: '100vw', flexShrink: 0 }}
       >
         <Hero />
       </section>
 
-      <div className="section-divider" style={{ height: 1, background: 'linear-gradient(90deg, transparent, #E2E8F0, transparent)' }} />
-
-      {/* Categories — Horizontal Carousel */}
+      {/* Categories Slide */}
       <section
         ref={el => sectionRefs.current[1] = el}
         id="categories"
-        className="snap-section"
-        style={{ padding: '80px 0' }}
+        className="horizontal-slide"
+        style={{ width: '100vw', flexShrink: 0, padding: '80px 0', background: C.background }}
       >
         <FeaturedCategories categories={categories} />
       </section>
 
-      <div className="section-divider" style={{ height: 1, background: 'linear-gradient(90deg, transparent, #E2E8F0, transparent)' }} />
-
-      {/* Featured Products — Horizontal Carousel */}
+      {/* Featured Products Slide */}
       <section
         ref={el => sectionRefs.current[2] = el}
         id="featured"
-        className="snap-section"
-        style={{ padding: '64px 0' }}
+        className="horizontal-slide"
+        style={{ width: '100vw', flexShrink: 0, padding: '64px 0' }}
       >
         <FeaturedProducts products={featuredProducts} onAddToCart={addToCart} />
       </section>
 
-      <div className="section-divider" style={{ height: 1, background: 'linear-gradient(90deg, transparent, #E2E8F0, transparent)' }} />
-
-      {/* AI Recommendations — Horizontal Carousel */}
+      {/* AI Recommendations Slide */}
       <section
         ref={el => sectionRefs.current[3] = el}
         id="ai-recommendations"
-        className="snap-section"
-        style={{ padding: '64px 0', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)' }}
+        className="horizontal-slide"
+        style={{ width: '100vw', flexShrink: 0, padding: '64px 0', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)' }}
       >
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 16 }}>
@@ -226,25 +228,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="section-divider" style={{ height: 1, background: 'linear-gradient(90deg, transparent, #E2E8F0, transparent)' }} />
-
-      {/* Recently Viewed — Horizontal Carousel */}
+      {/* Recently Viewed Slide */}
       <section
         ref={el => sectionRefs.current[4] = el}
         id="recently-viewed"
-        className="snap-section"
+        className="horizontal-slide"
+        style={{ width: '100vw', flexShrink: 0 }}
       >
         <RecentlyViewedProducts />
       </section>
 
-      <div className="section-divider" style={{ height: 1, background: 'linear-gradient(90deg, transparent, #E2E8F0, transparent)' }} />
-
-      {/* How It Works — Smooth Section */}
+      {/* How It Works Slide */}
       <section
         ref={el => sectionRefs.current[5] = el}
         id="how-it-works"
-        className="snap-section"
-        style={{ padding: '80px 0', background: C.surface }}
+        className="horizontal-slide"
+        style={{ width: '100vw', flexShrink: 0, padding: '80px 0', background: C.surface }}
       >
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
@@ -258,7 +257,7 @@ export default function HomePage() {
           <div className="step-flow" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {HOW_IT_WORKS_STEPS.map((step, idx) => (
               <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flex: 1, position: 'relative' }}>
-                <div className="step-number" style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #6366F1, #4F46E5)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, boxShadow: '0 8px 20px rgba(99, 102, 241, 0.3)', marginBottom: 20 }}>
+                <div className="step-number" style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, boxShadow: '0 8px 20px rgba(99, 102, 241, 0.3)', marginBottom: 20 }}>
                   {step.number}
                 </div>
                 <h3 style={{ fontSize: 18, fontWeight: 700, color: C.text, marginBottom: 8, letterSpacing: '-0.01em' }}>{step.title}</h3>
@@ -290,14 +289,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="section-divider" style={{ height: 1, background: 'linear-gradient(90deg, transparent, #E2E8F0, transparent)' }} />
-
-      {/* AI Features Grid */}
+      {/* AI Features Slide */}
       <section
         ref={el => sectionRefs.current[6] = el}
         id="ai-features"
-        className="snap-section"
-        style={{ padding: '80px 0', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)' }}
+        className="horizontal-slide"
+        style={{ width: '100vw', flexShrink: 0, padding: '80px 0', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)' }}
       >
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>

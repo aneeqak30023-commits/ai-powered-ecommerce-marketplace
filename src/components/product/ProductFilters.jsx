@@ -26,7 +26,7 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' }
 ]
 
-export default function ProductFilters({ categories = [], onFilterChange, initialCategory }) {
+export default function ProductFilters({ categories = [], subcategories = [], selectedSubcategory, onSubcategoryChange, onFilterChange, initialCategory }) {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'all')
   const [priceRange, setPriceRange] = useState('all')
   const [sortBy, setSortBy] = useState('featured')
@@ -34,9 +34,9 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
 
   useEffect(() => {
     if (onFilterChange) {
-      onFilterChange({ category: selectedCategory, priceRange, sortBy })
+      onFilterChange({ category: selectedCategory, subcategory: selectedSubcategory, priceRange, sortBy })
     }
-  }, [selectedCategory, priceRange, sortBy, onFilterChange])
+  }, [selectedCategory, selectedSubcategory, priceRange, sortBy, onFilterChange])
 
   const filtersActive =
     selectedCategory !== 'all' || priceRange !== 'all' || sortBy !== 'featured'
@@ -50,7 +50,11 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
   const activeFilters = []
   if (selectedCategory !== 'all') {
     const cat = categories.find(c => c.id === selectedCategory)
-    activeFilters.push({ key: 'category', label: cat?.name || selectedCategory, clear: () => setSelectedCategory('all') })
+    activeFilters.push({ key: 'category', label: cat?.name || selectedCategory, clear: () => { setSelectedCategory('all'); onSubcategoryChange('') } })
+  }
+  if (selectedSubcategory) {
+    const sub = subcategories.find(s => s.id === selectedSubcategory)
+    activeFilters.push({ key: 'subcategory', label: sub?.name || selectedSubcategory, clear: () => onSubcategoryChange('') })
   }
   if (priceRange !== 'all') {
     const range = PRICE_RANGES.find(p => p.value === priceRange)
@@ -235,6 +239,54 @@ export default function ProductFilters({ categories = [], onFilterChange, initia
                 ))}
               </div>
             </div>
+
+            {/* Subcategory Filter */}
+            {selectedCategory !== 'all' && subcategories.length > 0 && (
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: C.textSecondary, marginBottom: 10 }}>
+                  Subcategory
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => onSubcategoryChange('')}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: 9999,
+                      border: `1px solid ${!selectedSubcategory ? C.primary : C.border}`,
+                      background: !selectedSubcategory ? C.primary : 'transparent',
+                      color: !selectedSubcategory ? 'white' : C.text,
+                      fontSize: 13,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    All
+                  </button>
+                  {subcategories.map((sub) => (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() => onSubcategoryChange(sub.id)}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: 9999,
+                        border: `1px solid ${selectedSubcategory === sub.id ? C.primary : C.border}`,
+                        background: selectedSubcategory === sub.id ? C.primary : 'transparent',
+                        color: selectedSubcategory === sub.id ? 'white' : C.text,
+                        fontSize: 13,
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {sub.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Price Filter */}
             <div>

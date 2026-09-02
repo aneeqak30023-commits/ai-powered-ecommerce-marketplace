@@ -21,9 +21,11 @@ export default function ProductsPage() {
   const [searchParams] = useSearchParams()
   const searchFromUrl = searchParams.get('search') || ''
   const categoryFromUrl = searchParams.get('category') || ''
+  const subcategoryFromUrl = searchParams.get('subcategory') || ''
 
   const [searchQuery, setSearchQuery] = useState(searchFromUrl)
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
+  const [selectedSubcategory, setSelectedSubcategory] = useState(subcategoryFromUrl)
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [sortBy, setSortBy] = useState('id')
   const { addToCart } = useCart()
@@ -48,6 +50,10 @@ export default function ProductsPage() {
       result = result.filter(p => p.categoryId === selectedCategory)
     }
 
+    if (selectedSubcategory) {
+      result = result.filter(p => p.subcategory === selectedSubcategory)
+    }
+
     result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1])
 
     result.sort((a, b) => {
@@ -65,12 +71,16 @@ export default function ProductsPage() {
     })
 
     return result
-  }, [searchQuery, selectedCategory, priceRange, sortBy])
+  }, [searchQuery, selectedCategory, selectedSubcategory, priceRange, sortBy])
 
   const handleFilterChange = (filters) => {
     if (filters.search !== undefined) setSearchQuery(filters.search)
     if (filters.category !== undefined) {
       setSelectedCategory(filters.category === 'all' ? '' : filters.category)
+      setSelectedSubcategory('')
+    }
+    if (filters.subcategory !== undefined) {
+      setSelectedSubcategory(filters.subcategory === 'all' ? '' : filters.subcategory)
     }
     if (filters.priceRange !== undefined) {
       if (filters.priceRange === 'all') {
@@ -87,13 +97,24 @@ export default function ProductsPage() {
     if (filters.sortBy !== undefined) setSortBy(filters.sortBy)
   }
 
+  const selectedCategoryObj = allCategories.find(c => c.id === selectedCategory)
+  const selectedSubcategoryObj = selectedCategoryObj?.subcategories?.find(s => s.id === selectedSubcategory)
+
+  const pageTitle = searchQuery
+    ? `Results for "${searchQuery}"`
+    : selectedSubcategoryObj
+      ? selectedSubcategoryObj.name
+      : selectedCategoryObj
+        ? selectedCategoryObj.name
+        : 'All Products'
+
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
       {/* Page Header */}
       <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}` }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px 24px' }}>
           <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
-            {searchQuery ? `Results for "${searchQuery}"` : 'All Products'}
+            {pageTitle}
           </h1>
           <p style={{ fontSize: 14, color: C.textSecondary, margin: 0 }}>
             {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
@@ -107,6 +128,9 @@ export default function ProductsPage() {
           <aside style={{ width: 280, flexShrink: 0 }}>
             <ProductFilters
               categories={allCategories}
+              subcategories={selectedCategoryObj?.subcategories || []}
+              selectedSubcategory={selectedSubcategory}
+              onSubcategoryChange={setSelectedSubcategory}
               onFilterChange={handleFilterChange}
               initialCategory={categoryFromUrl}
             />

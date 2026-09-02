@@ -1,10 +1,10 @@
-import { searchProductsMultilingual, normalizeToEnglish } from './multilingualSearch.js'
+import { searchProductsMultilingual, normalizeToEnglish, PRODUCT_TYPE_MAP } from './multilingualSearch.js'
 
 const PRIORITY_KEYWORDS = {
-  price: ['price', 'cost', 'cheap', 'expensive', 'budget', 'affordable', 'قیمت', 'سستا', 'مہنگا'],
-  rating: ['rating', 'rated', 'stars', 'score', 'best', 'top', 'popular', 'ریٹنگ', 'ستارہ'],
-  battery: ['battery', 'battery life', '续航', 'پاور', 'چارج'],
-  features: ['features', 'specs', 'specifications', 'functions', 'فیچرز', 'خصوصیات'],
+  price: ['price', 'cost', 'cheap', 'expensive', 'budget', 'affordable', 'قیمت', 'سستا', 'مہنگا', 'pricey', 'costly', 'economical'],
+  rating: ['rating', 'rated', 'stars', 'score', 'best', 'top', 'popular', 'ریٹنگ', 'ستارہ', 'highest', 'recommended'],
+  battery: ['battery', 'battery life', '续航', 'پاور', 'چارج', 'longevity'],
+  features: ['features', 'specs', 'specifications', 'functions', 'فیچرز', 'خصوصیات', 'capabilities'],
   value: ['value', 'worth', '性价比', 'قیمت کا']
 }
 
@@ -25,14 +25,81 @@ function detectPriority(text) {
 function extractProductNamesFromMessage(text) {
   const normalized = normalizeToEnglish(text)
   const lower = normalized.toLowerCase()
-  
-  // Remove comparison keywords
+
+  // Remove comparison keywords and filler words
   const cleaned = lower
     .replace(/compare|comparison|vs|versus|difference between|which is better|better than|pros and cons|compare the|compare a|compare an/gi, ' ')
-    .replace(/\b(i want|show me|find|search|looking for|do you have|i need|looking to buy|i'm searching|where can i find|looking for a|looking for an|the|a|an|some|me|to|and|or|with|under|over|above|below|less than|more than|between|from)\b/gi, ' ')
-  
+    .replace(/\b(i want|show me|find|search|looking for|do you have|i need|looking to buy|i'm searching|where can i find|looking for a|looking for an|the|a|an|some|me|to|and|or|with|under|over|above|below|less than|more than|between|from|please|help|want|need|which|what|tell me|give me)\b/gi, ' ')
+
   const words = cleaned.split(/[\s,]+/).filter(w => w.length > 2)
   return [...new Set(words)]
+}
+
+// Extract product names explicitly mentioned in comparison phrases like "X vs Y" or "X and Y"
+function extractExplicitProductNames(text, products) {
+  const normalized = normalizeToEnglish(text).toLowerCase()
+  const productNames = products.map(p => p.name.toLowerCase())
+  const matched = []
+
+  // Direct product name substring match
+  for (const productName of productNames) {
+    if (normalized.includes(productName)) {
+      const product = products.find(p => p.name.toLowerCase() === productName)
+      if (product && !matched.includes(product)) {
+        matched.push(product)
+      }
+    }
+  }
+
+  if (matched.length >= 2) {
+    return matched
+  }
+
+  // Try matching individual significant words against product names
+  const words = normalized.replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 2)
+  const uniqueWords = [...new Set(words)]
+
+  for (const word of uniqueWords) {
+    for (const product of products) {
+      if (matched.includes(product)) continue
+      // Match if the word appears at the start of the product name (brand/model)
+      const productName = product.name.toLowerCase()
+      if (productName.startsWith(word) || productName.includes(word)) {
+        // Only match if it's a substantial part of the name
+        if (word.length >= 3 && (productName.startsWith(word) || productName.split(' ').includes(word))) {
+          matched.push(product)
+          break // One product per significant word to avoid overmatching
+        }
+      }
+    }
+    if (matched.length >= 2) break
+  }
+
+  return matched
+}
+
+// Extract product types from the message and find matching products
+function extractProductTypesFromMessage(text) {
+  const normalized = normalizeToEnglish(text)
+  const lower = normalized.toLowerCase()
+  const words = lower.replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 0)
+
+  const matchedTypes = []
+
+  // Check product types from longest name to shortest to avoid substring conflicts
+  const productTypeKeys = Object.keys(PRODUCT_TYPE_MAP).sort((a, b) => b.length - a.length)
+
+  for (const key of productTypeKeys) {
+    const values = PRODUCT_TYPE_MAP[key]
+    const allNames = [values.en, values.ur, ...(values.roman || [])].filter(Boolean).join(' ')
+    const variantWords = allNames.replace(/[^\w\s]/g, '').split(/\s+/).filter(Boolean)
+
+    if (variantWords.some(vw => words.includes(vw))) {
+      matchedTypes.push(key)
+    }
+  }
+
+  return [...new Set(matchedTypes)]
 }
 
 export function identifyComparisonProducts(message, products) {
@@ -40,16 +107,16 @@ export function identifyComparisonProducts(message, products) {
     return []
   }
 
-  const lower = message.toLowerCase()
-  
-  // Exact product-name matching first
-  const exactMatches = products.filter(p => lower.includes(p.name.toLowerCase()))
+  // Step 1: Try exact product name matching first
+  const exactMatches = extractExplicitProductNames(message, products)
   if (exactMatches.length >= 2) {
     return exactMatches.slice(0, 2)
   }
-  
-  // If only one exact match, pair it with the best multilingual candidate
+
+  // Step 2: Use multilingual search for initial candidates
   const candidates = searchProductsMultilingual(message, products, [])
+
+  // If we already have one exact match, pair it with a candidate
   if (exactMatches.length === 1 && candidates.length >= 1) {
     const remaining = candidates.filter(p => p.id !== exactMatches[0].id)
     if (remaining.length > 0) {
@@ -57,20 +124,75 @@ export function identifyComparisonProducts(message, products) {
     }
   }
 
+  // Step 3: If we have at least 2 candidates from search, use them
   if (candidates.length >= 2) {
-    return candidates.slice(0, 2)
+    // Try to find distinct products if message mentions specific types
+    const mentionedTypes = extractProductTypesFromMessage(message)
+
+    if (mentionedTypes.length === 1 && exactMatches.length === 0) {
+      // Single product type mentioned — find best 2 from that type
+      const typeVariants = PRODUCT_TYPE_MAP[mentionedTypes[0]] || { en: mentionedTypes[0] }
+      const searchTerms = [mentionedTypes[0], typeVariants.en, typeVariants.ur, ...(typeVariants.roman || [])].filter(Boolean).map(t => t.toLowerCase())
+      const typeProducts = products.filter(p => {
+        const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+        return searchTerms.some(term => searchText.includes(term))
+      }).sort((a, b) => b.rating - a.rating)
+
+      if (typeProducts.length >= 2) {
+        return [typeProducts[0], typeProducts[1]]
+      }
+    }
+
+    if (mentionedTypes.length >= 2) {
+      // Multiple types mentioned — find best from each type
+      const matchedByType = []
+      for (const type of mentionedTypes) {
+        const typeVariants = PRODUCT_TYPE_MAP[type] || { en: type }
+        const searchTerms = [type, typeVariants.en, typeVariants.ur, ...(typeVariants.roman || [])].filter(Boolean).map(t => t.toLowerCase())
+        const typeProducts = products.filter(p => {
+          const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+          return searchTerms.some(term => searchText.includes(term))
+        }).sort((a, b) => b.rating - a.rating)
+
+        if (typeProducts.length > 0) {
+          matchedByType.push(typeProducts[0])
+        }
+
+        if (matchedByType.length >= 2) {
+          return matchedByType.slice(0, 2)
+        }
+      }
+      if (matchedByType.length >= 2) {
+        return matchedByType.slice(0, 2)
+      }
+    }
+
+    // Only use search candidates if the query mentioned specific product types
+    // or had at least one exact match
+    if (exactMatches.length === 1 || mentionedTypes.length > 0) {
+      return candidates.slice(0, 2)
+    }
+
+    // Don't return generic search results for queries without specific product names
+    return []
   }
 
+  // Step 4: Fallback to name-word extraction - only match substantial product name words
   const nameWords = extractProductNamesFromMessage(message)
   const matched = []
-  
-  for (const word of nameWords) {
+
+  // Filter out generic words that shouldn't be used for product matching
+  const genericWords = new Set(['product', 'item', 'unknown', 'compare', 'comparison', 'vs', 'versus'])
+  const significantWords = nameWords.filter(word => word.length >= 3 && !genericWords.has(word.toLowerCase()))
+
+  for (const word of significantWords) {
     for (const product of products) {
       if (matched.includes(product)) continue
-      const searchText = `${product.name} ${product.description || ''} ${(product.tags || []).join(' ')}`.toLowerCase()
-      if (searchText.includes(word)) {
+      const productName = product.name.toLowerCase()
+      // Match only if the word appears in the product name
+      if (productName.includes(word)) {
         matched.push(product)
-        if (matched.length >= 2) break
+        break // One product per significant word
       }
     }
     if (matched.length >= 2) break
@@ -82,7 +204,7 @@ export function identifyComparisonProducts(message, products) {
 export function classifyProduct(product) {
   const name = (product.name || '').toLowerCase()
   const category = product.categoryId || product.categoryName || 'unknown'
-  
+
   let productType = 'general'
   const typeHints = [
     ['watch', ['watch', 'wearable', 'smartwatch', 'band']],
@@ -256,11 +378,11 @@ export function generateComparison(productA, productB, priority = ['rating', 'pr
 
   // Basic info
   lines.push(`**${productA.name}** (${classA.category})`)
-  lines.push(`Price: $${productA.price.toFixed(2)} | Rating: ${productA.rating}★ (${productA.reviewCount} reviews)`)
+  lines.push(`Price: $${productA.price.toFixed(2)} | Rating: ${productA.rating}★ (${productA.reviewCount || 0} reviews)`)
   lines.push('')
 
   lines.push(`**${productB.name}** (${classB.category})`)
-  lines.push(`Price: $${productB.price.toFixed(2)} | Rating: ${productB.rating}★ (${productB.reviewCount} reviews)`)
+  lines.push(`Price: $${productB.price.toFixed(2)} | Rating: ${productB.rating}★ (${productB.reviewCount || 0} reviews)`)
   lines.push('')
 
   // Common specifications
