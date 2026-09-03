@@ -19,10 +19,14 @@ function darken(hex, amount) {
 }
 
 // 3D Headphone component
-function Headphone3D({ parallaxX, parallaxY, delay = 0 }) {
+function Headphone3D({ parallaxX, parallaxY, delay = 0, size = {} }) {
+  const w = size.w || 56
+  const h = size.h || 56
+  const cupW = size.cupW || 24
+  const cupH = size.cupH || 44
   return (
     <div
-      className="floating-product"
+      className="floating-product prod-headphone"
       style={{
         position: 'absolute',
         top: '30%',
@@ -34,8 +38,8 @@ function Headphone3D({ parallaxX, parallaxY, delay = 0 }) {
       }}
     >
       <div style={{
-        width: 56,
-        height: 56,
+        width: w,
+        height: h,
         borderRadius: '50% 50% 50% 50%',
         background: 'linear-gradient(135deg, #CBD5E1 0%, #94A3B8 50%, #CBD5E1 100%)',
         border: '1px solid rgba(255,255,255,0.5)',
@@ -48,8 +52,8 @@ function Headphone3D({ parallaxX, parallaxY, delay = 0 }) {
       }}>
         {/* Left ear cup */}
         <div style={{
-          width: 24,
-          height: 44,
+          width: cupW,
+          height: cupH,
           borderRadius: '50% 0 0 50%',
           background: 'radial-gradient(circle, #60A5FA 0%, #3B82F6 70%, #1D4ED8 100%)',
           border: '1px solid rgba(255,255,255,0.3)',
@@ -57,8 +61,8 @@ function Headphone3D({ parallaxX, parallaxY, delay = 0 }) {
         }} />
         {/* Right ear cup */}
         <div style={{
-          width: 24,
-          height: 44,
+          width: cupW,
+          height: cupH,
           borderRadius: '0 50% 50% 0',
           background: 'radial-gradient(circle, #60A5FA 0%, #3B82F6 70%, #1D4ED8 100%)',
           border: '1px solid rgba(255,255,255,0.3)',
@@ -81,10 +85,12 @@ function Headphone3D({ parallaxX, parallaxY, delay = 0 }) {
 }
 
 // 3D Sneaker component
-function Sneaker3D({ parallaxX, parallaxY, delay = 0 }) {
+function Sneaker3D({ parallaxX, parallaxY, delay = 0, size = {} }) {
+  const w = size.w || 48
+  const h = size.h || 24
   return (
     <div
-      className="floating-product"
+      className="floating-product prod-sneaker"
       style={{
         position: 'absolute',
         top: '65%',
@@ -96,8 +102,8 @@ function Sneaker3D({ parallaxX, parallaxY, delay = 0 }) {
       }}
     >
       <div style={{
-        width: 48,
-        height: 24,
+        width: w,
+        height: h,
         borderRadius: '50% 50% 40% 40% / 40% 40% 60% 60%',
         background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)',
         border: '1px solid rgba(255,255,255,0.4)',
@@ -117,10 +123,14 @@ function Sneaker3D({ parallaxX, parallaxY, delay = 0 }) {
 }
 
 // 3D Laptop component
-function Laptop3D({ parallaxX, parallaxY, delay = 0 }) {
+function Laptop3D({ parallaxX, parallaxY, delay = 0, size = {} }) {
+  const w = size.w || 52
+  const h = size.h || 36
+  const screenW = size.screenW || 12
+  const screenH = size.screenH || 12
   return (
     <div
-      className="floating-product"
+      className="floating-product prod-laptop"
       style={{
         position: 'absolute',
         top: '45%',
@@ -132,8 +142,8 @@ function Laptop3D({ parallaxX, parallaxY, delay = 0 }) {
       }}
     >
       <div style={{
-        width: 52,
-        height: 36,
+        width: w,
+        height: h,
         borderRadius: '4px 4px 0 0',
         background: 'linear-gradient(135deg, #CBD5E1 0%, #94A3B8 100%)',
         border: '2px solid #64748B',
@@ -152,8 +162,8 @@ function Laptop3D({ parallaxX, parallaxY, delay = 0 }) {
           overflow: 'hidden'
         }}>
           <div style={{
-            width: 12,
-            height: 12,
+            width: screenW,
+            height: screenH,
             borderRadius: '50%',
             background: COLORS.blue,
             boxShadow: `0 0 8px ${COLORS.blue}`
@@ -162,8 +172,8 @@ function Laptop3D({ parallaxX, parallaxY, delay = 0 }) {
       </div>
       {/* Laptop base */}
       <div style={{
-        width: 44,
-        height: 8,
+        width: size.baseW || 44,
+        height: size.baseH || 8,
         background: 'linear-gradient(135deg, #94A3B8 0%, #64748B 100%)',
         borderRadius: '0 0 4px 4px',
         margin: '0 auto',
@@ -174,10 +184,15 @@ function Laptop3D({ parallaxX, parallaxY, delay = 0 }) {
 }
 
 // 3D Smartphone component
-function Smartphone3D({ parallaxX, parallaxY, delay = 0 }) {
+function Smartphone3D({ parallaxX, parallaxY, delay = 0, size = {} }) {
+  const w = size.w || 40
+  const h = size.h || 28
+  const screenW = size.screenW || 34
+  const screenH = size.screenH || 20
+  const screenContentH = size.screenContentH || 16
   return (
     <div
-      className="floating-product"
+      className="floating-product prod-smartphone"
       style={{
         position: 'absolute',
         top: '35%',
@@ -189,8 +204,8 @@ function Smartphone3D({ parallaxX, parallaxY, delay = 0 }) {
       }}
     >
       <div style={{
-        width: 40,
-        height: 28,
+        width: w,
+        height: h,
         borderRadius: 5,
         background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)',
         border: '1px solid rgba(255,255,255,0.2)',
@@ -202,8 +217,8 @@ function Smartphone3D({ parallaxX, parallaxY, delay = 0 }) {
       }}>
         {/* Screen */}
         <div style={{
-          width: 34,
-          height: 20,
+          width: screenW,
+          height: screenH,
           borderRadius: 3,
           background: '#0EA5E9',
           marginTop: 4,
@@ -215,7 +230,7 @@ function Smartphone3D({ parallaxX, parallaxY, delay = 0 }) {
             top: 2,
             left: 2,
             right: 2,
-            height: 16,
+            height: screenContentH,
             background: '#0284C7',
             borderRadius: 2
           }} />
@@ -226,10 +241,12 @@ function Smartphone3D({ parallaxX, parallaxY, delay = 0 }) {
 }
 
 // 3D Smartwatch component
-function Smartwatch3D({ parallaxX, parallaxY, delay = 0 }) {
+function Smartwatch3D({ parallaxX, parallaxY, delay = 0, size = {} }) {
+  const w = size.w || 36
+  const h = size.h || 26
   return (
     <div
-      className="floating-product"
+      className="floating-product prod-smartwatch"
       style={{
         position: 'absolute',
         top: '65%',
@@ -241,8 +258,8 @@ function Smartwatch3D({ parallaxX, parallaxY, delay = 0 }) {
       }}
     >
       <div style={{
-        width: 36,
-        height: 26,
+        width: w,
+        height: h,
         borderRadius: 6,
         background: 'linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 50%, #F1F5F9 100%)',
         border: '1px solid rgba(255,255,255,0.5)',
@@ -273,10 +290,16 @@ function Smartwatch3D({ parallaxX, parallaxY, delay = 0 }) {
 }
 
 // 3D Shopping Bag component
-function ShoppingBag3D({ color, parallaxX, parallaxY, pos, delay = 0, rot = 0 }) {
+function ShoppingBag3D({ color, parallaxX, parallaxY, pos, delay = 0, rot = 0, size = {}, bagClass = '' }) {
+  const className = `floating-product ${bagClass}`
+  const w = size.w || 32
+  const h = size.h || 36
+  const handleW = size.handleW || 26
+  const handleH = size.handleH || 10
+  const handleThickness = size.handleThickness || 6
   return (
     <div
-      className="floating-product"
+      className={className}
       style={{
         position: 'absolute',
         ...pos,
@@ -287,8 +310,8 @@ function ShoppingBag3D({ color, parallaxX, parallaxY, pos, delay = 0, rot = 0 })
       }}
     >
       <div style={{
-        width: 32,
-        height: 36,
+        width: w,
+        height: h,
         background: color,
         borderRadius: '6px 6px 0 0',
         border: '1px solid rgba(0,0,0,0.15)',
@@ -301,22 +324,22 @@ function ShoppingBag3D({ color, parallaxX, parallaxY, pos, delay = 0, rot = 0 })
           top: 0,
           left: '50%',
           transform: 'translateX(-50%)',
-          width: 26,
-          height: 10,
+          width: handleW,
+          height: handleH,
           display: 'flex',
           justifyContent: 'space-between'
         }}>
           <div style={{
-            width: 6,
-            height: 10,
+            width: handleThickness,
+            height: handleH,
             border: `2px solid ${darken(color, 0.1)}`,
             borderTop: 'none',
             borderRight: 'none',
             borderRadius: '0 4px 4px 0'
           }} />
           <div style={{
-            width: 6,
-            height: 10,
+            width: handleThickness,
+            height: handleH,
             border: `2px solid ${darken(color, 0.1)}`,
             borderTop: 'none',
             borderLeft: 'none',
@@ -354,76 +377,83 @@ export default function Hero3D() {
   return (
     <div
       ref={containerRef}
+      className="hero-3d-scene"
       style={{
         position: 'relative',
         width: '100%',
         height: '100%',
-        minHeight: 500,
+        minHeight: 320,
+        maxHeight: '70vh',
         perspective: 1200,
-        overflow: 'visible'
+        overflow: 'visible',
+        maxWidth: '100%',
+        boxSizing: 'border-box'
       }}
     >
-      {/* Scene container - right side content */}
+      {/* Scene container - centered */}
       <div style={{
         position: 'absolute',
         inset: 0,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
-        pointerEvents: 'none'
+        justifyContent: 'center',
+        pointerEvents: 'none',
+        width: '100%',
+        height: '100%',
+        boxSizing: 'border-box'
       }}>
         {/* Glossy futuristic platform with cyan ring */}
-        <div style={{
+        <div className="platform-wrap" style={{
           position: 'relative',
-          width: 340,
-          height: 140,
-          bottom: -30,
+          width: 'var(--platform-size, 340px)',
+          height: 'var(--platform-height, 140px)',
+          bottom: 'var(--platform-bottom, -30px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           transform: `translate(${parallaxX * 0.2}px, ${parallaxY * 0.2}px)`
         }}>
           {/* Cyan glowing ring */}
-          <div style={{
+          <div className="ring" style={{
             position: 'absolute',
-            width: 260,
-            height: 260,
+            width: 'var(--ring-size, 260px)',
+            height: 'var(--ring-size, 260px)',
             borderRadius: '50%',
             border: `3px solid ${COLORS.cyan}`,
             boxShadow: `0 0 25px ${COLORS.cyan}, 0 0 50px ${COLORS.cyan}40`,
-            top: -60,
+            top: 'var(--ring-top, -60px)',
             animation: 'rotateRing 12s linear infinite'
           }} />
 
           {/* Platform surface */}
-          <div style={{
+          <div className="platform-surface" style={{
             position: 'absolute',
-            width: 280,
-            height: 12,
+            width: 'var(--surface-width, 280px)',
+            height: 'var(--surface-height, 12px)',
             borderRadius: '50%',
             background: 'linear-gradient(90deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.4) 100%)',
-            bottom: -8,
+            bottom: 'var(--surface-bottom, -8px)',
             boxShadow: `0 0 30px ${COLORS.cyan}40`
           }} />
 
           {/* Platform reflection */}
-          <div style={{
+          <div className="platform-reflection" style={{
             position: 'absolute',
-            width: 260,
-            height: 24,
+            width: 'var(--reflection-width, 260px)',
+            height: 'var(--reflection-height, 24px)',
             borderRadius: '50%',
             background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%)',
-            bottom: -18,
+            bottom: 'var(--reflection-bottom, -18px)',
             filter: 'blur(2px)',
             opacity: 0.6
           }} />
         </div>
 
         {/* Shopping cart */}
-        <div style={{
+        <div className="cart-wrap" style={{
           position: 'relative',
-          width: 220,
-          height: 300,
+          width: 'var(--cart-size, 220px)',
+          height: 'var(--cart-height, 300px)',
           transform: `translate(${parallaxX * 0.3}px, ${parallaxY * 0.3}px)`,
           zIndex: 5,
           animation: 'float-cart 5s ease-in-out infinite'
@@ -434,8 +464,8 @@ export default function Hero3D() {
             bottom: 0,
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 200,
-            height: 200,
+            width: 'var(--basket-width, 200px)',
+            height: 'var(--basket-size, 200px)',
             borderRadius: '0 0 12px 12px',
             background: 'linear-gradient(145deg, #CBD5E1 0%, #94A3B8 50%, #CBD5E1 100%)',
             border: '2px solid #94A3B8',
@@ -451,54 +481,54 @@ export default function Hero3D() {
             <div style={{ position: 'absolute', inset: 8, border: '1px dashed rgba(148,165,177,0.5)', borderRadius: 8 }} />
 
             {/* Brown NexMart box */}
-            <div style={{
-              width: 70,
-              height: 60,
-              background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
-              borderRadius: 6,
-              marginBottom: 6,
-              boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 8,
-              fontWeight: 700,
-              color: '#fff'
-            }}>NEXMART</div>
+            <div className="cart-box" style={{
+               width: 'var(--box-width, 70px)',
+               height: 'var(--box-height, 60px)',
+               background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
+               borderRadius: 6,
+               marginBottom: 6,
+               boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               fontSize: 'var(--box-font, 8px)',
+               fontWeight: 700,
+               color: '#fff'
+             }}>NEXMART</div>
 
-            {/* Colorful shopping bags in cart */}
-            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <div style={{ width: 24, height: 20, background: '#F59E0B', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
-              <div style={{ width: 24, height: 20, background: '#3B82F6', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
-              <div style={{ width: 24, height: 20, background: '#EAB308', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
-              <div style={{ width: 24, height: 20, background: '#EC4899', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+             {/* Colorful shopping bags in cart */}
+            <div className="cart-bags" style={{ display: 'flex', gap: 'var(--bag-gap, 4px)', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div style={{ width: 'var(--bag-size, 24px)', height: 'var(--bag-height, 20px)', background: '#F59E0B', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+              <div style={{ width: 'var(--bag-size, 24px)', height: 'var(--bag-height, 20px)', background: '#3B82F6', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+              <div style={{ width: 'var(--bag-size, 24px)', height: 'var(--bag-height, 20px)', background: '#EAB308', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+              <div style={{ width: 'var(--bag-size, 24px)', height: 'var(--bag-height, 20px)', background: '#EC4899', borderRadius: '4px 4px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
             </div>
           </div>
 
           {/* Cart handles */}
-          <div style={{
+          <div className="cart-handles" style={{
             position: 'absolute',
-            top: 10,
+            top: 'var(--handles-top, 10px)',
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 200,
+            width: 'var(--handles-width, 200px)',
             height: 16,
             display: 'flex',
             justifyContent: 'space-between',
             padding: '0 8px',
             boxSizing: 'border-box'
           }}>
-            <div style={{ width: 8, height: 16, background: '#CBD5E1', borderRadius: 2, boxShadow: '0 0 5px rgba(0,0,0,0.3)' }} />
-            <div style={{ width: 8, height: 16, background: '#CBD5E1', borderRadius: 2, boxShadow: '0 0 5px rgba(0,0,0,0.3)' }} />
+            <div style={{ width: 'var(--handle-width, 8px)', height: 16, background: '#CBD5E1', borderRadius: 2, boxShadow: '0 0 5px rgba(0,0,0,0.3)' }} />
+            <div style={{ width: 'var(--handle-width, 8px)', height: 16, background: '#CBD5E1', borderRadius: 2, boxShadow: '0 0 5px rgba(0,0,0,0.3)' }} />
           </div>
 
           {/* Cart wheel */}
-          <div style={{
+          <div className="cart-wheel" style={{
             position: 'absolute',
-            top: 200,
+            top: 'var(--wheel-top, 200px)',
             left: '50%',
             transform: 'translateX(-50%) rotate(15deg)',
-            width: 180,
+            width: 'var(--wheel-width, 180px)',
             height: 8,
             border: '2px solid #94A3B8',
             borderRadius: '50% 50% 0 0',
@@ -518,12 +548,12 @@ export default function Hero3D() {
         </div>
 
         {/* AI Robot - sitting/standing behind cart, pointing left */}
-        <div style={{
+        <div className="robot-wrap" style={{
           position: 'relative',
-          width: 200,
-          height: 320,
-          left: 60,
-          top: -30,
+          width: 'var(--robot-width, 200px)',
+          height: 'var(--robot-height, 320px)',
+          left: 'var(--robot-left, 60px)',
+          top: 'var(--robot-top, -30px)',
           transform: `translate(${parallaxX * 0.4}px, ${parallaxY * 0.4}px)`,
           zIndex: 10
         }}>
@@ -708,40 +738,40 @@ export default function Hero3D() {
         <Smartwatch3D parallaxX={parallaxX} parallaxY={parallaxY} delay={0.7} />
 
         {/* Floating shopping bags around the scene */}
-        <ShoppingBag3D color="#F59E0B" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '20%', left: '30%' }} delay={0.2} rot={-10} />
-        <ShoppingBag3D color="#EC4899" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '50%', left: '40%' }} delay={0.4} rot={5} />
-        <ShoppingBag3D color="#3B82F6" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '60%', right: '20%' }} delay={0.6} rot={-5} />
-        <ShoppingBag3D color="#A855F7" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '35%', right: '15%' }} delay={0.8} rot={15} />
+        <ShoppingBag3D color="#F59E0B" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '20%', left: '30%' }} delay={0.2} rot={-10} bagClass="bag-1" />
+        <ShoppingBag3D color="#EC4899" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '50%', left: '40%' }} delay={0.4} rot={5} bagClass="bag-2" />
+        <ShoppingBag3D color="#3B82F6" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '60%', right: '20%' }} delay={0.6} rot={-5} bagClass="bag-3" />
+        <ShoppingBag3D color="#A855F7" parallaxX={parallaxX} parallaxY={parallaxY} pos={{ top: '35%', right: '15%' }} delay={0.8} rot={15} bagClass="bag-4" />
 
         {/* Soft neon light streaks for colorful lighting */}
-        <div style={{
+        <div className="light-streak" style={{
           position: 'absolute',
           top: '25%',
           left: '20%',
-          width: 200,
-          height: 3,
+          width: 'var(--streak-1-w, 200px)',
+          height: 'var(--streak-h, 3px)',
           background: `linear-gradient(90deg, transparent, ${COLORS.pink}40, transparent)`,
           borderRadius: 2,
           zIndex: 3,
           animation: 'light-streak 6s ease-in-out infinite'
         }} />
-        <div style={{
+        <div className="light-streak" style={{
           position: 'absolute',
           top: '55%',
           left: '25%',
-          width: 150,
-          height: 3,
+          width: 'var(--streak-2-w, 150px)',
+          height: 'var(--streak-h, 3px)',
           background: `linear-gradient(90deg, transparent, ${COLORS.cyan}40, transparent)`,
           borderRadius: 2,
           zIndex: 3,
           animation: 'light-streak 8s ease-in-out infinite 1s'
         }} />
-        <div style={{
+        <div className="light-streak" style={{
           position: 'absolute',
           top: '40%',
           right: '30%',
-          width: 120,
-          height: 3,
+          width: 'var(--streak-3-w, 120px)',
+          height: 'var(--streak-h, 3px)',
           background: `linear-gradient(90deg, transparent, ${COLORS.blue}40, transparent)`,
           borderRadius: 2,
           zIndex: 3,
@@ -749,36 +779,36 @@ export default function Hero3D() {
         }} />
 
         {/* Floating sparkle particles */}
-        <div style={{
+        <div className="sparkle" style={{
           position: 'absolute',
           top: '15%',
           left: '40%',
-          width: 12,
-          height: 12,
+          width: 'var(--sparkle-1, 12px)',
+          height: 'var(--sparkle-1, 12px)',
           background: COLORS.pink,
           borderRadius: '50%',
           zIndex: 6,
           boxShadow: `0 0 10px ${COLORS.pink}`,
           animation: 'sparkle 3s infinite'
         }} />
-        <div style={{
+        <div className="sparkle" style={{
           position: 'absolute',
           top: '50%',
           right: '35%',
-          width: 10,
-          height: 10,
+          width: 'var(--sparkle-2, 10px)',
+          height: 'var(--sparkle-2, 10px)',
           background: COLORS.cyan,
           borderRadius: '50%',
           zIndex: 6,
           boxShadow: `0 0 8px ${COLORS.cyan}`,
           animation: 'sparkle 2.5s infinite 0.5s'
         }} />
-        <div style={{
+        <div className="sparkle" style={{
           position: 'absolute',
           top: '75%',
           left: '50%',
-          width: 14,
-          height: 14,
+          width: 'var(--sparkle-3, 14px)',
+          height: 'var(--sparkle-3, 14px)',
           background: COLORS.blue,
           borderRadius: '50%',
           zIndex: 6,
@@ -789,6 +819,117 @@ export default function Hero3D() {
       </div>
 
       <style>{`
+        /* Default (desktop) sizing variables */
+        .hero-3d-scene {
+          --platform-size: 340px;
+          --platform-height: 140px;
+          --platform-bottom: -30px;
+          --ring-size: 260px;
+          --ring-top: -60px;
+          --surface-width: 280px;
+          --surface-height: 12px;
+          --surface-bottom: -8px;
+          --reflection-width: 260px;
+          --reflection-height: 24px;
+          --reflection-bottom: -18px;
+          --cart-size: 220px;
+          --cart-height: 300px;
+          --basket-width: 200px;
+          --basket-size: 200px;
+          --box-width: 70px;
+          --box-height: 60px;
+          --box-font: 8px;
+          --bag-size: 24px;
+          --bag-height: 20px;
+          --bag-gap: 4px;
+          --handles-top: 10px;
+          --handles-width: 200px;
+          --handle-width: 8px;
+          --wheel-top: 200px;
+          --wheel-width: 180px;
+          --robot-width: 200px;
+          --robot-height: 320px;
+          --robot-left: 60px;
+          --robot-top: -30px;
+          --sparkle-size: 12px;
+          --light-streak-width: 200px;
+        }
+        /* Mobile (under 768px) - smaller and spaced out */
+        @media (max-width: 767px) {
+          .hero-3d-scene {
+            --platform-size: 260px;
+            --platform-height: 120px;
+            --platform-bottom: -25px;
+            --ring-size: 200px;
+            --ring-top: -45px;
+            --surface-width: 210px;
+            --surface-height: 10px;
+            --surface-bottom: -7px;
+            --reflection-width: 200px;
+            --reflection-height: 20px;
+            --reflection-bottom: -14px;
+            --cart-size: 170px;
+            --cart-height: 240px;
+            --basket-width: 160px;
+            --basket-size: 160px;
+            --box-width: 55px;
+            --box-height: 45px;
+            --box-font: 6px;
+            --bag-size: 18px;
+            --bag-height: 16px;
+            --bag-gap: 3px;
+            --handles-top: 8px;
+            --handles-width: 160px;
+            --handle-width: 6px;
+            --wheel-top: 160px;
+            --wheel-width: 145px;
+            --robot-width: 160px;
+            --robot-height: 255px;
+            --robot-left: 45px;
+            --robot-top: -20px;
+            --sparkle-1: 10px;
+            --sparkle-2: 8px;
+            --sparkle-3: 10px;
+            --streak-1-w: 150px;
+            --streak-2-w: 120px;
+            --streak-3-w: 100px;
+          }
+          /* Reposition floating products for mobile to avoid overlap */
+          .prod-headphone {
+            top: 20% !important;
+            left: 5% !important;
+          }
+          .prod-sneaker {
+            top: 70% !important;
+            left: 5% !important;
+          }
+          .prod-laptop {
+            top: 40% !important;
+            left: 15% !important;
+          }
+          .prod-smartphone {
+            top: 35% !important;
+            right: 15% !important;
+          }
+          .prod-smartwatch {
+            top: 65% !important;
+            right: 20% !important;
+          }
+          .bag-1 { top: 15% !important; left: 25% !important; }
+          .bag-2 { top: 45% !important; left: 35% !important; }
+          .bag-3 { top: 55% !important; right: 15% !important; }
+          .bag-4 { top: 30% !important; right: 10% !important; }
+          /* Reduce cart height on mobile */
+          .cart-wrap {
+            height: var(--cart-height, 240px) !important;
+          }
+          .robot-wrap {
+            left: var(--robot-left, 45px) !important;
+            top: var(--robot-top, -20px) !important;
+            width: var(--robot-width, 160px) !important;
+            height: var(--robot-height, 255px) !important;
+          }
+        }
         @keyframes float-cart {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-6px); }
