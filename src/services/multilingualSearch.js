@@ -2,28 +2,28 @@ import productsData from '../data/products.json'
 import categoriesData from '../data/categories.json'
 
 const PRODUCT_TYPE_MAP = {
-  watch: { en: 'watch', ur: 'گھڑی', roman: ['waṭch', 'watch', 'gari', 'ghadi'] },
-  phone: { en: 'phone', ur: 'فون', roman: ['phone', 'fon', 'mobile'] },
-  laptop: { en: 'laptop', ur: 'لیپ ٹاپ', roman: ['laptop', 'leptop', 'notebook'] },
-  headphones: { en: 'headphones', ur: 'ہیڈفون', roman: ['headphones', 'headphone', 'hedfon', 'headphone', 'headset', 'head phones'] },
-  earbuds: { en: 'earbuds', ur: 'ایربڈز', roman: ['earbuds', 'earbud', 'earbuds', 'ear phones', 'earbuds'] },
-  keyboard: { en: 'keyboard', ur: 'کی بورڈ', roman: ['keyboard', 'keybord', 'key board'] },
-  speaker: { en: 'speaker', ur: 'سپیکر', roman: ['speaker', 'spiker', 'speakers'] },
-  camera: { en: 'camera', ur: 'کیمرہ', roman: ['camera', 'kamra', 'cams', 'digital camera'] },
-  webcam: { en: 'webcam', ur: 'ویب کیم', roman: ['webcam', 'web cam', 'web cam'] },
-  'power bank': { en: 'power bank', ur: 'پاور بینک', roman: ['power bank', 'powerbank', 'power-bank'] },
-  't-shirt': { en: 't-shirt', ur: 'ٹی شرٹ', roman: ['t-shirt', 'tshirt', 't shirt', 'tee shirt', 'tee-shirt'] },
-  shirt: { en: 'shirt', ur: 'شرٹ', roman: ['shirt', 'shert', 'polo shirt'] },
-  shoes: { en: 'shoes', ur: 'جوتے', roman: ['shoes', 'shoe', 'jootay', 'sneakers', 'footwear'] },
-  book: { en: 'book', ur: 'کتاب', roman: ['book', 'kitab', 'books', 'novel', 'textbook'] },
-  cream: { en: 'cream', ur: 'کریم', roman: ['cream', 'kream', 'moisturizer', 'lotion'] },
-  makeup: { en: 'makeup', ur: 'میک اپ', roman: ['makeup', 'make up', 'meikup', 'cosmetics', 'beauty'] }
+  watch: { en: 'watch', ur: 'گھڑی', roman: ['waṭch', 'watch', 'gari', 'ghadi', 'watches'] },
+  phone: { en: 'phone', ur: 'فون', roman: ['phone', 'fon', 'mobile', 'phones', 'smartphone', 'smartphones'] },
+  laptop: { en: 'laptop', ur: 'لیپ ٹاپ', roman: ['laptop', 'leptop', 'notebook', 'laptops', 'notebooks'] },
+  headphones: { en: 'headphones', ur: 'ہیڈفون', roman: ['headphones', 'headphone', 'hedfon', 'headphones', 'headset', 'head phones', 'headphones'] },
+  earbuds: { en: 'earbuds', ur: 'ایربڈز', roman: ['earbuds', 'earbud', 'earbuds', 'ear phones', 'earbuds', 'earphones'] },
+  keyboard: { en: 'keyboard', ur: 'کی بورڈ', roman: ['keyboard', 'keybord', 'key board', 'keyboards'] },
+  speaker: { en: 'speaker', ur: 'سپیکر', roman: ['speaker', 'spiker', 'speakers', 'speakers'] },
+  camera: { en: 'camera', ur: 'کیمرہ', roman: ['camera', 'kamra', 'cams', 'digital camera', 'cameras'] },
+  webcam: { en: 'webcam', ur: 'ویب کیم', roman: ['webcam', 'web cam', 'web cams'] },
+  'power bank': { en: 'power bank', ur: 'پاور بینک', roman: ['power bank', 'powerbank', 'power-bank', 'power banks'] },
+  't-shirt': { en: 't-shirt', ur: 'ٹی شرٹ', roman: ['t-shirt', 'tshirt', 't shirt', 'tee shirt', 'tee-shirt', 't-shirts', 'tshirts'] },
+  shirt: { en: 'shirt', ur: 'شرٹ', roman: ['shirt', 'shert', 'polo shirt', 'shirts', 't-shirt', 't-shirts'] },
+  shoes: { en: 'shoes', ur: 'جوتے', roman: ['shoes', 'shoe', 'jootay', 'sneakers', 'sneaker', 'footwear', 'shoe'] },
+  book: { en: 'book', ur: 'کتاب', roman: ['book', 'kitab', 'books', 'novel', 'novels', 'textbook', 'textbooks', 'ebook'] },
+  cream: { en: 'cream', ur: 'کریم', roman: ['cream', 'kream', 'moisturizer', 'lotion', 'creams'] },
+  makeup: { en: 'makeup', ur: 'میک اپ', roman: ['makeup', 'make up', 'meikup', 'cosmetics', 'beauty', 'makeup'] }
 }
 
 const CATEGORY_MAP = {
   electronics: { en: 'electronics', ur: 'الیکٹرانکس', roman: ['electronics', 'electronic'] },
   fashion: { en: 'fashion', ur: 'فیشن', roman: ['fashion', 'fashn'] },
-  'home-kitchen': { en: 'home kitchen', ur: 'گھر/کچن', roman: ['home', 'kitchen', 'home kitchen', 'homedics'] },
+  'home-kitchen': { en: 'home kitchen', ur: 'گھر/کچن', roman: ['home', 'kitchen', 'home kitchen'] },
   sports: { en: 'sports', ur: 'کھیل', roman: ['sports', 'sport'] },
   books: { en: 'books', ur: 'کتابیں', roman: ['books', 'book'] },
   beauty: { en: 'beauty', ur: 'بیوٹی', roman: ['beauty', 'beuty'] }
@@ -36,13 +36,14 @@ const SEARCH_STOPWORDS = new Set([
   'will', 'has', 'had', 'have', 'are', 'is', 'was', 'were', 'i', 'you', 'he', 'she', 'it',
   'we', 'they', 'them', 'their', 'your', 'my', 'our', 'all', 'any', 'some', 'many', 'more',
   'most', 'or', 'but', 'about', 'from', 'than', 'then', 'here', 'also', 'very', 'much', 'under',
-  'over', 'above', 'below', 'products', 'product'
+  'over', 'above', 'below', 'products', 'product', 'recommend', 'suggest', 'best', 'top',
+  'good', 'nice', 'under', 'budget', 'price', 'priced'
 ])
 
 function detectLanguage(text) {
   const urduPattern = /[\u0600-\u06FF]/
   const hasUrdu = urduPattern.test(text)
-  const hasRoman = /\b(mujhe|chahiye|dikhao|dikhado|dikhaen|se kam|se zyada|ki|wali|hai|ka|ki|ke|mein|main|aur|ya|to|bhi|nahi|nai|nahin|bht|bohat|zyada|kam|achha|accha|sasta|mehnga|package|offer|deal)\b/i.test(text)
+  const hasRoman = /\b(mujhe|chahiye|dikhao|dikhado|dikhaen|se kam|se zyada|ki|wali|hai|ka|ki|ke|mein|main|aur|ya|to|bhi|nahi|nai|nahin|bht|bohat|zyada|kam|achha|accha|sasto|mehnga|package|offer|deal)\b/i.test(text)
 
   if (hasUrdu && hasRoman) return 'mixed'
   if (hasUrdu) return 'urdu'
@@ -105,21 +106,47 @@ function normalizeToEnglish(text) {
   return text
 }
 
-// Synonym expansions for more natural language understanding
+// Synonym expansions - includes both singular and plural forms so that
+// "watches" expands to "watch" and vice versa
 const KEYWORD_SYNONYMS = {
-  'headphones': ['headphone', 'headphone', 'head phones', 'earphone', 'earphones', 'headset'],
-  'earbuds': ['earbuds', 'earbud', 'ear bud', 'ear buds', 'in ear', 'wireless earbuds'],
-  'laptop': ['laptop', 'laptops', 'notebook', 'laptops', 'notebook computer'],
-  'phone': ['phone', 'phones', 'mobile', 'smartphone', 'mobile phone'],
-  'watch': ['watch', 'watches', 'smartwatch', 'wristwatch'],
-  'shoes': ['shoes', 'shoe', 'sneaker', 'sneakers', 'footwear', 'trainers'],
-  'book': ['book', 'books', 'novel', 'textbook', 'ebook'],
-  'keyboard': ['keyboard', 'keyboards', 'key board'],
-  'speaker': ['speaker', 'speakers', 'bluetooth speaker'],
-  'camera': ['camera', 'cameras', 'digital camera'],
-  'shirt': ['shirt', 'shirts', 't-shirt', 'tshirt', 'polo'],
-  'cream': ['cream', 'creams', 'moisturizer', 'lotion', 'face cream'],
-  'makeup': ['makeup', 'make-up', 'cosmetics', 'beauty', 'beauty products']
+  'headphone': ['headphones', 'headset', 'earphone', 'earphones', 'head phone', 'head phones', 'over ear', 'on ear', 'noise cancelling'],
+  'headphones': ['headphone', 'headset', 'earphone', 'earphones', 'head phone', 'head phones', 'over ear', 'on ear', 'noise cancelling'],
+  'earbud': ['earbuds', 'ear bud', 'ear buds', 'in ear', 'true wireless', 'wireless earbuds'],
+  'earbuds': ['earbud', 'ear bud', 'ear buds', 'in ear', 'true wireless', 'wireless earbuds'],
+  'laptop': ['laptops', 'notebook', 'notebooks', 'ultrabook', 'chromebook', 'notebook computer', 'netbook'],
+  'laptops': ['laptop', 'notebook', 'notebooks', 'ultrabook', 'chromebook', 'notebook computer'],
+  'notebook': ['laptops', 'laptop', 'notebooks', 'ultrabook', 'chromebook'],
+  'phone': ['phones', 'mobile', 'smartphone', 'smartphones', 'cell phone', 'cell phones', 'mobile phone', 'telephone'],
+  'phones': ['phone', 'mobile', 'smartphone', 'smartphones', 'cell phone', 'cell phones', 'mobile phone'],
+  'watch': ['watches', 'smartwatch', 'smartwatches', 'wristwatch', 'fitness tracker', 'timepiece'],
+  'watches': ['watch', 'smartwatch', 'smartwatches', 'wristwatch', 'fitness tracker', 'timepiece'],
+  'smartwatch': ['smartwatches', 'watch', 'watches', 'fitness tracker', 'wristwatch'],
+  'shoes': ['shoe', 'sneakers', 'sneaker', 'footwear', 'trainers', 'running shoes', 'athletic shoes'],
+  'shoe': ['shoes', 'sneakers', 'sneaker', 'footwear', 'trainers', 'running shoes'],
+  'keyboard': ['keyboards', 'mechanical keyboard', 'wireless keyboard', 'mechanical keyboards'],
+  'keyboards': ['keyboard', 'mechanical keyboard', 'wireless keyboard'],
+  'speaker': ['speakers', 'bluetooth speaker', 'portable speaker', 'sound system'],
+  'speakers': ['speaker', 'bluetooth speaker', 'portable speaker'],
+  'camera': ['cameras', 'digital camera', 'digital cameras', 'mirrorless', 'dslr'],
+  'cameras': ['camera', 'digital camera', 'mirrorless', 'dslr'],
+  'monitor': ['monitors', 'display', 'displays', 'screen', 'screens', 'desktop monitor'],
+  'monitors': ['monitor', 'display', 'displays', 'screen', 'screens'],
+  'display': ['displays', 'monitor', 'monitors', 'screen', 'screens'],
+  'book': ['books', 'novel', 'novels', 'textbook', 'textbooks', 'ebook', 'ebooks', 'biography'],
+  'books': ['book', 'novel', 'novels', 'textbook', 'textbooks', 'ebook', 'ebooks'],
+  'cream': ['creams', 'moisturizer', 'lotion', 'face cream', 'skincare', 'body cream'],
+  'makeup': ['makeups', 'cosmetics', 'beauty', 'foundation', 'lipstick', 'beauty products'],
+  'bag': ['bags', 'backpack', 'backpacks', 'crossbody', 'handbag', 'tote'],
+  'bags': ['bag', 'backpack', 'backpacks', 'crossbody', 'handbag', 'tote'],
+  'backpack': ['backpacks', 'bag', 'bags', 'rucksack'],
+  'mouse': ['mice', 'wireless mouse', 'bluetooth mouse'],
+  'earphone': ['earphones', 'headphone', 'headphones', 'in ear'],
+  'earphones': ['earphone', 'headphones', 'headphone', 'in ear'],
+  'tshirt': ['t-shirt', 't-shirts', 'tee shirt', 'tee-shirt', 'tee shirts'],
+  't-shirt': ['tshirt', 't-shirt', 't-shirts', 'tee shirt', 'tee-shirt', 'tee shirts'],
+  'sunglasses': ['sunglass', 'shades', 'sun glasses'],
+  'sneakers': ['sneaker', 'shoes', 'shoe', 'athletic', 'running'],
+  'sneaker': ['sneakers', 'shoe', 'shoes', 'athletic', 'running'],
 }
 
 function buildSynonymMap() {
@@ -133,12 +160,52 @@ function buildSynonymMap() {
 
 const SYNONYM_MAP = buildSynonymMap()
 
+// Use case to keywords mapping for matching products to use cases
+const USE_CASE_PRODUCTS_KEYWORDS = {
+  studying: ['noise cancelling', 'quiet', 'comfortable', 'wireless', 'bluetooth', 'battery', 'lightweight', 'notebook', 'laptop', 'book', 'books', 'study', 'focus', 'student', 'educational', 'headphones', 'headphone', 'speaker', 'keyboard', 'mouse'],
+  gaming: ['gaming', 'rgb', 'mechanical', 'surround', 'performance', 'game', 'high precision', 'low latency', 'fps', 'mmo'],
+  work: ['professional', 'noise cancelling', 'comfortable', 'bluetooth', 'wireless', 'calls', 'microphone', 'office', 'meeting', 'keyboard', 'mouse', 'monitor'],
+  travel: ['portable', 'compact', 'lightweight', 'wireless', 'long battery', 'travel', 'foldable', 'power bank'],
+  content_creation: ['4k', 'high resolution', 'stabilization', 'professional', 'studio', 'recording', 'camera', 'microphone', 'webcam'],
+  coding: ['comfortable', 'ergonomic', 'mechanical', 'programmable', 'multi-device', 'quiet', 'backlit', 'keyboard', 'monitor', 'mouse']
+}
+
+// Use case detection patterns
+const USE_CASE_PATTERNS = [
+  { key: 'studying', pattern: /studying|study|student|college|university|class|lecture|educational|school|dorm|campus/i },
+  { key: 'gaming', pattern: /gaming|game|gamer|fps|mmo|streaming|console|pc gaming|esports/i },
+  { key: 'content_creation', pattern: /content creator|content creation|youtube|tiktok|vlog|video editing|photo editing/i },
+  { key: 'coding', pattern: /coding|programming|developer|software engineer|code/i },
+  { key: 'work', pattern: /work|office|business|professional|meeting|calls|remote work|home office/i },
+  { key: 'travel', pattern: /travel|commute|portable|flight|on the go|mobile|lightweight/i },
+  { key: 'outdoor', pattern: /outdoor|sports|running|gym|exercise|workout|active|fishing|hiking|camping/i },
+  { key: 'home', pattern: /home|kitchen|indoor|daily use|everyday|household|smart home/i }
+]
+
+function detectUseCases(text) {
+  const normalized = normalizeToEnglish(text).toLowerCase()
+  const useCases = []
+  for (const { key, pattern } of USE_CASE_PATTERNS) {
+    if (pattern.test(normalized) && !useCases.includes(key)) {
+      useCases.push(key)
+    }
+  }
+  return useCases
+}
+
 function expandKeywords(keywords) {
   const expanded = new Set(keywords)
   for (const kw of keywords) {
+    // Direct synonym match
     if (SYNONYM_MAP[kw]) {
       for (const syn of SYNONYM_MAP[kw]) {
         expanded.add(syn)
+      }
+    }
+    // Check if any synonym key is a parent (reverse lookup)
+    for (const [parent, synonyms] of Object.entries(KEYWORD_SYNONYMS)) {
+      if (synonyms.includes(kw)) {
+        expanded.add(parent)
       }
     }
   }
@@ -158,7 +225,8 @@ function extractMultilingualEntities(text) {
     orderId: null,
     keywords: [],
     language: lang,
-    originalQuery: text
+    originalQuery: text,
+    useCases: detectUseCases(text)
   }
 
   // Extract category from normalized text
@@ -191,7 +259,7 @@ function extractMultilingualEntities(text) {
     /(?:under|below|less than|max|up to|cheaper than|cost)\s+(?:around|about|roughly)?\s*\$?(\d+(?:\.\d+)?)/i,
     /\$?(\d+(?:\.\d+)?)\s*[-–]\s*\$?(\d+(?:\.\d+)?)/i,
     /between\s+\$?(\d+(?:\.\d+)?)\s*and\s*\$?(\d+(?:\.\d+)?)/i,
-    /(\d+(?:\.\d+)?)\s*(?:dollars?|dollar)/i,
+    /(\d+(?:\.\d+)?)\s*(?:dollars|dollar)/i,
     /(?:budget|spend)\s+(?:around|about|up to)?\s*\$?(\d+(?:\.\d+)?)/i,
     /under\s+\$?(\d+(?:\.\d+)?)/i,
     /(?:more than|above)\s+\$?(\d+(?:\.\d+)?)\s*(?:but\s+(?:under|below|less))\s+\$?(\d+(?:\.\d+)?)/i
@@ -225,11 +293,30 @@ function extractMultilingualEntities(text) {
     }
   }
 
-  // Extract keywords (preserve meaningful product descriptors)
+  // Extract keywords (remove plural 's' for better matching)
   const words = normalized.replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 2)
-  entities.keywords = [...new Set(words)]
+  const singularized = words.map(singularize).filter(w => w.length > 2)
+  entities.keywords = [...new Set([...words, ...singularized])]
 
   return entities
+}
+
+/**
+ * Simple singularization: removes trailing 's' or 'es' for basic plural handling.
+ * Not a full stemming library, but handles common e-commerce plurals.
+ */
+function singularize(word) {
+  if (word.endsWith('ies') && word.length > 4) {
+    return word.slice(0, -3) + 'y'
+  }
+  if (word.endsWith('es') && word.length > 3) {
+    // Keep "es" endings for words like "watches" -> "watch" handled separately
+    return word.slice(0, -2)
+  }
+  if (word.endsWith('s') && word.length > 3) {
+    return word.slice(0, -1)
+  }
+  return word
 }
 
 function hasWord(text, word) {
@@ -275,21 +362,23 @@ export function searchProductsMultilingual(query, products = productsData, _cate
     results = results.filter(p => p.rating >= entities.minRating)
   }
 
-  // If entity-based filters reduced results but none remain, try falling back to keyword search
-  if (results.length === 0) {
+  // If entity-based filters (category, type, price, rating) reduced results but none remain,
+  // try falling back to keyword search
+  const hasHardConstraints = entities.productType || entities.category ||
+    entities.maxPrice !== null || entities.minPrice !== null || entities.minRating !== null
+
+  if (results.length === 0 && hasHardConstraints) {
     const fallbackResults = fallbackKeywordSearch(query, entities, products)
     if (fallbackResults.length > 0) {
       return fallbackResults
     }
+    return []
   }
 
-  // Keyword filtering: only apply when no specific entity filter is active,
-  // or when entity filter returned no results and we're in fallback mode
-  const hasEntityFilter = entities.productType || entities.category ||
-    entities.maxPrice !== null || entities.minPrice !== null || entities.minRating !== null
-
-  if (!hasEntityFilter) {
-    const meaningfulKeywords = entities.keywords.filter(kw => !SEARCH_STOPWORDS.has(kw))
+  // Keyword filtering: only apply when no specific entity filter is active
+  // (no product type, no category, no price/rating constraints)
+  if (!hasHardConstraints && results.length > 0) {
+    const meaningfulKeywords = entities.keywords.filter(kw => !SEARCH_STOPWORDS.has(kw) && kw.length > 2)
     if (meaningfulKeywords.length > 0) {
       // Expand keywords with synonyms for better matching
       const expandedKeywords = expandKeywords(meaningfulKeywords)
@@ -302,7 +391,19 @@ export function searchProductsMultilingual(query, products = productsData, _cate
       // Only apply keyword filter if it doesn't eliminate all results
       if (filtered.length > 0) {
         results = filtered
+      } else {
+        // Keywords were present but matched nothing - return empty instead of
+        // returning all products (which would be irrelevant)
+        results = []
       }
+    }
+  }
+
+  // If no results after keyword filtering, try use case matching as a fallback
+  if (results.length === 0 && entities.useCases && entities.useCases.length > 0) {
+    const ucResults = searchUseCaseProducts(entities.useCases, products)
+    if (ucResults.length > 0) {
+      results = ucResults
     }
   }
 
@@ -320,6 +421,22 @@ export function searchProductsMultilingual(query, products = productsData, _cate
   })
 
   return results.slice(0, 5)
+}
+
+/**
+ * Fallback search that matches products based on use case keywords.
+ * Does NOT return random/unrelated products - only products that match
+ * the detected use case keywords.
+ */
+function searchUseCaseProducts(useCases, products) {
+  const matchedProducts = products.filter(p => {
+    const productText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+    return useCases.some(uc => {
+      const kw = USE_CASE_PRODUCTS_KEYWORDS[uc] || []
+      return kw.some(k => productText.includes(k))
+    })
+  })
+  return matchedProducts
 }
 
 function fallbackKeywordSearch(query, entities, products) {
@@ -344,24 +461,19 @@ function fallbackKeywordSearch(query, entities, products) {
     return []
   }
 
-  // Apply price/rating filters if available (price is optional in fallback)
+  // Apply price/rating filters if available (MUST enforce constraints)
   if (entities.maxPrice !== null) {
-    const priceFiltered = fallbackResults.filter(p => p.price <= entities.maxPrice)
-    if (priceFiltered.length > 0) {
-      fallbackResults = priceFiltered
-    }
+    fallbackResults = fallbackResults.filter(p => p.price <= entities.maxPrice)
   }
   if (entities.minPrice !== null) {
-    const priceFiltered = fallbackResults.filter(p => p.price >= entities.minPrice)
-    if (priceFiltered.length > 0) {
-      fallbackResults = priceFiltered
-    }
+    fallbackResults = fallbackResults.filter(p => p.price >= entities.minPrice)
   }
   if (entities.minRating !== null) {
-    const ratingFiltered = fallbackResults.filter(p => p.rating >= entities.minRating)
-    if (ratingFiltered.length > 0) {
-      fallbackResults = ratingFiltered
-    }
+    fallbackResults = fallbackResults.filter(p => p.rating >= entities.minRating)
+  }
+
+  if (fallbackResults.length === 0) {
+    return []
   }
 
   // Sort by relevance
@@ -376,4 +488,4 @@ function fallbackKeywordSearch(query, entities, products) {
   return fallbackResults.slice(0, 5)
 }
 
-export { detectLanguage, normalizeToEnglish, extractMultilingualEntities, PRODUCT_TYPE_MAP, CATEGORY_MAP }
+export { detectLanguage, normalizeToEnglish, extractMultilingualEntities, PRODUCT_TYPE_MAP, CATEGORY_MAP, detectUseCases, USE_CASE_PRODUCTS_KEYWORDS }

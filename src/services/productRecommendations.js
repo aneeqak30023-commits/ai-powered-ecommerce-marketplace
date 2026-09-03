@@ -1,47 +1,51 @@
-import { extractMultilingualEntities, normalizeToEnglish, PRODUCT_TYPE_MAP } from './multilingualSearch.js'
-
-function detectUseCases(text) {
-  const normalized = normalizeToEnglish(text).toLowerCase()
-  const useCases = []
-
-  if (/studying|study|student|college|university|class|lecture|educational/i.test(normalized)) useCases.push('studying')
-  if (/gaming|game|gamer|fps|mmo|streaming|console|pc gaming/i.test(normalized)) useCases.push('gaming')
-  if (/work|office|business|professional|meeting|calls|remote work|home office/i.test(normalized)) useCases.push('work')
-  if (/travel|commute|portable|lightweight|flight|on the go|mobile/i.test(normalized)) useCases.push('travel')
-  if (/home|kitchen|indoor|daily use|everyday|household/i.test(normalized)) useCases.push('home')
-  if (/outdoor|sports|running|gym|exercise|workout|active|fishing|hiking|camping/i.test(normalized)) useCases.push('outdoor')
-  if (/content creator|content creation|youtube|tiktok|vlog|video editing|photo editing/i.test(normalized)) useCases.push('content_creation')
-  if (/coding|programming|developer|software engineer/i.test(normalized)) useCases.push('coding')
-
-  return useCases
-}
+import { extractMultilingualEntities, normalizeToEnglish, PRODUCT_TYPE_MAP, detectUseCases } from './multilingualSearch.js'
 
 const USE_CASE_KEYWORDS = {
-  studying: ['noise cancelling', 'quiet', 'comfortable', 'wireless', 'bluetooth', 'battery', 'lightweight', 'study', 'focus', 'dorm'],
-  gaming: ['gaming', 'rgb', 'mechanical', 'low latency', 'surround', 'high precision', 'fps', 'mmo', 'gaming', 'performance'],
+  studying: ['noise cancelling', 'quiet', 'comfortable', 'wireless', 'bluetooth', 'battery', 'lightweight', 'study', 'focus', 'dorm', 'student', 'educational', 'notebook', 'laptop', 'book', 'books'],
+  gaming: ['gaming', 'rgb', 'mechanical', 'low latency', 'surround', 'high precision', 'fps', 'mmo', 'performance', 'game'],
   work: ['professional', 'noise cancelling', 'comfortable', 'bluetooth', 'wireless', 'calls', 'microphone', 'office', 'meeting'],
-  travel: ['portable', 'compact', 'lightweight', 'wireless', 'long battery', 'travel', 'compact', 'foldable'],
+  travel: ['portable', 'compact', 'lightweight', 'wireless', 'long battery', 'travel', 'foldable'],
   home: ['smart', 'voice', 'bluetooth', 'wifi', 'easy to use', 'connected', 'home automation', 'indoor'],
   outdoor: ['waterproof', 'durable', 'wireless', 'portable', 'long battery', 'rugged', 'weatherproof', 'water resistant'],
   content_creation: ['4k', 'high resolution', 'stabilization', 'professional', 'studio', 'recording', 'content'],
   coding: ['comfortable', 'ergonomic', 'mechanical', 'programmable', 'multi-device', 'quiet', 'backlit']
 }
 
-// Synonym expansions for better matching
+// Synonym expansions for better matching - includes both singular and plural forms
 const KEYWORD_SYNONYMS = {
-  'headphones': ['headphone', 'headset', 'earphone', 'over ear', 'on ear', 'noise cancelling'],
-  'earbuds': ['earbuds', 'earbud', 'in ear', 'true wireless', 'wireless earbuds'],
-  'laptop': ['laptop', 'notebook', 'ultrabook', 'chromebook'],
-  'phone': ['phone', 'mobile', 'smartphone', 'cell phone'],
-  'watch': ['watch', 'smartwatch', 'wristwatch', 'fitness tracker'],
-  'shoes': ['shoes', 'sneakers', 'footwear', 'trainers', 'running shoes'],
-  'keyboard': ['keyboard', 'mechanical keyboard', 'wireless keyboard'],
-  'speaker': ['speaker', 'bluetooth speaker', 'portable speaker'],
-  'camera': ['camera', 'digital camera', 'mirrorless'],
-  'monitor': ['monitor', 'display', 'screen', '4k'],
-  'book': ['book', 'novel', 'textbook', 'ebook', 'biography'],
-  'cream': ['cream', 'moisturizer', 'lotion', 'face cream', 'skincare'],
-  'makeup': ['makeup', 'cosmetics', 'beauty', 'foundation', 'lipstick']
+  'headphone': ['headphones', 'headset', 'earphone', 'earphones', 'over ear', 'on ear', 'noise cancelling', 'head phone', 'head phones'],
+  'headphones': ['headphone', 'headset', 'earphone', 'earphones', 'over ear', 'on ear', 'noise cancelling', 'head phone', 'head phones'],
+  'earbud': ['earbuds', 'ear bud', 'ear buds', 'in ear', 'true wireless'],
+  'earbuds': ['earbud', 'ear bud', 'ear buds', 'in ear', 'true wireless'],
+  'laptop': ['laptops', 'notebook', 'notebooks', 'ultrabook', 'chromebook', 'notebook computer'],
+  'laptops': ['laptop', 'notebook', 'notebooks', 'ultrabook', 'chromebook', 'notebook computer'],
+  'notebook': ['laptops', 'laptop', 'notebooks', 'ultrabook', 'chromebook'],
+  'phone': ['phones', 'mobile', 'smartphone', 'smartphones', 'cell phone', 'cell phones', 'mobile phone'],
+  'phones': ['phone', 'mobile', 'smartphone', 'smartphones', 'cell phone', 'cell phones', 'mobile phone'],
+  'watch': ['watches', 'smartwatch', 'smartwatches', 'wristwatch', 'fitness tracker'],
+  'watches': ['watch', 'smartwatch', 'smartwatches', 'wristwatch', 'fitness tracker'],
+  'smartwatch': ['smartwatches', 'watch', 'watches', 'fitness tracker'],
+  'shoe': ['shoes', 'sneakers', 'sneaker', 'footwear', 'trainers', 'running shoes'],
+  'shoes': ['shoe', 'sneaker', 'sneakers', 'footwear', 'trainers', 'running shoes'],
+  'keyboard': ['keyboards', 'mechanical keyboard', 'wireless keyboard'],
+  'keyboards': ['keyboard', 'mechanical keyboard', 'wireless keyboard'],
+  'speaker': ['speakers', 'bluetooth speaker'],
+  'speakers': ['speaker', 'bluetooth speaker'],
+  'camera': ['cameras', 'digital camera'],
+  'cameras': ['camera', 'digital camera'],
+  'monitor': ['monitors', 'display', 'displays', 'screen', 'screens'],
+  'monitors': ['monitor', 'display', 'displays', 'screen', 'screens'],
+  'display': ['displays', 'monitor', 'monitors', 'screen', 'screens'],
+  'book': ['books', 'novel', 'novels', 'textbook', 'textbooks', 'ebook'],
+  'books': ['book', 'novel', 'novels', 'textbook', 'textbooks', 'ebook'],
+  'cream': ['creams', 'moisturizer', 'lotion'],
+  'makeup': ['makeups', 'cosmetics', 'beauty', 'foundation', 'lipstick'],
+  'bag': ['bags', 'backpack', 'backpacks', 'crossbody'],
+  'bags': ['bag', 'backpack', 'backpacks', 'crossbody'],
+  'backpack': ['backpacks', 'bag', 'bags'],
+  'mouse': ['mice', 'wireless mouse'],
+  'earphone': ['earphones', 'headphone', 'headphones'],
+  'earphones': ['earphone', 'headphone', 'headphones']
 }
 
 function expandKeywords(keywords) {
@@ -53,7 +57,7 @@ function expandKeywords(keywords) {
         expanded.add(syn)
       }
     }
-    // Check if any synonym key is a parent
+    // Check if any synonym key is a parent (reverse lookup)
     for (const [parent, synonyms] of Object.entries(KEYWORD_SYNONYMS)) {
       if (synonyms.includes(kw)) {
         expanded.add(parent)
@@ -131,53 +135,83 @@ export function generateRecommendations(message, products) {
     candidates = candidates.filter(p => p.rating >= entities.minRating)
   }
 
-  // Soft filter: keywords (exclude generic recommendation words)
+  // Soft filter: keywords (exclude generic recommendation words and category names)
   const genericKeywords = new Set([
     'recommend', 'suggestion', 'suggest', 'best', 'top', 'popular',
     'recommendation', 'advice', 'products', 'product', 'good', 'nice',
-    'looking', 'want', 'need', 'buy', 'purchase', 'get'
+    'looking', 'want', 'need', 'buy', 'purchase', 'get', 'find', 'show',
+    'search', 'please', 'what', 'which', 'for', 'the', 'a', 'an',
+    'i', 'you', 'under', 'over', 'below', 'above', 'my', 'your',
+    // Category names should not be used as keyword filters (category is already handled)
+    'electronics', 'electronic', 'fashion', 'apparel', 'clothing', 'home', 'kitchen',
+    'furniture', 'sports', 'athletic', 'books', 'book', 'beauty', 'cosmetics', 'makeup'
   ])
 
   // Expand keywords with synonyms for better matching
-  const specificKeywords = entities.keywords.filter(kw => !genericKeywords.has(kw))
+  const specificKeywords = entities.keywords.filter(kw => !genericKeywords.has(kw) && kw.length > 2)
   const expandedKeywords = specificKeywords.length > 0 ? expandKeywords(specificKeywords) : []
 
-  if (expandedKeywords.length > 0) {
+  if (expandedKeywords.length > 0 && candidates.length > 0) {
     const keywordRegex = new RegExp(
       expandedKeywords.map(kw => kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'),
       'i'
     )
-    candidates = candidates.filter(p => {
+    const filtered = candidates.filter(p => {
       const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
       return keywordRegex.test(searchText)
     })
+    // Only apply keyword filter if it doesn't eliminate all results
+    if (filtered.length > 0) {
+      candidates = filtered
+    } else if (specificKeywords.length > 0) {
+      // Keywords were present but matched nothing - do not return
+      // unrelated products
+      candidates = []
+    }
   }
 
+  // Determine if we have any meaningful constraints
+  const hasHardConstraints = entities.productType || entities.category ||
+    entities.maxPrice !== null || entities.minPrice !== null ||
+    entities.minRating !== null
+
+  // Check if there are specific (non-generic) keywords that could match products
+  const hasSpecificKeywords = entities.keywords.some(kw =>
+    !genericKeywords.has(kw) && kw.length > 2 && !kw.match(/^\d+$/)
+  )
+
   if (candidates.length === 0) {
-    // Fallback: if no hard filters or only generic keywords, return top-rated products
-    const hasSpecificKeywords = entities.keywords.some(kw => !genericKeywords.has(kw))
-
-    if (!entities.productType && !entities.category && entities.maxPrice === null && !hasSpecificKeywords) {
-      const fallback = [...products]
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 4)
-
-      const lines = [`Here are some popular products from our catalog:\n`]
-      for (const p of fallback) {
-        lines.push(`• **${p.name}** — $${p.price.toFixed(2)} (${p.rating}★, ${p.reviewCount || 0} reviews)`)
+    // If we had hard constraints (product type, category, budget, rating),
+    // do NOT fall back to random/unrelated products - return empty with explanation
+    if (hasHardConstraints || entities.useCases.length > 0 || hasSpecificKeywords) {
+      // Check if it's a use-case-only query with no product type
+      if (!entities.productType && !entities.category && entities.useCases.length > 0) {
+        // Use-case only: try to find products matching use case keywords
+        return findUseCaseProducts(message, entities, products)
       }
 
       return {
-        text: lines.join('\n'),
-        products: fallback,
-        recommendations: fallback.map(p => ({ product: p, score: p.rating * 20, reasons: ['popular choice'] }))
+        text: "I couldn't find any products matching your requirements. Try adjusting your budget or preferences.",
+        products: [],
+        recommendations: null
       }
     }
 
+    // Truly generic request (e.g., "Recommend products" with no specifics):
+    // Return top-rated products as a general suggestion
+    const fallback = [...products]
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 4)
+
+    const lines = [`Here are some popular products from our catalog:\n`]
+    for (const p of fallback) {
+      lines.push(`• **${p.name}** — $${p.price.toFixed(2)} (${p.rating}★, ${p.reviewCount || 0} reviews)`)
+    }
+
     return {
-      text: "I couldn't find any products matching your requirements. Try adjusting your budget or preferences.",
-      products: [],
-      recommendations: null
+      text: lines.join('\n'),
+      products: fallback,
+      recommendations: fallback.map(p => ({ product: p, score: p.rating * 20, reasons: ['popular choice'] }))
     }
   }
 
@@ -230,12 +264,12 @@ export function generateRecommendations(message, products) {
       const keywords = USE_CASE_KEYWORDS[useCase] || []
       const productText = `${product.name} ${product.description || ''} ${(product.tags || []).join(' ')}`.toLowerCase()
       const matchedUseCaseKeywords = keywords.filter(kw => productText.includes(kw))
-      if (matchedUseCaseKeywords.length >= 1) {
+      if (matchedUseCaseKeywords.length >= 2) {
+        score += 20
+        reasons.push(`excellent for ${useCase}`)
+      } else if (matchedUseCaseKeywords.length >= 1) {
         score += 15
         reasons.push(`great for ${useCase}`)
-      } else if (matchedUseCaseKeywords.length >= 2) {
-        score += 10
-        reasons.push(`excellent for ${useCase}`)
       }
     }
 
@@ -302,6 +336,62 @@ export function generateRecommendations(message, products) {
       product: item.product,
       score: item.score,
       reasons: item.reasons
+    }))
+  }
+}
+
+/**
+ * Fallback for use-case-only queries (no explicit product type or category).
+ * Matches products based on use-case keywords and use-case keyword associations,
+ * then applies soft relevance scoring. Does NOT return random/unrelated products.
+ */
+function findUseCaseProducts(message, entities, products) {
+  const useCases = entities.useCases
+  if (useCases.length === 0) {
+    return {
+      text: "I couldn't find any products matching your query. Could you be more specific about what you're looking for?",
+      products: [],
+      recommendations: null
+    }
+  }
+
+  const candidates = products.filter(p => {
+    const productText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+    return useCases.some(uc => {
+      const kw = USE_CASE_KEYWORDS[uc] || []
+      return kw.some(k => productText.includes(k))
+    })
+  })
+
+  if (candidates.length === 0) {
+    return {
+      text: "I couldn't find any products matching your use case. Try a different query or be more specific.",
+      products: [],
+      recommendations: null
+    }
+  }
+
+  // Score by rating
+  const scored = candidates
+    .map(p => ({
+      product: p,
+      score: p.rating * 20 + (p.reviewCount >= 200 ? 12 : p.reviewCount >= 100 ? 4 : 0)
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+
+  const lines = [`Here are some products great for ${useCases.join(', ')}:\n`]
+  for (const item of scored) {
+    lines.push(`• **${item.product.name}** — $${item.product.price.toFixed(2)} (${item.product.rating}★, ${item.product.reviewCount || 0} reviews)`)
+  }
+
+  return {
+    text: lines.join('\n'),
+    products: scored.map(item => item.product),
+    recommendations: scored.map(item => ({
+      product: item.product,
+      score: item.score,
+      reasons: [`great for ${useCases.join(', ')}`]
     }))
   }
 }
