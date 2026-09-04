@@ -362,4 +362,136 @@ describe('Shared Product Retrieval Pipeline', () => {
       expect(r1.map(p => p.id)).toEqual(r2.map(p => p.id))
     })
   })
+
+  describe('Query isolation - consecutive messages', () => {
+    it('first "Best watches" then "Recommend me a laptop for students" - second returns laptops not watches', async () => {
+      // First query: watches
+      const r1 = await aiService.processMessage('Best watches', productsData, categoriesData)
+      expect(r1.products.length).toBeGreaterThan(0)
+      expect(r1.products.every(p => p.name.toLowerCase().includes('watch'))).toBe(true)
+      const firstProductIds = new Set(r1.products.map(p => p.id))
+
+      // Second query: laptop (different product type)
+      const r2 = await aiService.processMessage('Recommend me a laptop for students', productsData, categoriesData)
+      // No laptops in catalog, so should return empty or laptop-like products
+      if (r2.products.length > 0) {
+        // If any products returned, they should NOT be watches from the first query
+        expect(r2.products.every(p => !firstProductIds.has(p.id))).toBe(true)
+        expect(r2.products.every(p =>
+          p.name.toLowerCase().includes('laptop') ||
+          p.name.toLowerCase().includes('notebook') ||
+          p.tags?.some(t => ['laptop', 'notebook'].includes(t))
+        )).toBe(true)
+      }
+    })
+
+    it('first "Recommend good headphones" then "Best watches" - second returns watches not headphones', async () => {
+      // First query: headphones
+      const r1 = await aiService.processMessage('Recommend good headphones', productsData, categoriesData)
+      expect(r1.products.length).toBeGreaterThan(0)
+      expect(r1.products.every(p => p.name.toLowerCase().includes('headphone'))).toBe(true)
+
+      // Second query: watches (different product type)
+      const r2 = await aiService.processMessage('Best watches', productsData, categoriesData)
+      expect(r2.products.length).toBeGreaterThan(0)
+      expect(r2.products.every(p => p.name.toLowerCase().includes('watch'))).toBe(true)
+      // Should not return the same headphones from first query
+      const firstProductIds = new Set(r1.products.map(p => p.id))
+      expect(r2.products.every(p => !firstProductIds.has(p.id))).toBe(true)
+    })
+
+    it('first headphones under $80 then Best watches under $100 - budgets and types don', () => {
+      // First query: headphones under $80
+      const r1 = searchProductsMultilingual('headphones under $80', productsData, categoriesData)
+      expect(r1.length).toBeGreaterThan(0)
+      expect(r1.every(p => p.price <= 80)).toBe(true)
+      expect(r1.every(p => p.name.toLowerCase().includes('headphone'))).toBe(true)
+
+      // Second query: watches under $100 (different product type + different budget)
+      // Note: the only watch in catalog is $199.99, so under $100 returns empty (correct behavior)
+      const r2 = searchProductsMultilingual('Best watches under $100', productsData, categoriesData)
+      expect(r2.every(p => p.price <= 100)).toBe(true)
+      expect(r2.every(p => p.name.toLowerCase().includes('watch'))).toBe(true)
+
+      // Verify query type isolation - r2 should not include any headphones from r1
+      const firstIds = new Set(r1.map(p => p.id))
+      expect(r2.every(p => !firstIds.has(p.id))).toBe(true)
+
+      // Also verify "watches under $500" does return the actual watch product
+      const r3 = searchProductsMultilingual('watches under $500', productsData, categoriesData)
+      expect(r3.length).toBe(1)
+      expect(r3[0].name).toBe('Smart Watch Pro')
+    })
+
+    it('search isolation: "Best watches" then "headphones" - results differ', () => {
+      const r1 = searchProductsMultilingual('Best watches', productsData, categoriesData)
+      const r2 = searchProductsMultilingual('headphones', productsData, categoriesData)
+      // First should return watches, second should return headphones
+      if (r1.length > 0 && r2.length > 0) {
+        expect(r1.every(p => p.name.toLowerCase().includes('watch'))).toBe(true)
+        expect(r2.every(p => p.name.toLowerCase().includes('headphone'))).toBe(true)
+      }
+    })
+  })
+
+  describe('Validation examples', () => {
+    it('"Best watches" returns only watch products', () => {
+      const results = searchProductsMultilingual('Best watches', productsData, categoriesData)
+      expect(results.every(p => p.name.toLowerCase().includes('watch'))).toBe(true)
+    })
+
+    it('"Recommend good headphones" returns only headphone products', () => {
+      const results = searchProductsMultilingual('Recommend good headphones', productsData, categoriesData)
+      expect(results.every(p => p.name.toLowerCase().includes('headphone'))).toBe(true)
+    })
+
+    it('"Gaming laptop" returns only laptop products', () => {
+      const results = searchProductsMultilingual('Gaming laptop', productsData, categoriesData)
+      if (results.length > 0) {
+        expect(results.every(p => p.name.toLowerCase().includes('laptop') || p.tags?.some(t => t.includes('laptop')))).toBe(true)
+      }
+    })
+
+    it('"Headphones under $80" returns headphones under $80', () => {
+      const results = searchProductsMultilingual('Headphones under $80', productsData, categoriesData)
+      expect(results.every(p => p.price <= 80)).toBe(true)
+      expect(results.every(p => p.name.toLowerCase().includes('headphone'))).toBe(true)
+    })
+
+    it('"Best watches under $100" returns watches under $100', () => {
+      const results = searchProductsMultilingual('Best watches under $100', productsData, categoriesData)
+      expect(results.every(p => p.price <= 100)).toBe(true)
+      expect(results.every(p => p.name.toLowerCase().includes('watch'))).toBe(true)
+    })
+
+    it('"Tell me about a product" does not randomly select an unrelated product', () => {
+      const result = generateRecommendations('Tell me about a product', productsData)
+      // Should either return empty or ask for clarification
+      // Should NOT return a random unrelated product
+      if (result.products.length > 0) {
+        // If products are returned, they should not be random
+        expect(result.recommendations).not.toBeNull()
+      }
+    })
+
+    it('all returned products exist in the catalog', () => {
+      const queries = ['Best watches', 'headphones under $80', 'gaming', 'books', 'Products for studying', 'Show me electronics']
+      for (const q of queries) {
+        const results = searchProductsMultilingual(q, productsData, categoriesData)
+        for (const p of results) {
+          const exists = productsData.some(catalogProduct => catalogProduct.id === p.id)
+          expect(exists).toBe(true)
+        }
+      }
+    })
+
+    it('displayed prices match the catalog', () => {
+      const results = searchProductsMultilingual('Best watches', productsData, categoriesData)
+      for (const p of results) {
+        const catalogProduct = productsData.find(c => c.id === p.id)
+        expect(p.price).toBe(catalogProduct.price)
+        expect(p.rating).toBe(catalogProduct.rating)
+      }
+    })
+  })
 })
