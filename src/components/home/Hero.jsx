@@ -68,9 +68,9 @@ export default function Hero() {
             <p style={{ margin: '20px 0 0', maxWidth: 480, fontSize: 'clamp(15px, 4vw, 18px)', color: C.textSecondary, lineHeight: 1.7, fontWeight: 400 }}>
               Find, compare and choose the right products in seconds. Ask our AI assistant in natural language.
             </p>
-           </div>
+          </div>
 
-           <div className="hero-3d-panel" style={{
+          <div className="hero-3d-panel" style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
