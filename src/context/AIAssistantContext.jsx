@@ -15,19 +15,6 @@ function saveMessages(messages) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
 }
 
-function reduceProducts(products) {
-  return (products || [])
-    .map((p) => ({
-      id: p.id,
-      name: p.name,
-      price: p.price,
-      categoryId: p.categoryId,
-      categoryName: p.categoryName,
-      rating: p.rating,
-      tags: p.tags
-    }))
-}
-
 const AIAssistantContext = createContext(null)
 
 export function AIAssistantProvider({ children }) {
@@ -52,43 +39,15 @@ export function AIAssistantProvider({ children }) {
     setIsTyping(true)
 
     try {
-      let result
+       let result
 
-      const apiBase = import.meta.env.DEV
-        ? '/api/chat'
-        : 'https://ai-powered-ecommerce-marketplace.vercel.app/api/chat'
-
-      try {
-        const response = await fetch(apiBase, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: text.trim(),
-            products: reduceProducts(await import('../data/products.json').then(m => m.default || m)),
-            categories: await import('../data/categories.json').then(m => m.default || m)
-          })
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          result = {
-            text: data.text,
-            products: data.products || [],
-            intent: data.intent || null,
-            intentConfidence: data.intentConfidence || null,
-            entities: data.entities || null,
-            recommendations: data.recommendations || null,
-            comparison: data.comparison || null
-          }
-        } else {
-          throw new Error('API not available')
-        }
-      } catch (apiError) {
-        // Fallback to local AI service when API is unavailable
-        const { aiService } = await import('../services/aiService.js')
-        const products = (await import('../data/products.json')).default
-        result = await aiService.processMessage(text, products)
-      }
+      // Use the local aiService directly (not a remote API) so the deployed
+      // site uses exactly the same tested retrieval logic as the test suite.
+      // A remote API can drift out of sync with the local code and return
+      // stale or incorrect product results.
+      const { aiService } = await import('../services/aiService.js')
+      const products = (await import('../data/products.json')).default
+      result = await aiService.processMessage(text, products)
 
       const assistantMessage = {
         id: (Date.now() + 1).toString(),

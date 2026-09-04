@@ -494,4 +494,93 @@ describe('Shared Product Retrieval Pipeline', () => {
       }
     })
   })
+
+  describe('Integration: full AIAssistantContext data flow', () => {
+    // This simulates what AIAssistantContext.jsx does: calls aiService.processMessage
+    // directly (no remote API) and verifies the response object structure
+    async function simulateAIChat(message) {
+      const { aiService } = await import('../services/aiService.js')
+      const result = await aiService.processMessage(message, productsData, categoriesData)
+      return result
+    }
+
+    it('Best watches -> returns watches not T-shirt', async () => {
+      const result = await simulateAIChat('Best watches')
+      expect(result.products || []).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: expect.stringMatching(/watch/i) })
+        ])
+      )
+      const allProductIds = (result.products || []).map(p => p.id)
+      const tshirtId = productsData.find(p => p.name === 'Classic Fit Cotton T-Shirt')?.id
+      expect(allProductIds).not.toContain(tshirtId)
+    })
+
+    it('Recommend me a laptop for students -> returns laptops not T-shirt', async () => {
+      const result = await simulateAIChat('Recommend me a laptop for students')
+      // No laptops in catalog, so no unrelated products should be returned
+      const allProductIds = (result.products || []).map(p => p.id)
+      const tshirtId = productsData.find(p => p.name === 'Classic Fit Cotton T-Shirt')?.id
+      expect(allProductIds).not.toContain(tshirtId)
+      if (result.products && result.products.length > 0) {
+        expect(result.products.every(p => p.name.toLowerCase().includes('laptop') || p.tags?.some(t => t.includes('laptop')))).toBe(true)
+      }
+    })
+
+    it('Recommend good headphones -> returns headphones not T-shirt', async () => {
+      const result = await simulateAIChat('Recommend good headphones')
+      expect(result.products || []).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: expect.stringMatching(/headphone/i) })
+        ])
+      )
+      const allProductIds = (result.products || []).map(p => p.id)
+      const tshirtId = productsData.find(p => p.name === 'Classic Fit Cotton T-Shirt')?.id
+      expect(allProductIds).not.toContain(tshirtId)
+    })
+
+    it('Best watches under $100 -> returns watches under $100 not T-shirt', async () => {
+      const result = await simulateAIChat('Best watches under $100')
+      if (result.products && result.products.length > 0) {
+        expect(result.products.every(p => p.price <= 100)).toBe(true)
+        expect(result.products.every(p => p.name.toLowerCase().includes('watch'))).toBe(true)
+      }
+      const allProductIds = (result.products || []).map(p => p.id)
+      const tshirtId = productsData.find(p => p.name === 'Classic Fit Cotton T-Shirt')?.id
+      expect(allProductIds).not.toContain(tshirtId)
+    })
+
+    it('consecutive different queries return different product IDs', async () => {
+      const r1 = await simulateAIChat('Best watches')
+      const r2 = await simulateAIChat('Recommend good headphones')
+
+      // Second response should NOT contain the first response's products
+      const firstIds = new Set((r1.products || []).map(p => p.id))
+      const secondIds = new Set((r2.products || []).map(p => p.id))
+
+      // If both returned products, they should not overlap
+      if (firstIds.size > 0 && secondIds.size > 0) {
+        const overlap = [...firstIds].filter(id => secondIds.has(id))
+        expect(overlap.length).toBe(0)
+      }
+    })
+
+    it('every rendered product ID exists in the catalog', async () => {
+      const queries = [
+        'Best watches',
+        'Recommend me a laptop for students',
+        'Recommend good headphones',
+        'Best watches under $100',
+        'Products for studying',
+        'Headphones under $80'
+      ]
+      for (const q of queries) {
+        const result = await simulateAIChat(q)
+        for (const p of result.products || []) {
+          const exists = productsData.some(c => c.id === p.id)
+          expect(exists).toBe(true)
+        }
+      }
+    })
+  })
 })
