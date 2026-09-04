@@ -94,8 +94,9 @@ const INTENT_RULES = [
     keywords: [
       'tell me about', 'details about', 'information about', 'specs of',
       'specifications of', 'features of', 'describe', 'more info',
-      'learn about', 'tell me more', 'what is', 'what are', 'product info',
-      'product details', 'characteristics of', 'what does', 'tech specs'
+      'learn about', 'tell me more', 'what is', 'product info',
+      'product details', 'characteristics of', 'what does', 'tech specs',
+      'what is the', 'what are the specs', 'what are the features'
     ]
   },
   {
@@ -134,13 +135,13 @@ const INTENT_RULES = [
     intent: INTENTS.FAQ,
     priority: 100,
     keywords: [
-      'return policy', 'refund policy', 'shipping policy', 'payment policy',
+      'return policy', 'return policies', 'refund policy', 'shipping policy', 'payment policy',
       'exchange policy', 'warranty policy', 'what is your return policy',
       'what is your refund policy', 'what is your shipping policy',
       'what is your payment policy', 'terms and conditions', 'terms of service',
       'privacy policy', 'faq', 'frequently asked questions',
-      'how do i return', 'can i return', 'return policy', 'money back guarantee',
-      'warranty coverage', 'what are your policies'
+      'how do i return', 'can i return', 'money back guarantee',
+      'warranty coverage', 'what are your policies', 'what are your return policies'
     ]
   },
   {

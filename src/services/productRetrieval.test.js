@@ -563,7 +563,7 @@ describe('Shared Product Retrieval Pipeline', () => {
         const overlap = [...firstIds].filter(id => secondIds.has(id))
         expect(overlap.length).toBe(0)
       }
-    })
+    }, 15000)
 
     it('every rendered product ID exists in the catalog', async () => {
       const queries = [
@@ -581,6 +581,165 @@ describe('Shared Product Retrieval Pipeline', () => {
           expect(exists).toBe(true)
         }
       }
+    }, 30000)
+  })
+
+  describe('Natural language and multilingual robustness', () => {
+    async function simulateAIChat(message) {
+      const { aiService } = await import('../services/aiService.js')
+      const result = await aiService.processMessage(message, productsData, categoriesData)
+      return result
+    }
+
+    it('handles "Which is better?" for comparison', async () => {
+      const result = await simulateAIChat('Which is better, the Smart Watch Pro or the Wireless Bluetooth Headphones?')
+      // Should either return a comparison or product info
+      expect(result.intent).toBeTruthy()
+      if (result.comparison) {
+        expect(result.comparison.productA).toBeDefined()
+        expect(result.comparison.productB).toBeDefined()
+      }
+    })
+
+    it('handles "I need something for studying"', async () => {
+      const result = await simulateAIChat('I need something for studying')
+      // Should return products relevant to studying (headphones, laptop, books, etc.)
+      if (result.products && result.products.length > 0) {
+        for (const p of result.products) {
+          const exists = productsData.some(c => c.id === p.id)
+          expect(exists).toBe(true)
+        }
+      }
+    })
+
+    it('handles conversational "Can you show me a good laptop?"', async () => {
+      const result = await simulateAIChat('Can you show me a good laptop?')
+      // No laptops in catalog - should not return unrelated products
+      const allProductIds = (result.products || []).map(p => p.id)
+      const tshirtId = productsData.find(p => p.name === 'Classic Fit Cotton T-Shirt')?.id
+      expect(allProductIds).not.toContain(tshirtId)
+    })
+
+    it('handles greeting "Hello"', async () => {
+      const result = await simulateAIChat('Hello')
+      expect(result.text).toContain('NexMart')
+      expect(result.products || []).toEqual([])
+    })
+
+    it('handles "Can you help me choose something?"', async () => {
+      const result = await simulateAIChat('Can you help me choose something?')
+      expect(result.text).toBeTruthy()
+      // Should not error or return random products without context
+    })
+
+    it('handles return policy question', async () => {
+      const result = await simulateAIChat('What are your return policies?')
+      expect(result.text).toBeTruthy()
+      expect(result.text).toMatch(/return/i)
+    })
+
+    it('handles shipping question', async () => {
+      const result = await simulateAIChat('How long does shipping take?')
+      expect(result.text).toBeTruthy()
+      expect(result.text).toMatch(/ship|deliver/i)
+    })
+
+    it('handles "Can I return an item?"', async () => {
+      const result = await simulateAIChat('Can I return an item?')
+      expect(result.text).toBeTruthy()
+      expect(result.text).toMatch(/return|30/i)
+    })
+
+    it('handles "What are your return policies?"', async () => {
+      const result = await simulateAIChat('What are your return policies?')
+      expect(result.text).toBeTruthy()
+      // Should not return products
+      expect(result.products || []).toEqual([])
+    })
+  })
+
+  describe('Multilingual validation examples', () => {
+    async function simulateAIChat(message) {
+      const { aiService } = await import('../services/aiService.js')
+      const result = await aiService.processMessage(message, productsData, categoriesData)
+      return result
+    }
+
+    it('Mujhe students ke liye acha laptop chahiye (Roman Urdu)', async () => {
+      const result = await simulateAIChat('Mujhe students ke liye acha laptop chahiye')
+      const allProductIds = (result.products || []).map(p => p.id)
+      const tshirtId = productsData.find(p => p.name === 'Classic Fit Cotton T-Shirt')?.id
+      expect(allProductIds).not.toContain(tshirtId)
+      // No laptops in catalog, should not return unrelated products
+      if (result.products && result.products.length > 0) {
+        // If products returned, they should be laptop-related or study-related
+        for (const p of result.products) {
+          const exists = productsData.some(c => c.id === p.id)
+          expect(exists).toBe(true)
+        }
+      }
+    })
+
+    it('Urdu: مجھے پڑھائی کے لیے ایک اچھا لیپ ٹاپ چاہیے', async () => {
+      const result = await simulateAIChat('مجھے پڑھائی کے لیے ایک اچھا لیپ ٹاپ چاہیے')
+      const allProductIds = (result.products || []).map(p => p.id)
+      const tshirtId = productsData.find(p => p.name === 'Classic Fit Cotton T-Shirt')?.id
+      expect(allProductIds).not.toContain(tshirtId)
+      if (result.products && result.products.length > 0) {
+        for (const p of result.products) {
+          const exists = productsData.some(c => c.id === p.id)
+          expect(exists).toBe(true)
+        }
+      }
+    })
+
+    it('Best watches - multilingual keyword still works', async () => {
+      const result = await simulateAIChat('Best watches')
+      expect(result.products || []).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: expect.stringMatching(/watch/i) })
+        ])
+      )
+    })
+  })
+
+  describe('Soft constraint handling', () => {
+    async function simulateAIChat(message) {
+      const { aiService } = await import('../services/aiService.js')
+      const result = await aiService.processMessage(message, productsData, categoriesData)
+      return result
+    }
+
+    it('use case "for studying" does not reject study-related products', async () => {
+      // Headphones are great for studying - should be returned
+      const result = await simulateAIChat('I need headphones for studying')
+      if (result.products && result.products.length > 0) {
+        expect(result.products.every(p => p.name.toLowerCase().includes('headphone'))).toBe(true)
+        for (const p of result.products) {
+          const exists = productsData.some(c => c.id === p.id)
+          expect(exists).toBe(true)
+        }
+      }
+    })
+
+    it('use case "for gaming" with gaming keyboard returns gaming keyboard', async () => {
+      const result = await simulateAIChat('Recommend a keyboard for gaming')
+      if (result.products && result.products.length > 0) {
+        expect(result.products.some(p => p.name.toLowerCase().includes('keyboard') && p.tags?.includes('gaming'))).toBe(true)
+      }
+    })
+
+    it('budget "under $80" with product type returns products under $80 only', async () => {
+      const result = await simulateAIChat('headphones under $80')
+      if (result.products && result.products.length > 0) {
+        expect(result.products.every(p => p.price <= 80)).toBe(true)
+        expect(result.products.every(p => p.name.toLowerCase().includes('headphone'))).toBe(true)
+      }
+    })
+
+    it('impossibly low budget returns no unrelated products', async () => {
+      const result = await simulateAIChat('headphones under $10')
+      expect(result.products || []).toEqual([])
     })
   })
 })

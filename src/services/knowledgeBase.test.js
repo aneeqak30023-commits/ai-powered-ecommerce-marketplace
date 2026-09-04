@@ -66,6 +66,18 @@ describe('knowledgeBase', () => {
     expect(result).toBeNull()
   })
 
+  it('returns return-policy for plural "return policies" query', () => {
+    const result = searchKnowledgeBase('What are your return policies?')
+    expect(result).not.toBeNull()
+    expect(result.id).toBe('return-policy')
+  })
+
+  it('returns return-policy for "returns" query', () => {
+    const result = searchKnowledgeBase('returns')
+    expect(result).not.toBeNull()
+    expect(result.id).toBe('return-policy')
+  })
+
   it('returns no match for empty string', () => {
     const result = searchKnowledgeBase('')
     expect(result).toBeNull()

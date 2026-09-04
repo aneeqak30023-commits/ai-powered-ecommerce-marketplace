@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, createContext, useContext } from 'react'
+import { useState, useCallback, useEffect, useRef, createContext, useContext } from 'react'
 
 const STORAGE_KEY = 'nexmart-ai-chat'
 
@@ -20,6 +20,12 @@ const AIAssistantContext = createContext(null)
 export function AIAssistantProvider({ children }) {
   const [messages, setMessages] = useState(() => loadMessages())
   const [isTyping, setIsTyping] = useState(false)
+  const messagesRef = useRef(messages)
+
+  // Keep ref in sync with messages state
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
 
   useEffect(() => {
     saveMessages(messages)
@@ -47,7 +53,7 @@ export function AIAssistantProvider({ children }) {
       // stale or incorrect product results.
       const { aiService } = await import('../services/aiService.js')
       const products = (await import('../data/products.json')).default
-      result = await aiService.processMessage(text, products)
+      result = await aiService.processMessage(text, products, undefined, messagesRef.current)
 
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
