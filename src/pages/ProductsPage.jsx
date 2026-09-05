@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import ProductGrid from '../components/product/ProductGrid'
-import ProductFilters from '../components/product/ProductFilters'
+import ProductGrid from '../components/product/ProductGrid.jsx'
+import ProductFilters from '../components/product/ProductFilters.jsx'
 import allProducts from '../data/products.json'
 import allCategories from '../data/categories.json'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../context/CartContext.jsx'
 
 const C = {
   primary: '#6366F1',

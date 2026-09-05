@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-import ProductDetail from '../components/product/ProductDetail'
+import ProductDetail from '../components/product/ProductDetail.jsx'
 import allProducts from '../data/products.json'
-import { useCart } from '../context/CartContext'
-import { useRecentlyViewed } from '../context/RecentlyViewedContext'
+import { useCart } from '../context/CartContext.jsx'
+import { useRecentlyViewed } from '../context/RecentlyViewedContext.jsx'
 
 const C = {
   primary: '#6366F1',

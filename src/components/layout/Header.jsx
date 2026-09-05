@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext.jsx'
 import { useWishlist } from '../../context/WishlistContext.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const C = {
   primary: '#6366F1',
@@ -82,9 +83,19 @@ function HeartIcon({ size = 22 }) {
   )
 }
 
+function UserIcon({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export default function Header() {
   const { cartCount } = useCart()
   const { wishlistCount } = useWishlist()
+  const { isAuthenticated, user, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -320,11 +331,20 @@ export default function Header() {
 
           <nav className="nx-nav nx-hide-mobile">
             {NAV_LINKS.map((l) => (
-              <Link key={l.to} to={l.to} className={`nx-nav-link${l.highlight ? ' nx-ai-link' : ''}`} onClick={() => setMenuOpen(false)}>
+              <Link key={l.label} to={l.to} className={`nx-nav-link${l.highlight ? ' nx-ai-link' : ''}`} onClick={() => setMenuOpen(false)}>
                 {l.highlight && <SparkleIcon size={14} />}
                 {l.label}
               </Link>
             ))}
+            {isAuthenticated ? (
+              <Link to="/account" className="nx-nav-link" onClick={() => setMenuOpen(false)}>
+                Account
+              </Link>
+            ) : (
+              <Link to="/login" className="nx-nav-link" onClick={() => setMenuOpen(false)}>
+                Sign in
+              </Link>
+            )}
           </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -337,6 +357,47 @@ export default function Header() {
             >
               <SearchIcon />
             </button>
+
+            {isAuthenticated ? (
+              <>
+                <button
+                  type="button"
+                  className="nx-icon-btn nx-hide-mobile"
+                  aria-label="Account"
+                  onClick={() => navigate('/account')}
+                  title={user?.name || 'Account'}
+                >
+                  <UserIcon />
+                </button>
+                <button
+                  type="button"
+                  className="nx-icon-btn nx-show-mobile"
+                  aria-label="Account menu"
+                  onClick={() => {
+                    if (menuOpen) {
+                      logout()
+                      navigate('/')
+                    } else {
+                      navigate('/account')
+                    }
+                    setMenuOpen(false)
+                  }}
+                  style={{ display: 'none' }}
+                >
+                  <UserIcon />
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="nx-icon-btn nx-show-mobile"
+                aria-label="Login"
+                onClick={() => navigate('/login')}
+                style={{ display: 'none' }}
+              >
+                <UserIcon />
+              </button>
+            )}
 
             <button
               type="button"
@@ -378,6 +439,21 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
+            {isAuthenticated ? (
+              <>
+                <Link to="/account" className="nx-mobile-link" onClick={() => setMenuOpen(false)}>Account</Link>
+                <button
+                  type="button"
+                  className="nx-mobile-link"
+                  onClick={() => { logout(); setMenuOpen(false); navigate('/') }}
+                  style={{ background: 'none', border: 'none', textAlign: 'left', width: '100%', cursor: 'pointer' }}
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="nx-mobile-link" onClick={() => setMenuOpen(false)}>Sign in</Link>
+            )}
           </div>
         )}
       </header>
