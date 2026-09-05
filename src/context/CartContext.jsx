@@ -1,4 +1,5 @@
 import { useCallback, useEffect, createContext, useContext, useReducer } from 'react'
+import { useInventory } from './InventoryContext.jsx'
 
 const STORAGE_KEY = 'nexmart-cart'
 
@@ -20,12 +21,17 @@ const CartContext = createContext(null)
 
 export function CartProvider({ children }) {
   const [items, dispatch] = useReducer(cartReducer, loadCart())
+  const { canAddToCart } = useInventory()
 
   useEffect(() => {
     saveCart(items)
   }, [items])
 
   const addToCart = useCallback((product, quantity = 1) => {
+    const stockCheck = canAddToCart(product.id, quantity)
+    if (!stockCheck.allowed) {
+      return { success: false, reason: stockCheck.reason, available: stockCheck.available, requested: quantity }
+    }
     dispatch({
       type: 'ADD_ITEM',
       payload: {
@@ -36,15 +42,25 @@ export function CartProvider({ children }) {
         quantity
       }
     })
-  }, [])
+    return { success: true, available: stockCheck.available }
+  }, [canAddToCart])
 
   const removeFromCart = useCallback((id) => {
     dispatch({ type: 'REMOVE_ITEM', payload: id })
   }, [])
 
   const updateQuantity = useCallback((id, quantity) => {
+    if (quantity <= 0) {
+      dispatch({ type: 'REMOVE_ITEM', payload: id })
+      return { success: true }
+    }
+    const stockCheck = canAddToCart(id, quantity)
+    if (!stockCheck.allowed) {
+      return { success: false, reason: stockCheck.reason, available: stockCheck.available, requested: quantity }
+    }
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } })
-  }, [])
+    return { success: true, available: stockCheck.available }
+  }, [canAddToCart])
 
   const clearCart = useCallback(() => {
     dispatch({ type: 'CLEAR_CART' })

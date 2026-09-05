@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext.jsx'
 import { useOrders } from '../../context/OrderContext.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useInventory } from '../../context/InventoryContext.jsx'
 
 const C = {
   primary: '#6366F1',
@@ -46,13 +48,32 @@ export default function CheckoutForm() {
   const navigate = useNavigate()
   const { cartItems = [], updateQuantity: _updateQuantity, removeFromCart: _removeFromCart } = useCart()
   const { placeOrder } = useOrders()
+  const { user } = useAuth()
+  const { validateCartStock, bulkDecreaseStock } = useInventory()
   const { subtotal, shipping, tax, total } = calcTotals(cartItems)
   const orderCounter = useRef(0)
 
   const [form, setForm] = useState({
-    name: '', email: '', phone: '', address: '', city: '', state: '', zip: ''
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: '',
+    address: user?.shippingAddress || '',
+    city: '',
+    state: '',
+    zip: ''
   })
   const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    if (user) {
+      setForm(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        address: user.shippingAddress || prev.address
+      }))
+    }
+  }, [user])
 
   if (cartItems.length === 0) {
     return (
@@ -91,7 +112,19 @@ export default function CheckoutForm() {
   const handleSubmit = (ev) => {
     ev.preventDefault()
     if (!validate()) return
+
+    const stockIssues = validateCartStock(cartItems)
+    if (stockIssues.length > 0) {
+      const issue = stockIssues[0]
+      const errorMsg = issue.reason === 'out_of_stock'
+        ? `${issue.name} is out of stock. Please remove it from your cart.`
+        : `${issue.name} only has ${issue.available} left in stock. Please adjust the quantity.`
+      setErrors({ submit: errorMsg })
+      return
+    }
+
     const order = {
+      userId: user?.userId || null,
       items: cartItems,
       customer: { name: form.name, email: form.email, phone: form.phone },
       shippingAddress: { address: form.address, city: form.city, state: form.state, zip: form.zip },
@@ -102,6 +135,7 @@ export default function CheckoutForm() {
       date: new Date().toISOString()
     }
     const created = placeOrder ? placeOrder(order) : { ...order, id: 'ORD-' + (++orderCounter.current) }
+    bulkDecreaseStock(cartItems)
     navigate('/confirmation', { state: { order: created } })
   }
 

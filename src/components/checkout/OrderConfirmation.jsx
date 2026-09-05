@@ -112,11 +112,11 @@ export default function OrderConfirmation({ order }) {
         >
           Continue Shopping
         </Link>
-        <Link to="/orders" style={{ padding: '14px 28px', border: `1px solid ${C.border}`, color: C.text, textDecoration: 'none', borderRadius: 12, fontWeight: 600, background: C.surface, fontSize: 15, transition: 'background 0.2s ease, transform 0.15s ease' }}
+        <Link to={`/orders/${id}`} style={{ padding: '14px 28px', border: `1px solid ${C.border}`, color: C.text, textDecoration: 'none', borderRadius: 12, fontWeight: 600, background: C.surface, fontSize: 15, transition: 'background 0.2s ease, transform 0.15s ease' }}
           onMouseEnter={(e) => { e.currentTarget.style.background = C.background; e.currentTarget.style.transform = 'translateY(-1px)' }}
           onMouseLeave={(e) => { e.currentTarget.style.background = C.surface; e.currentTarget.style.transform = 'translateY(0)' }}
         >
-          View Orders
+          View Order
         </Link>
       </div>
     </div>

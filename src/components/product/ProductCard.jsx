@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWishlist } from '../../context/WishlistContext.jsx'
+import { useInventory, STOCK_STATES } from '../../context/InventoryContext.jsx'
 
 const C = {
   primary: '#6366F1',
@@ -39,15 +40,20 @@ function formatPrice(value) {
 export default function ProductCard({ product, onAddToCart, aiReason, aiScore, showCompare = false, onCompare, onToggleWishlist, showWishlistButton = true }) {
   const [hovered, setHovered] = useState(false)
   const { isInWishlist } = useWishlist()
+  const { getStockStateForProduct, getStock } = useInventory()
 
   if (!product) return null
 
-  const { name, price, originalPrice, categoryName, rating, reviewCount, image, stock, specifications } = product
+  const { name, price, originalPrice, categoryName, rating, reviewCount, image, specifications } = product
   const hasDiscount = originalPrice && Number(originalPrice) > Number(price)
   const discountPct = hasDiscount
     ? Math.round((1 - Number(price) / Number(originalPrice)) * 100)
     : 0
-  const outOfStock = stock !== undefined && stock <= 0
+
+  const stockState = getStockStateForProduct(product.id)
+  const availableStock = getStock(product.id)
+  const outOfStock = stockState === STOCK_STATES.OUT_OF_STOCK
+  const lowStock = stockState === STOCK_STATES.LOW_STOCK
   const wishlisted = isInWishlist(product.id)
 
   const keySpecs = specifications ? Object.entries(specifications).slice(0, 2) : []
@@ -239,7 +245,12 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
           onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            if (!outOfStock && onAddToCart) onAddToCart(product)
+            if (!outOfStock && onAddToCart) {
+              const result = onAddToCart(product)
+              if (result && !result.success) {
+                // Parent component should handle the error
+              }
+            }
           }}
           disabled={outOfStock}
           style={{
@@ -257,7 +268,7 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
           onMouseEnter={(e) => { if (!outOfStock) e.currentTarget.style.background = C.primaryDark }}
           onMouseLeave={(e) => { if (!outOfStock) e.currentTarget.style.background = C.primary }}
         >
-          {outOfStock ? 'Out of Stock' : 'Add to Cart'}
+          {outOfStock ? 'Out of Stock' : lowStock ? `Only ${availableStock} left` : 'Add to Cart'}
         </button>
         {showCompare && (
           <button

@@ -452,7 +452,21 @@ function fallbackKeywordSearch(query, entities, products) {
 
   const keywordRegex = new RegExp(expanded.map(kw => kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'i')
 
-  let fallbackResults = products.filter(p => {
+  let fallbackResults = products
+
+  // CRITICAL: If a product type was detected in the query, the fallback must
+  // still respect that constraint. Filter by product type BEFORE keyword search
+  // to prevent returning unrelated product categories.
+  if (entities.productType) {
+    const typeRegex = new RegExp(entities.productType, 'i')
+    fallbackResults = fallbackResults.filter(p => {
+      const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
+      return typeRegex.test(searchText)
+    })
+  }
+
+  // Now apply keyword matching on the constrained set
+  fallbackResults = fallbackResults.filter(p => {
     const searchText = `${p.name} ${p.description || ''} ${(p.tags || []).join(' ')}`.toLowerCase()
     return keywordRegex.test(searchText)
   })
@@ -488,4 +502,4 @@ function fallbackKeywordSearch(query, entities, products) {
   return fallbackResults.slice(0, 5)
 }
 
-export { detectLanguage, normalizeToEnglish, extractMultilingualEntities, PRODUCT_TYPE_MAP, CATEGORY_MAP, detectUseCases, USE_CASE_PRODUCTS_KEYWORDS }
+export { detectLanguage, normalizeToEnglish, extractMultilingualEntities, PRODUCT_TYPE_MAP, CATEGORY_MAP, detectUseCases, USE_CASE_PRODUCTS_KEYWORDS, KEYWORD_SYNONYMS }

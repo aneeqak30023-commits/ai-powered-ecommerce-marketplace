@@ -1,6 +1,8 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useOrders } from '../context/OrderContext'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useOrders } from '../context/OrderContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
+import { ORDER_STATUSES } from '../context/OrderContext.jsx'
 
 const C = {
   primary: '#6366F1',
@@ -13,13 +15,45 @@ const C = {
   success: '#16A34A'
 }
 
+const STATUS_COLORS = {
+  [ORDER_STATUSES.PENDING]: { bg: '#FEF3C7', text: '#92400E' },
+  [ORDER_STATUSES.CONFIRMED]: { bg: '#DBEAFE', text: '#1E40AF' },
+  [ORDER_STATUSES.SHIPPED]: { bg: '#E0E7FF', text: '#3730A3' },
+  [ORDER_STATUSES.DELIVERED]: { bg: '#D1FAE5', text: '#065F46' },
+  [ORDER_STATUSES.CANCELLED]: { bg: '#FEE2E2', text: '#991B1B' }
+}
+
 export default function OrdersPage() {
-  const { orders } = useOrders()
-  const [expandedOrder, setExpandedOrder] = useState(null)
+  const { getOrdersByUserId } = useOrders()
+  const { isAuthenticated, user } = useAuth()
+  const navigate = useNavigate()
+  const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const sortedOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date))
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login', { replace: true })
+      return
+    }
 
-  if (sortedOrders.length === 0) {
+    const timer = setTimeout(() => {
+      const userOrders = getOrdersByUserId(user?.userId)
+      setOrders(userOrders)
+      setLoading(false)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [isAuthenticated, user, getOrdersByUserId, navigate])
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: C.textSecondary, fontSize: 15 }}>Loading your orders...</p>
+      </div>
+    )
+  }
+
+  if (orders.length === 0) {
     return (
       <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
@@ -38,53 +72,44 @@ export default function OrdersPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
-      <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 20px' }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 24px' }}>My Orders</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {sortedOrders.map(order => (
-            <div key={order.id} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, overflow: 'hidden' }}>
-              <div
-                style={{ padding: 24, cursor: 'pointer' }}
-                onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+          {orders.map(order => {
+            const statusColor = STATUS_COLORS[order.status] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED]
+            return (
+              <Link
+                key={order.id}
+                to={`/orders/${order.id}`}
+                style={{ display: 'block', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, overflow: 'hidden', textDecoration: 'none', color: 'inherit', transition: 'box-shadow 0.2s ease' }}
+                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none' }}
               >
-                <div style={{ display: 'flex', flexDirection: 'column', smFlexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-                  <div>
-                    <p style={{ fontWeight: 600, color: C.text, margin: '0 0 4px' }}>Order #{order.id}</p>
-                    <p style={{ fontSize: 14, color: C.textSecondary, margin: 0 }}>{new Date(order.date).toLocaleDateString()}</p>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 9999, fontSize: 12, fontWeight: 600, background: '#DCFCE7', color: '#16A34A' }}>
-                      {order.status || 'Confirmed'}
-                    </span>
-                    <span style={{ fontWeight: 700, color: C.text }}>${order.total.toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-              {expandedOrder === order.id && (
-                <div style={{ borderTop: `1px solid ${C.border}`, padding: 24 }}>
-                  <h3 style={{ fontWeight: 700, color: C.text, margin: '0 0 16px', fontSize: 16 }}>Items</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    {order.items.map((item, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 10 }}
-                        />
-                        <div style={{ flex: 1 }}>
-                          <p style={{ fontWeight: 600, color: C.text, margin: '0 0 4px', fontSize: 14 }}>{item.name}</p>
-                          <p style={{ fontSize: 13, color: C.textSecondary, margin: 0 }}>Qty: {item.quantity}</p>
-                        </div>
-                        <p style={{ fontWeight: 600, color: C.text }}>${(item.price * item.quantity).toFixed(2)}</p>
-                      </div>
-                    ))}
+                <div style={{ padding: 24 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, smFlexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <p style={{ fontWeight: 600, color: C.text, margin: '0 0 4px', fontSize: 15 }}>Order #{order.id}</p>
+                      <p style={{ fontSize: 14, color: C.textSecondary, margin: 0 }}>
+                        {new Date(order.date).toLocaleDateString()} · {order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                      <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 9999, fontSize: 12, fontWeight: 600, background: statusColor.bg, color: statusColor.text }}>
+                        {order.status || ORDER_STATUSES.CONFIRMED}
+                      </span>
+                      <span style={{ fontWeight: 700, color: C.text, fontSize: 16 }}>{formatPrice(order.total)}</span>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
-          ))}
+              </Link>
+            )
+          })}
         </div>
       </div>
     </div>
   )
+}
+
+function formatPrice(value) {
+  return `$${Number(value || 0).toFixed(2)}`
 }

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import ProductCard from './ProductCard.jsx'
 import { useReviews } from '../../context/ReviewContext.jsx'
 import { useWishlist } from '../../context/WishlistContext.jsx'
+import { useInventory, STOCK_STATES } from '../../context/InventoryContext.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const C = {
   primary: '#6366F1',
@@ -41,39 +43,99 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
   const [activeImage, setActiveImage] = useState(product?.image)
   const [quantity, setQuantity] = useState(1)
   const [specsOpen, setSpecsOpen] = useState(true)
-  const { getReviewsForProduct, addReview, getAverageRating, getReviewCount } = useReviews()
+  const { getReviewsForProduct, getUserReviewForProduct, addReview, editReview, deleteReview, getAverageRating, getReviewCount, getRatingBreakdown } = useReviews()
+  const { user, isAuthenticated } = useAuth()
   const { toggleWishlist } = useWishlist()
+  const { getStockStateForProduct, getStock, canAddToCart } = useInventory()
   const [reviews, setReviews] = useState(() => getReviewsForProduct(product?.id))
   const [reviewForm, setReviewForm] = useState({ reviewerName: '', rating: 5, text: '' })
+  const [editingReviewId, setEditingReviewId] = useState(null)
+  const [editForm, setEditForm] = useState({ rating: 5, text: '' })
+  const [reviewError, setReviewError] = useState('')
+  const [reviewSuccess, setReviewSuccess] = useState('')
 
   useEffect(() => {
     setActiveImage(product?.image)
     setQuantity(1)
     setReviews(getReviewsForProduct(product?.id))
+    setEditingReviewId(null)
+    setReviewError('')
+    setReviewSuccess('')
   }, [product?.id, product?.image, getReviewsForProduct])
 
   if (!product) return null
 
-  const { name, price, originalPrice, categoryName, rating, reviewCount, image, description, specifications, stock } = product
+  const { name, price, originalPrice, categoryName, rating, reviewCount, image, description, specifications } = product
   const gallery = product.images && product.images.length ? product.images : [image]
   const hasDiscount = originalPrice && Number(originalPrice) > Number(price)
   const discountPct = hasDiscount ? Math.round((1 - Number(price) / Number(originalPrice)) * 100) : 0
-  const inStock = stock === undefined ? true : stock > 0
+
+  const stockState = getStockStateForProduct(product.id)
+  const availableStock = getStock(product.id)
+  const inStock = stockState !== STOCK_STATES.OUT_OF_STOCK
+  const lowStock = stockState === STOCK_STATES.LOW_STOCK
   const avgRating = getAverageRating(product.id)
   const totalReviews = getReviewCount(product.id)
   const displayRating = avgRating !== null ? avgRating : rating
   const displayReviewCount = totalReviews > 0 ? totalReviews : reviewCount
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1))
-  const inc = () => setQuantity((q) => Math.min(stock || 99, q + 1))
+  const inc = () => setQuantity((q) => Math.min(availableStock, q + 1))
 
   const handleSubmitReview = (e) => {
     e.preventDefault()
-    if (!reviewForm.text.trim()) return
-    addReview(product.id, reviewForm)
+    setReviewError('')
+    setReviewSuccess('')
+
+    if (!isAuthenticated) {
+      setReviewError('Please log in to submit a review')
+      return
+    }
+
+    const result = addReview(product.id, reviewForm)
+    if (!result.success) {
+      setReviewError(result.error || 'Failed to submit review')
+      return
+    }
+
     setReviews(getReviewsForProduct(product.id))
     setReviewForm({ reviewerName: '', rating: 5, text: '' })
+    setReviewSuccess('Review submitted successfully!')
   }
+
+  const handleEditReview = (review) => {
+    setEditingReviewId(review.id)
+    setEditForm({ rating: review.rating, text: review.text })
+    setReviewError('')
+    setReviewSuccess('')
+  }
+
+  const handleSaveEdit = (reviewId) => {
+    setReviewError('')
+    const result = editReview(reviewId, product.id, editForm)
+    if (!result.success) {
+      setReviewError(result.error || 'Failed to update review')
+      return
+    }
+    setReviews(getReviewsForProduct(product.id))
+    setEditingReviewId(null)
+    setEditForm({ rating: 5, text: '' })
+    setReviewSuccess('Review updated successfully!')
+  }
+
+  const handleDeleteReview = (reviewId) => {
+    setReviewError('')
+    if (!window.confirm('Are you sure you want to delete this review?')) return
+    const result = deleteReview(reviewId, product.id)
+    if (!result.success) {
+      setReviewError(result.error || 'Failed to delete review')
+      return
+    }
+    setReviews(getReviewsForProduct(product.id))
+    setReviewSuccess('Review deleted successfully!')
+  }
+
+  const currentUserReview = user ? getUserReviewForProduct(product.id, user.userId) : null
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -213,10 +275,17 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
 
             <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 20 }}>
               {inStock ? (
-                <span style={{ color: C.success, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: C.success, display: 'inline-block' }} />
-                  In Stock
-                </span>
+                lowStock ? (
+                  <span style={{ color: C.accent, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: C.accent, display: 'inline-block' }} />
+                    Only {availableStock} left
+                  </span>
+                ) : (
+                  <span style={{ color: C.success, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: C.success, display: 'inline-block' }} />
+                    In Stock
+                  </span>
+                )
               ) : (
                 <span style={{ color: C.danger, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: C.danger, display: 'inline-block' }} />
@@ -232,7 +301,7 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
                   value={quantity}
                   onChange={(e) => {
                     const v = parseInt(e.target.value, 10)
-                    if (!isNaN(v)) setQuantity(Math.min(stock || 99, Math.max(1, v)))
+                    if (!isNaN(v)) setQuantity(Math.min(availableStock, Math.max(1, v)))
                   }}
                   style={{ width: 52, textAlign: 'center', border: 'none', outline: 'none', fontSize: 15, color: C.text, padding: '12px 0' }}
                   aria-label="Quantity"
@@ -243,7 +312,12 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
               <button
                 type="button"
                 disabled={!inStock}
-                onClick={() => inStock && onAddToCart && onAddToCart(product, quantity)}
+                onClick={() => {
+                  const result = canAddToCart(product.id, quantity)
+                  if (result.allowed && onAddToCart) {
+                    onAddToCart(product, quantity)
+                  }
+                }}
                 style={{
                   flex: 1,
                   padding: '14px 24px',
@@ -314,112 +388,275 @@ export default function ProductDetail({ product, onAddToCart, relatedProducts = 
         <h2 style={{ fontSize: 20, fontWeight: 700, color: C.text, margin: '0 0 20px', letterSpacing: '-0.02em' }}>Customer Reviews</h2>
 
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, marginBottom: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24, flexWrap: 'wrap' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 48, fontWeight: 800, color: C.primary, lineHeight: 1 }}>
-                {displayRating.toFixed(1)}
+                {displayRating !== null ? displayRating.toFixed(1) : '0.0'}
               </div>
-              <StarRatingDisplay rating={displayRating} count={null} size={20} />
+              <StarRatingDisplay rating={displayRating || 0} count={null} size={20} />
               <div style={{ fontSize: 13, color: C.textSecondary, marginTop: 6 }}>
                 {displayReviewCount} review{displayReviewCount !== 1 ? 's' : ''}
               </div>
             </div>
+            {displayReviewCount > 0 && (
+              <div style={{ flex: '1 1 200px', minWidth: 200 }}>
+                {(() => {
+                  const breakdown = getRatingBreakdown(product.id)
+                  return Object.entries(breakdown).reverse().map(([star, count]) => {
+                    const pct = displayReviewCount > 0 ? (count / displayReviewCount) * 100 : 0
+                    return (
+                      <div key={star} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: C.text, width: 16 }}>{star}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+                          <path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2z" fill={C.star} />
+                        </svg>
+                        <div style={{ flex: 1, height: 8, background: C.border, borderRadius: 4, overflow: 'hidden' }}>
+                          <div style={{ width: `${pct}%`, height: '100%', background: C.star, borderRadius: 4, transition: 'width 0.3s ease' }} />
+                        </div>
+                        <span style={{ fontSize: 12, color: C.textSecondary, width: 24, textAlign: 'right' }}>{count}</span>
+                      </div>
+                    )
+                  })
+                })()}
+              </div>
+            )}
           </div>
 
           {reviews.length === 0 && (
-            <p style={{ color: C.textSecondary, margin: 0 }}>No reviews yet. Be the first to review this product!</p>
+            <p style={{ color: C.textSecondary, margin: '0 0 16px' }}>No reviews yet. Be the first to review this product!</p>
           )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {reviews.map((r) => (
-              <div key={r.id} style={{ borderBottom: `1px solid ${C.border}`, paddingBottom: 16, marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: '50%',
-                      background: C.primary,
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      fontSize: 14
-                    }}>
-                      {r.reviewerName.charAt(0).toUpperCase()}
+            {reviews.map((r) => {
+              const isOwner = user && r.userId === user.userId
+              const isEditing = editingReviewId === r.id
+              return (
+                <div key={r.id} style={{ borderBottom: `1px solid ${C.border}`, paddingBottom: 16, marginBottom: 16 }}>
+                  {isEditing ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <div>
+                        <label style={labelStyle}>Rating</label>
+                        <select
+                          style={inputStyle}
+                          value={editForm.rating}
+                          onChange={(e) => setEditForm((f) => ({ ...f, rating: Number(e.target.value) }))}
+                        >
+                          <option value="5">5 - Excellent</option>
+                          <option value="4">4 - Good</option>
+                          <option value="3">3 - Average</option>
+                          <option value="2">2 - Poor</option>
+                          <option value="1">1 - Terrible</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Review</label>
+                        <textarea
+                          style={{ ...inputStyle, minHeight: 100, resize: 'vertical' }}
+                          value={editForm.text}
+                          onChange={(e) => setEditForm((f) => ({ ...f, text: e.target.value }))}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', gap: 10 }}>
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEdit(r.id)}
+                          style={{
+                            padding: '10px 18px',
+                            border: 'none',
+                            borderRadius: 10,
+                            background: C.primary,
+                            color: '#fff',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingReviewId(null)}
+                          style={{
+                            padding: '10px 18px',
+                            border: `1px solid ${C.border}`,
+                            borderRadius: 10,
+                            background: 'transparent',
+                            color: C.textSecondary,
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                    <div>
-                      <div style={{ fontWeight: 600, color: C.text, fontSize: 14 }}>{r.reviewerName}</div>
-                      <div style={{ fontSize: 12, color: C.textSecondary }}>{formatDate(r.date)}</div>
-                    </div>
-                  </div>
-                  <StarRatingDisplay rating={r.rating} count={null} size={14} />
+                  ) : (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: '50%',
+                            background: C.primary,
+                            color: '#fff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 700,
+                            fontSize: 14
+                          }}>
+                            {r.reviewerName.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 600, color: C.text, fontSize: 14 }}>{r.reviewerName}</div>
+                            <div style={{ fontSize: 12, color: C.textSecondary }}>{formatDate(r.date)}</div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <StarRatingDisplay rating={r.rating} count={null} size={14} />
+                          {isOwner && (
+                            <div style={{ display: 'flex', gap: 6 }}>
+                              <button
+                                type="button"
+                                onClick={() => handleEditReview(r)}
+                                style={{
+                                  padding: '4px 10px',
+                                  border: `1px solid ${C.border}`,
+                                  borderRadius: 8,
+                                  background: 'transparent',
+                                  color: C.textSecondary,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteReview(r.id)}
+                                style={{
+                                  padding: '4px 10px',
+                                  border: `1px solid ${C.border}`,
+                                  borderRadius: 8,
+                                  background: 'transparent',
+                                  color: C.danger,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <p style={{ margin: 0, fontSize: 14, color: C.textSecondary, lineHeight: 1.7 }}>{r.text}</p>
+                    </>
+                  )}
                 </div>
-                <p style={{ margin: 0, fontSize: 14, color: C.textSecondary, lineHeight: 1.7 }}>{r.text}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24 }}>
-          <h3 style={{ margin: '0 0 18px', fontSize: 18, fontWeight: 700, color: C.text }}>Write a Review</h3>
-          <form onSubmit={handleSubmitReview}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div>
-                <label style={labelStyle}>Your Name</label>
-                <input
-                  style={inputStyle}
-                  value={reviewForm.reviewerName}
-                  onChange={(e) => setReviewForm((f) => ({ ...f, reviewerName: e.target.value }))}
-                  placeholder="Enter your name"
-                  required
-                />
-              </div>
-              <div>
-                <label style={labelStyle}>Rating</label>
-                <select
-                  style={inputStyle}
-                  value={reviewForm.rating}
-                  onChange={(e) => setReviewForm((f) => ({ ...f, rating: Number(e.target.value) }))}
-                >
-                  <option value="5">5 - Excellent</option>
-                  <option value="4">4 - Good</option>
-                  <option value="3">3 - Average</option>
-                  <option value="2">2 - Poor</option>
-                  <option value="1">1 - Terrible</option>
-                </select>
-              </div>
-              <div>
-                <label style={labelStyle}>Review</label>
-                <textarea
-                  style={{ ...inputStyle, minHeight: 100, resize: 'vertical' }}
-                  value={reviewForm.text}
-                  onChange={(e) => setReviewForm((f) => ({ ...f, text: e.target.value }))}
-                  placeholder="Share your experience with this product"
-                  required
-                />
-              </div>
+          <h3 style={{ margin: '0 0 18px', fontSize: 18, fontWeight: 700, color: C.text }}>
+            {currentUserReview ? 'Edit Your Review' : 'Write a Review'}
+          </h3>
+          {reviewError && (
+            <div style={{ padding: '10px 14px', borderRadius: 10, background: '#FEF2F2', color: C.danger, fontSize: 14, marginBottom: 16 }}>
+              {reviewError}
+            </div>
+          )}
+          {reviewSuccess && (
+            <div style={{ padding: '10px 14px', borderRadius: 10, background: '#F0FDF4', color: C.success, fontSize: 14, marginBottom: 16 }}>
+              {reviewSuccess}
+            </div>
+          )}
+          {currentUserReview && !editingReviewId ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <p style={{ margin: 0, fontSize: 14, color: C.textSecondary }}>You have already reviewed this product. You can edit or delete your review above.</p>
               <button
-                type="submit"
+                type="button"
+                onClick={() => handleEditReview(currentUserReview)}
                 style={{
-                  padding: '12px 24px',
-                  border: 'none',
+                  alignSelf: 'flex-start',
+                  padding: '10px 18px',
+                  border: `1px solid ${C.border}`,
                   borderRadius: 10,
-                  background: C.primary,
-                  color: '#fff',
+                  background: 'transparent',
+                  color: C.textSecondary,
                   fontSize: 14,
                   fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'background 0.2s ease'
+                  cursor: 'pointer'
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = C.primaryDark)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = C.primary)}
               >
-                Submit Review
+                Edit Your Review
               </button>
             </div>
-          </form>
+          ) : !isAuthenticated ? (
+            <p style={{ margin: 0, fontSize: 14, color: C.textSecondary }}>Please log in to write a review.</p>
+          ) : (
+            <form onSubmit={handleSubmitReview}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div>
+                  <label style={labelStyle}>Your Name</label>
+                  <input
+                    style={inputStyle}
+                    value={user?.name || ''}
+                    readOnly
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Rating</label>
+                  <select
+                    style={inputStyle}
+                    value={reviewForm.rating}
+                    onChange={(e) => setReviewForm((f) => ({ ...f, rating: Number(e.target.value) }))}
+                  >
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Terrible</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>Review</label>
+                  <textarea
+                    style={{ ...inputStyle, minHeight: 100, resize: 'vertical' }}
+                    value={reviewForm.text}
+                    onChange={(e) => setReviewForm((f) => ({ ...f, text: e.target.value }))}
+                    placeholder="Share your experience with this product"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '12px 24px',
+                    border: 'none',
+                    borderRadius: 10,
+                    background: C.primary,
+                    color: '#fff',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'background 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = C.primaryDark)}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = C.primary)}
+                >
+                  {currentUserReview ? 'Update Review' : 'Submit Review'}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
