@@ -435,7 +435,7 @@ export default function Header() {
         {menuOpen && (
           <div className="nx-mobile-menu nx-show-mobile" style={{ display: 'none' }}>
             {NAV_LINKS.map((l) => (
-              <Link key={l.to} to={l.to} className="nx-mobile-link" onClick={() => setMenuOpen(false)}>
+              <Link key={l.label} to={l.to} className="nx-mobile-link" onClick={() => setMenuOpen(false)}>
                 {l.label}
               </Link>
             ))}
