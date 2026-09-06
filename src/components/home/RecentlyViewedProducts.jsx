@@ -70,6 +70,7 @@ export default function RecentlyViewedProducts() {
               style={{
                 width: 160,
                 minWidth: 160,
+                display: 'block',
                 background: C.surface,
                 borderRadius: 16,
                 border: `1px solid ${C.border}`,

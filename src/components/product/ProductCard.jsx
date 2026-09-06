@@ -76,7 +76,7 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
         transform: hovered ? 'translateY(-6px)' : 'none'
       }}
     >
-      <Link to={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <Link to={`/products/${product.id}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
         <div style={{ position: 'relative', zIndex: 1, aspectRatio: '1 / 1', overflow: 'hidden', background: '#F8FAFC' }}>
           {categoryName && (
             <span
