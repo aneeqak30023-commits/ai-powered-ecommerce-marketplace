@@ -41,3 +41,4 @@ cd backend && npm test
 ```bash
 curl http://localhost:3001/health
 ```
+<!-- Backend deployment configuration updated -->
