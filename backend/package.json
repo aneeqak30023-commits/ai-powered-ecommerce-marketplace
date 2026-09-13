@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node src/index.js",
     "start": "node src/index.js",
+    "prestart": "node scripts/prestart.cjs",
     "test": "node --test --test-concurrency=1 src/tests/*.js",
     "prisma:generate": "prisma generate",
     "prisma:generate:production": "prisma generate --schema=prisma/schema.production.prisma",
