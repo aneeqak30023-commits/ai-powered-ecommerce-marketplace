@@ -11,7 +11,8 @@ CREATE TABLE "User" (
     "salt" TEXT NOT NULL,
     "role" TEXT NOT NULL DEFAULT 'user',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -24,7 +25,8 @@ CREATE TABLE "Category" (
     "productCount" INTEGER NOT NULL DEFAULT 0,
     "subcategories" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -57,7 +59,8 @@ CREATE TABLE "Review" (
     "rating" INTEGER NOT NULL,
     "comment" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -75,7 +78,8 @@ CREATE TABLE "Order" (
     "tax" REAL NOT NULL,
     "total" REAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -87,7 +91,8 @@ CREATE TABLE "OrderItem" (
     "image" TEXT,
     "quantity" INTEGER NOT NULL,
     "price" REAL NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -97,7 +102,8 @@ CREATE TABLE "CartItem" (
     "productId" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -105,7 +111,8 @@ CREATE TABLE "Wishlist" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "productId" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -114,7 +121,8 @@ CREATE TABLE "Inventory" (
     "productId" INTEGER NOT NULL,
     "stock" INTEGER NOT NULL,
     "lowStockThreshold" INTEGER NOT NULL DEFAULT 5,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -127,7 +135,8 @@ CREATE TABLE "KnowledgeBase" (
     "priority" INTEGER NOT NULL DEFAULT 0,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -142,7 +151,8 @@ CREATE TABLE "SupportTicket" (
     "orderId" TEXT,
     "productId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -151,7 +161,8 @@ CREATE TABLE "SupportTicketMessage" (
     "ticketId" TEXT NOT NULL,
     "sender" TEXT NOT NULL,
     "message" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -166,7 +177,8 @@ CREATE TABLE "Payment" (
     "provider" TEXT,
     "providerReference" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateIndex

@@ -32,5 +32,20 @@ console.log('[prestart] Prisma client configuration for PostgreSQL complete')
 execSync('npx prisma generate', { stdio: 'inherit' })
 
 console.log('[prestart] Deploying migrations...')
-execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+try {
+  execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+  console.log('[prestart] Migrations deployed successfully')
+} catch (deployError) {
+  const errOutput = (deployError.stderr ? deployError.stderr.toString() : '') +
+                    (deployError.stdout ? deployError.stdout.toString() : '')
+  if (errOutput.includes('P3009') || errOutput.includes('failed migrations')) {
+    console.log('[prestart] Detected failed migration (P3009). Resolving as rolled-back...')
+    execSync('npx prisma migrate resolve --rolled-back 20260101000000_postgres_init', { stdio: 'inherit' })
+    console.log('[prestart] Migration resolved as rolled-back. Retrying deployment...')
+    execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+    console.log('[prestart] Migrations deployed successfully')
+  } else {
+    throw deployError
+  }
+}
 console.log('[prestart] Production setup complete')
