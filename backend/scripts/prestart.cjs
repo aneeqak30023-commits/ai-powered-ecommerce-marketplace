@@ -33,7 +33,8 @@ execSync('npx prisma generate', { stdio: 'inherit' })
 
 console.log('[prestart] Deploying migrations...')
 try {
-  execSync('npx prisma migrate deploy', { stdio: 'inherit' })
+  const deployOutput = execSync('npx prisma migrate deploy', { encoding: 'utf8' })
+  if (deployOutput) process.stdout.write(deployOutput)
   console.log('[prestart] Migrations deployed successfully')
 } catch (deployError) {
   const errOutput = (deployError.stderr ? deployError.stderr.toString() : '') +
