@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import ProductCard from '../product/ProductCard'
 import { useCart } from '../../context/CartContext'
 import { useWishlist } from '../../context/WishlistContext'
-import allProducts from '../../data/products.json'
 
 const C = {
   primary: '#6366F1',
@@ -15,15 +14,15 @@ const C = {
   border: '#E2E8F0'
 }
 
-export default function WishlistPage() {
+export default function WishlistPage({ products = [] }) {
   const { addToCart } = useCart()
   const { wishlistItems, removeFromWishlist } = useWishlist()
 
   const wishlistProducts = useMemo(() => {
     return wishlistItems
-      .map(item => allProducts.find(p => p.id === item.id))
+      .map(item => products.find(p => p.id === item.id))
       .filter(Boolean)
-  }, [wishlistItems])
+  }, [wishlistItems, products])
 
   const handleAddToCart = (product) => {
     addToCart(product)

@@ -5,10 +5,10 @@ import FeaturedCategories from '../components/home/FeaturedCategories'
 import FeaturedProducts from '../components/home/FeaturedProducts'
 import RecentlyViewedProducts from '../components/home/RecentlyViewedProducts'
 import ProductCard from '../components/product/ProductCard.jsx'
-import products from '../data/products.json'
-import categories from '../data/categories.json'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext.jsx'
+import { fetchProducts } from '../services/productApi.js'
+import { fetchCategories } from '../services/categoryApi.js'
 
 const C = {
   primary: '#6366F1',
@@ -39,6 +39,10 @@ const SECTION_IDS = ['hero', 'categories', 'featured', 'ai-recommendations', 're
 const SECTION_LABELS = ['Home', 'Categories', 'Featured', 'AI Picks', 'History', 'How it Works', 'Features']
 
 export default function HomePage() {
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+
   const featuredProducts = products.slice(0, 5)
   const aiRecommendedProducts = products.slice(7, 17).map((p, i) => ({
     ...p,
@@ -50,6 +54,32 @@ export default function HomePage() {
   const [activeSection, setActiveSection] = useState(0)
   const containerRef = useRef(null)
   const sectionRefs = useRef([])
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+
+    Promise.all([
+      fetchProducts(),
+      fetchCategories(),
+    ])
+      .then(([productsData, categoriesData]) => {
+        if (!cancelled) {
+          setProducts(productsData)
+          setCategories(categoriesData)
+          setLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // Track active section on scroll (desktop - horizontal)
   useEffect(() => {
@@ -162,7 +192,7 @@ export default function HomePage() {
         className="horizontal-slide"
         style={{ width: '100vw', flexShrink: 0 }}
       >
-        <Hero />
+        <Hero products={products} loading={loading} />
       </section>
 
       {/* Categories Slide */}
@@ -182,7 +212,7 @@ export default function HomePage() {
         className="horizontal-slide"
         style={{ width: '100vw', flexShrink: 0, padding: '64px 0' }}
       >
-        <FeaturedProducts products={featuredProducts} onAddToCart={addToCart} />
+        <FeaturedProducts allProducts={featuredProducts} onAddToCart={addToCart} />
       </section>
 
       {/* AI Recommendations Slide */}
@@ -235,7 +265,7 @@ export default function HomePage() {
         className="horizontal-slide"
         style={{ width: '100vw', flexShrink: 0 }}
       >
-        <RecentlyViewedProducts />
+        <RecentlyViewedProducts products={products} />
       </section>
 
       {/* How It Works Slide */}

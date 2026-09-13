@@ -1,9 +1,9 @@
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import ProductDetail from '../components/product/ProductDetail.jsx'
-import allProducts from '../data/products.json'
 import { useCart } from '../context/CartContext.jsx'
 import { useRecentlyViewed } from '../context/RecentlyViewedContext.jsx'
+import { fetchProduct, fetchProducts } from '../services/productApi.js'
 
 const C = {
   primary: '#6366F1',
@@ -21,21 +21,65 @@ export default function ProductPage() {
   const { addToCart } = useCart()
   const { addRecentlyViewed } = useRecentlyViewed()
 
-  const product = allProducts.find(p => p.id === Number(id))
+  const [product, setProduct] = useState(null)
+  const [allProducts, setAllProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  // Track product view unconditionally
   useEffect(() => {
-    if (product) {
-      addRecentlyViewed(product)
-    }
-  }, [product?.id, addRecentlyViewed])
+    let cancelled = false
+    setLoading(true)
+    setError(null)
 
-  if (!product) {
+    Promise.all([
+      fetchProduct(Number(id)),
+      fetchProducts(),
+    ])
+      .then(([productData, allData]) => {
+        if (!cancelled) {
+          setProduct(productData)
+          setAllProducts(allData)
+          setLoading(false)
+          if (productData) {
+            addRecentlyViewed(productData)
+          }
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message || 'Failed to load product')
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [id, addRecentlyViewed])
+
+  const relatedProducts = useMemo(() => {
+    if (!product) return []
+    return allProducts
+      .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
+      .slice(0, 6)
+  }, [allProducts, product])
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: C.textSecondary, fontSize: 15 }}>Loading product...</p>
+      </div>
+    )
+  }
+
+  if (error || !product) {
     return (
       <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <h1 style={{ fontSize: 40, fontWeight: 800, color: C.text, margin: '0 0 16px' }}>Product Not Found</h1>
-          <p style={{ fontSize: 16, color: C.textSecondary, margin: '0 0 24px' }}>The product you are looking for does not exist.</p>
+          <p style={{ fontSize: 16, color: C.textSecondary, margin: '0 0 24px' }}>
+            {error || 'The product you are looking for does not exist.'}
+          </p>
           <button
             onClick={() => navigate('/products')}
             style={{
@@ -55,10 +99,6 @@ export default function ProductPage() {
       </div>
     )
   }
-
-  const relatedProducts = allProducts
-    .filter(p => p.categoryId === product.categoryId && p.id !== product.id)
-    .slice(0, 6)
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>

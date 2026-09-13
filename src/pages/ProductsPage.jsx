@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ProductGrid from '../components/product/ProductGrid.jsx'
 import ProductFilters from '../components/product/ProductFilters.jsx'
-import allProducts from '../data/products.json'
-import allCategories from '../data/categories.json'
 import { useCart } from '../context/CartContext.jsx'
+import { fetchProducts } from '../services/productApi.js'
+import { fetchCategories } from '../services/categoryApi.js'
 
 const C = {
   primary: '#6366F1',
@@ -23,6 +23,11 @@ export default function ProductsPage() {
   const categoryFromUrl = searchParams.get('category') || ''
   const subcategoryFromUrl = searchParams.get('subcategory') || ''
 
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
   const [searchQuery, setSearchQuery] = useState(searchFromUrl)
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
   const [selectedSubcategory, setSelectedSubcategory] = useState(subcategoryFromUrl)
@@ -30,13 +35,41 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState('id')
   const { addToCart } = useCart()
 
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+
+    Promise.all([
+      fetchProducts(),
+      fetchCategories(),
+    ])
+      .then(([productsData, categoriesData]) => {
+        if (!cancelled) {
+          setProducts(productsData)
+          setCategories(categoriesData)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message || 'Failed to load products')
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const filteredProducts = useMemo(() => {
-    let result = [...allProducts]
+    let result = [...products]
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       result = result.filter(p => {
-        const category = allCategories.find(c => c.id === p.categoryId)
+        const category = categories.find(c => c.id === p.categoryId)
         return (
           p.name.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
@@ -71,7 +104,7 @@ export default function ProductsPage() {
     })
 
     return result
-  }, [searchQuery, selectedCategory, selectedSubcategory, priceRange, sortBy])
+  }, [products, searchQuery, selectedCategory, selectedSubcategory, priceRange, sortBy])
 
   const handleFilterChange = (filters) => {
     if (filters.search !== undefined) setSearchQuery(filters.search)
@@ -97,7 +130,7 @@ export default function ProductsPage() {
     if (filters.sortBy !== undefined) setSortBy(filters.sortBy)
   }
 
-  const selectedCategoryObj = allCategories.find(c => c.id === selectedCategory)
+  const selectedCategoryObj = categories.find(c => c.id === selectedCategory)
   const selectedSubcategoryObj = selectedCategoryObj?.subcategories?.find(s => s.id === selectedSubcategory)
 
   const pageTitle = searchQuery
@@ -107,6 +140,40 @@ export default function ProductsPage() {
       : selectedCategoryObj
         ? selectedCategoryObj.name
         : 'All Products'
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: C.textSecondary, fontSize: 15 }}>Loading products...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div style={{ minHeight: '100vh', background: C.background, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 16px' }}>Unable to load products</h1>
+          <p style={{ fontSize: 15, color: C.textSecondary, margin: '0 0 24px' }}>{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '12px 24px',
+              borderRadius: 12,
+              border: 'none',
+              background: `linear-gradient(135deg, ${C.primary} 0%, ${C.primaryDark} 100%)`,
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: 'pointer'
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
@@ -127,7 +194,7 @@ export default function ProductsPage() {
           {/* Sidebar Filters */}
           <aside style={{ width: 280, flexShrink: 0 }}>
             <ProductFilters
-              categories={allCategories}
+              categories={categories}
               subcategories={selectedCategoryObj?.subcategories || []}
               selectedSubcategory={selectedSubcategory}
               onSubcategoryChange={setSelectedSubcategory}

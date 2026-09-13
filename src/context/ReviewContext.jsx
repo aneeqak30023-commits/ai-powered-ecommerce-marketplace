@@ -1,6 +1,15 @@
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
 import { useAuth } from './AuthContext.jsx'
+import { getProductReviews, createReview as createReviewApi, updateReview as updateReviewApi, deleteReview as deleteReviewApi, clearReviewsCache } from '../services/reviewApi.js'
 import demoReviews from '../data/reviews.json'
+
+export const ORDER_STATUSES = {
+  PENDING: 'Pending',
+  CONFIRMED: 'Confirmed',
+  SHIPPED: 'Shipped',
+  DELIVERED: 'Delivered',
+  CANCELLED: 'Cancelled'
+}
 
 const STORAGE_KEY = 'nexmart-reviews'
 
@@ -59,11 +68,55 @@ const ReviewContext = createContext(null)
 
 export function ReviewProvider({ children }) {
   const [reviewsByProduct, setReviewsByProduct] = useState(() => loadReviews())
-  const { user } = useAuth()
+  const [backendAvailable, setBackendAvailable] = useState(false)
+  const { user, loading: authLoading, backendAvailable: authBackendAvailable } = useAuth()
 
   useEffect(() => {
+    if (Object.keys(reviewsByProduct).length === 0) return
     saveReviews(reviewsByProduct)
   }, [reviewsByProduct])
+
+  useEffect(() => {
+    let cancelled = false
+    clearReviewsCache()
+
+    const syncReviews = async () => {
+      if (!user?.id || !authBackendAvailable) {
+        if (!cancelled) setBackendAvailable(false)
+        return
+      }
+
+      try {
+        const allReviews = {}
+        const products = Object.keys(demoReviews)
+        for (const productId of products) {
+          try {
+            const data = await getProductReviews(productId)
+            if (data?.reviews && Array.isArray(data.reviews)) {
+              allReviews[productId] = data.reviews
+            }
+          } catch {
+            // ignore individual product errors
+          }
+        }
+        if (cancelled) return
+        if (Object.keys(allReviews).length > 0) {
+          setReviewsByProduct(allReviews)
+        }
+        setBackendAvailable(true)
+      } catch {
+        if (!cancelled) setBackendAvailable(false)
+      }
+    }
+
+    if (!authLoading) {
+      syncReviews()
+    }
+
+    return () => {
+      cancelled = true
+    }
+  }, [user?.id, authLoading, authBackendAvailable])
 
   const getReviewsForProduct = useCallback((productId) => {
     if (!productId) return []
@@ -76,7 +129,7 @@ export function ReviewProvider({ children }) {
     return reviews.find(r => r.userId === userId) || null
   }, [reviewsByProduct])
 
-  const addReview = useCallback((productId, reviewData) => {
+  const addReview = useCallback(async (productId, reviewData) => {
     if (!user) {
       return { success: false, error: 'You must be logged in to submit a review' }
     }
@@ -89,6 +142,25 @@ export function ReviewProvider({ children }) {
     const existing = getUserReviewForProduct(productId, user.userId)
     if (existing) {
       return { success: false, error: 'You have already reviewed this product' }
+    }
+
+    if (backendAvailable) {
+      try {
+        const backendReview = await createReviewApi(productId, {
+          rating: reviewData.rating,
+          text: reviewData.text,
+        })
+        setReviewsByProduct((prev) => {
+          const existingReviews = prev[productId] || []
+          return {
+            ...prev,
+            [productId]: [backendReview, ...existingReviews],
+          }
+        })
+        return { success: true, review: backendReview }
+      } catch (error) {
+        return { success: false, error: error.message || 'Failed to submit review' }
+      }
     }
 
     const newReview = {
@@ -110,9 +182,9 @@ export function ReviewProvider({ children }) {
     })
 
     return { success: true, review: newReview }
-  }, [user, getUserReviewForProduct])
+  }, [user, getUserReviewForProduct, backendAvailable])
 
-  const editReview = useCallback((reviewId, productId, updates) => {
+  const editReview = useCallback(async (reviewId, productId, updates) => {
     if (!user) {
       return { success: false, error: 'You must be logged in to edit a review' }
     }
@@ -120,6 +192,31 @@ export function ReviewProvider({ children }) {
     const validation = validateReviewInput(updates.rating, updates.text)
     if (!validation.valid) {
       return { success: false, error: 'Invalid review', errors: validation.errors }
+    }
+
+    if (backendAvailable) {
+      try {
+        const updated = await updateReviewApi(reviewId, {
+          rating: updates.rating,
+          text: updates.text,
+        })
+        setReviewsByProduct((prev) => {
+          const existingReviews = prev[productId] || []
+          const reviewIndex = existingReviews.findIndex(r => r.id === reviewId)
+          if (reviewIndex === -1) {
+            return prev
+          }
+          const next = [...existingReviews]
+          next[reviewIndex] = updated
+          return {
+            ...prev,
+            [productId]: next
+          }
+        })
+        return { success: true }
+      } catch (error) {
+        return { success: false, error: error.message || 'Failed to update review' }
+      }
     }
 
     setReviewsByProduct((prev) => {
@@ -149,11 +246,27 @@ export function ReviewProvider({ children }) {
     })
 
     return { success: true }
-  }, [user])
+  }, [user, backendAvailable])
 
-  const deleteReview = useCallback((reviewId, productId) => {
+  const deleteReview = useCallback(async (reviewId, productId) => {
     if (!user) {
       return { success: false, error: 'You must be logged in to delete a review' }
+    }
+
+    if (backendAvailable) {
+      try {
+        await deleteReviewApi(reviewId)
+        setReviewsByProduct((prev) => {
+          const existingReviews = prev[productId] || []
+          return {
+            ...prev,
+            [productId]: existingReviews.filter(r => r.id !== reviewId)
+          }
+        })
+        return { success: true }
+      } catch (error) {
+        return { success: false, error: error.message || 'Failed to delete review' }
+      }
     }
 
     setReviewsByProduct((prev) => {
@@ -170,7 +283,7 @@ export function ReviewProvider({ children }) {
     })
 
     return { success: true }
-  }, [user])
+  }, [user, backendAvailable])
 
   const getAverageRating = useCallback((productId) => {
     const reviews = reviewsByProduct[productId] || []
@@ -215,7 +328,8 @@ export function ReviewProvider({ children }) {
     getAverageRating,
     getReviewCount,
     getRatingBreakdown,
-    getReadOnlyReviews
+    getReadOnlyReviews,
+    backendAvailable
   }
 
   return (

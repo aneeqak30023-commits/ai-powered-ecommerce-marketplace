@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String
+  passwordHash  String
+  salt          String
+  role          String    @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  orders        Order[]
+  reviews       Review[]
+  cartItems     CartItem[]
+  wishlistItems Wishlist[]
+  supportTickets SupportTicket[]
+  payments      Payment[]
+}
+
+model Category {
+  id          String    @id
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  productCount Int       @default(0)
+  subcategories String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id            Int       @id
+  name          String
+  description   String
+  price         Float
+  originalPrice Float?
+  categoryId    String
+  brand         String?
+  rating        Float?    @default(0)
+  reviewCount   Int       @default(0)
+  image         String?
+  images        String?
+  tags          String?
+  specifications String?
+  stock         Int       @default(0)
+  subcategory   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  category      Category       @relation(fields: [categoryId], references: [id])
+  reviews       Review[]
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  wishlistItems Wishlist[]
+  inventory     Inventory?
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  productId     Int
+  userId        String
+  reviewerName  String
+  rating        Int
+  comment       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+  user     User    @relation(fields: [userId], references: [id])
+
+  @@unique([productId, userId])
+}
+
+model Order {
+  id               String    @id @default(uuid())
+  orderNumber      String    @unique
+  userId           String
+  status           String    @default("pending")
+  customerName     String
+  customerEmail    String
+  customerPhone    String
+  shippingAddress  String
+  subtotal         Float
+  shipping         Float
+  tax              Float
+  total            Float
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+  payment   Payment?
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId Int
+  name      String
+  image     String?
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+
+  order   Order    @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  userId    String
+  productId Int
+  quantity  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  product Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Wishlist {
+  id        String  @id @default(uuid())
+  userId    String
+  productId Int
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  product Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Inventory {
+  id                 String   @id @default(uuid())
+  productId          Int      @unique
+  stock              Int
+  lowStockThreshold  Int      @default(5)
+  updatedAt          DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model KnowledgeBase {
+  id          String   @id @default(uuid())
+  category    String
+  question    String
+  answer      String
+  keywords    String?
+  priority    Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SupportTicket {
+  id            String    @id @default(uuid())
+  userId        String
+  subject       String
+  message       String
+  category      String
+  status        String    @default("open")
+  priority      String    @default("medium")
+  orderId       String?
+  productId     Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user      User              @relation(fields: [userId], references: [id])
+  messages  SupportTicketMessage[]
+}
+
+model SupportTicketMessage {
+  id        String    @id @default(uuid())
+  ticketId  String
+  sender    String
+  message   String
+  createdAt DateTime  @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id                String    @id @default(uuid())
+  orderId           String    @unique
+  userId            String
+  paymentMethod     String
+  status            String    @default("pending")
+  amount            Float
+  currency          String    @default("USD")
+  provider          String?
+  providerReference String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  order   Order @relation(fields: [orderId], references: [id])
+  user    User  @relation(fields: [userId], references: [id])
+}

@@ -1,4 +1,7 @@
 import { useState, useCallback, useEffect, useRef, createContext, useContext } from 'react'
+import { fetchProducts } from '../services/productApi.js'
+import { getKnowledgeBaseItems } from '../services/knowledgeBaseApi.js'
+import { createSupportTicket } from '../services/supportApi.js'
 
 const STORAGE_KEY = 'nexmart-ai-chat'
 
@@ -22,7 +25,6 @@ export function AIAssistantProvider({ children }) {
   const [isTyping, setIsTyping] = useState(false)
   const messagesRef = useRef(messages)
 
-  // Keep ref in sync with messages state
   useEffect(() => {
     messagesRef.current = messages
   }, [messages])
@@ -45,15 +47,17 @@ export function AIAssistantProvider({ children }) {
     setIsTyping(true)
 
     try {
-       let result
+      let result
 
-      // Use the local aiService directly (not a remote API) so the deployed
-      // site uses exactly the same tested retrieval logic as the test suite.
-      // A remote API can drift out of sync with the local code and return
-      // stale or incorrect product results.
       const { aiService } = await import('../services/aiService.js')
-      const products = (await import('../data/products.json')).default
-      result = await aiService.processMessage(text, products, undefined, messagesRef.current)
+      const products = await fetchProducts()
+      let knowledgeBaseItems = []
+      try {
+        knowledgeBaseItems = await getKnowledgeBaseItems()
+      } catch {
+        // knowledge base may not be available
+      }
+      result = await aiService.processMessage(text, products, knowledgeBaseItems, messagesRef.current)
 
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
@@ -65,7 +69,8 @@ export function AIAssistantProvider({ children }) {
         intentConfidence: result.intentConfidence || null,
         entities: result.entities || null,
         recommendations: result.recommendations || null,
-        comparison: result.comparison || null
+        comparison: result.comparison || null,
+        ticketCreated: result.ticketCreated || null,
       }
 
       setMessages(prev => [...prev, assistantMessage])
@@ -83,12 +88,22 @@ export function AIAssistantProvider({ children }) {
     }
   }, [])
 
+  const createTicketFromConversation = useCallback(async (ticketData) => {
+    try {
+      const ticket = await createSupportTicket(ticketData)
+      return ticket
+    } catch (error) {
+      console.error('Failed to create support ticket:', error)
+      return null
+    }
+  }, [])
+
   const clearHistory = useCallback(() => {
     setMessages([])
   }, [])
 
   return (
-    <AIAssistantContext.Provider value={{ messages, sendMessage, clearHistory, isTyping }}>
+    <AIAssistantContext.Provider value={{ messages, sendMessage, clearHistory, isTyping, createTicketFromConversation }}>
       {children}
     </AIAssistantContext.Provider>
   )

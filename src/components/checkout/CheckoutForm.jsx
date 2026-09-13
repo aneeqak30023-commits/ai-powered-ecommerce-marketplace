@@ -4,6 +4,7 @@ import { useCart } from '../../context/CartContext.jsx'
 import { useOrders } from '../../context/OrderContext.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useInventory } from '../../context/InventoryContext.jsx'
+import { createPayment } from '../../services/paymentApi.js'
 
 const C = {
   primary: '#6366F1',
@@ -49,9 +50,8 @@ export default function CheckoutForm() {
   const { cartItems = [], updateQuantity: _updateQuantity, removeFromCart: _removeFromCart } = useCart()
   const { placeOrder } = useOrders()
   const { user } = useAuth()
-  const { validateCartStock, bulkDecreaseStock } = useInventory()
+  const { validateCartStock } = useInventory()
   const { subtotal, shipping, tax, total } = calcTotals(cartItems)
-  const orderCounter = useRef(0)
 
   const [form, setForm] = useState({
     name: user?.name || '',
@@ -62,6 +62,7 @@ export default function CheckoutForm() {
     state: '',
     zip: ''
   })
+  const [paymentMethod, setPaymentMethod] = useState('cash_on_delivery')
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function CheckoutForm() {
     return Object.keys(e).length === 0
   }
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault()
     if (!validate()) return
 
@@ -134,9 +135,22 @@ export default function CheckoutForm() {
       total,
       date: new Date().toISOString()
     }
-    const created = placeOrder ? placeOrder(order) : { ...order, id: 'ORD-' + (++orderCounter.current) }
-    bulkDecreaseStock(cartItems)
-    navigate('/confirmation', { state: { order: created } })
+
+    try {
+      const created = await placeOrder(order)
+      try {
+        const payment = await createPayment(created.id, paymentMethod)
+        if (payment.checkoutUrl) {
+          window.location.href = payment.checkoutUrl
+          return
+        }
+      } catch (paymentError) {
+        console.error('Payment creation failed:', paymentError)
+      }
+      navigate('/confirmation', { state: { order: created } })
+    } catch (error) {
+      setErrors({ submit: error.message || 'Failed to place order. Please try again.' })
+    }
   }
 
   const inputStyle = (key) => ({
@@ -217,12 +231,19 @@ export default function CheckoutForm() {
           </Section>
 
           <Section title="Payment Method">
-            <label style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, border: `1px solid ${C.border}`, borderRadius: 12, cursor: 'pointer', transition: 'border-color 0.2s ease' }}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, border: `1px solid ${paymentMethod === 'cash_on_delivery' ? C.primary : C.border}`, borderRadius: 12, cursor: 'pointer', transition: 'border-color 0.2s ease' }}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = paymentMethod === 'cash_on_delivery' ? C.primary : C.border }}
             >
-              <input type="radio" name="payment" defaultChecked style={{ accentColor: C.primary }} />
-              <span style={{ fontSize: 14, color: C.text, fontWeight: 500 }}>Demo Payment — No real charge</span>
+              <input type="radio" name="payment" value="cash_on_delivery" checked={paymentMethod === 'cash_on_delivery'} onChange={(e) => setPaymentMethod(e.target.value)} style={{ accentColor: C.primary }} />
+              <span style={{ fontSize: 14, color: C.text, fontWeight: 500 }}>Cash on Delivery</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, border: `1px solid ${paymentMethod === 'online' ? C.primary : C.border}`, borderRadius: 12, cursor: 'pointer', transition: 'border-color 0.2s ease', marginTop: 12 }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.primary }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = paymentMethod === 'online' ? C.primary : C.border }}
+            >
+              <input type="radio" name="payment" value="online" checked={paymentMethod === 'online'} onChange={(e) => setPaymentMethod(e.target.value)} style={{ accentColor: C.primary }} />
+              <span style={{ fontSize: 14, color: C.text, fontWeight: 500 }}>Online Payment (Demo)</span>
             </label>
           </Section>
 

@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecentlyViewed } from '../../context/RecentlyViewedContext'
-import allProducts from '../../data/products.json'
 
 const C = {
   primary: '#6366F1',
@@ -17,14 +16,14 @@ function formatPrice(value) {
   return `$${Number(value).toFixed(2)}`
 }
 
-export default function RecentlyViewedProducts() {
+export default function RecentlyViewedProducts({ products = [] }) {
   const { recentlyViewedItems, clearRecentlyViewed } = useRecentlyViewed()
 
   const recentlyViewedProducts = useMemo(() => {
     return recentlyViewedItems
-      .map(item => allProducts.find(p => p.id === item.id))
+      .map(item => products.find(p => p.id === item.id))
       .filter(Boolean)
-  }, [recentlyViewedItems])
+  }, [recentlyViewedItems, products])
 
   if (recentlyViewedProducts.length === 0) {
     return null

@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '../context/AuthContext.jsx'
 import { InventoryProvider } from '../context/InventoryContext.jsx'
 import OrdersPage from '../pages/OrdersPage.jsx'
 import OrderDetailsPage from '../pages/OrderDetailsPage.jsx'
+import * as authApi from '../services/authApi.js'
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -43,6 +44,12 @@ function AuthInitializer({ autoLogin, children }) {
   return children
 }
 
+const mockSession = {
+  success: true,
+  user: { id: 'usr-order', email: 'testuser@example.com', name: 'Test User', createdAt: new Date().toISOString() },
+  session: { userId: 'usr-order', email: 'testuser@example.com', name: 'Test User', token: 'token', createdAt: new Date().toISOString() }
+}
+
 function renderWithProviders(ui, { route = '/' } = {}) {
   return render(
     <MemoryRouter initialEntries={[route]}>
@@ -70,6 +77,8 @@ describe('OrdersPage', () => {
   beforeEach(() => {
     localStorageMock.clear()
     vi.clearAllMocks()
+    vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
+    vi.spyOn(authApi, 'register').mockResolvedValue(mockSession)
   })
 
   it('shows empty state when no orders exist', async () => {
@@ -181,6 +190,8 @@ describe('OrderDetailsPage', () => {
     localStorageMock.clear()
     localStorageMock.removeItem('nexmart-inventory')
     vi.clearAllMocks()
+    vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
+    vi.spyOn(authApi, 'register').mockResolvedValue(mockSession)
   })
 
   it('shows loading state initially', async () => {

@@ -1,6 +1,3 @@
-import productsData from '../data/products.json'
-import categoriesData from '../data/categories.json'
-
 const PRODUCT_TYPE_MAP = {
   watch: { en: 'watch', ur: 'گھڑی', roman: ['waṭch', 'watch', 'gari', 'ghadi', 'watches'] },
   phone: { en: 'phone', ur: 'فون', roman: ['phone', 'fon', 'mobile', 'phones', 'smartphone', 'smartphones'] },
@@ -324,7 +321,7 @@ function hasWord(text, word) {
   return new RegExp(`\\b${escaped}`, 'i').test(text)
 }
 
-export function searchProductsMultilingual(query, products = productsData, _categories = categoriesData) {
+export function searchProductsMultilingual(query, products = [], _categories = []) {
   if (!query || typeof query !== 'string') {
     return []
   }

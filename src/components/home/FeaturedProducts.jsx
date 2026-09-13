@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ProductCard from '../product/ProductCard.jsx'
-import productsData from '../../data/products.json'
 import { useWishlist } from '../../context/WishlistContext.jsx'
 
 const C = {
@@ -12,7 +11,7 @@ const C = {
 }
 
 export default function FeaturedProducts({ allProducts, onAddToCart }) {
-  const products = (allProducts && allProducts.length ? allProducts : productsData || []).slice(0, 5)
+  const products = (allProducts && allProducts.length ? allProducts : []).slice(0, 5)
   const { toggleWishlist } = useWishlist()
   const scrollContainerRef = useRef(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import categoriesData from '../../data/categories.json'
 
 const C = {
   surface: '#FFFFFF',
@@ -30,7 +29,7 @@ const CATEGORY_ICONS = {
 }
 
 export default function FeaturedCategories({ categories: catsProp }) {
-  const categories = catsProp || categoriesData || []
+  const categories = catsProp || []
   const [expandedCategory, setExpandedCategory] = useState(null)
   const scrollContainerRef = useRef(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)

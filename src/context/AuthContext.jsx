@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
+import { register as registerApi, login as loginApi, logout as logoutApi, getSession as getSessionApi, clearAuthCache } from '../services/authApi.js'
 
 const STORAGE_KEY = 'nexmart-auth'
 const USERS_KEY = 'nexmart-users'
@@ -13,7 +14,11 @@ function loadAuth() {
 }
 
 function saveAuth(auth) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(auth))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(auth))
+  } catch {
+    // storage full or unavailable
+  }
 }
 
 function loadUsers() {
@@ -26,70 +31,77 @@ function loadUsers() {
 }
 
 function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users))
+  try {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users))
+  } catch {
+    // storage full or unavailable
+  }
 }
 
-/**
- * Simple hash function using Web Crypto API.
- * Falls back to a basic hash if crypto is unavailable.
- */
-async function hashPassword(password, salt) {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + salt)
-  
-  if (typeof crypto !== 'undefined' && crypto.subtle) {
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-    const hashArray = Array.from(new Uint8Array(hashBuffer))
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+function normalizeSession(data) {
+  if (!data || !data.success) return null
+  const user = data.user || data
+  const session = data.session || user
+  return {
+    userId: session.userId || user.id,
+    email: session.email || user.email,
+    name: session.name || user.name,
+    token: session.token,
+    createdAt: session.createdAt || user.createdAt || new Date().toISOString(),
   }
-  
-  // Fallback hash for environments without Web Crypto
-  let hash = 0
-  for (let i = 0; i < data.length; i++) {
-    const char = data[i]
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash
-  }
-  return Math.abs(hash).toString(16).padStart(64, '0')
-}
-
-function generateToken() {
-  const bytes = new Uint8Array(32)
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    crypto.getRandomValues(bytes)
-  } else {
-    for (let i = 0; i < 32; i++) {
-      bytes[i] = Math.floor(Math.random() * 256)
-    }
-  }
-  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [auth, setAuth] = useState(() => loadAuth())
+  const [backendAvailable, setBackendAvailable] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (Object.keys(auth || {}).length === 0) return
     saveAuth(auth)
   }, [auth])
 
-  // Simulate session check on mount
   useEffect(() => {
-    if (auth && auth.token) {
-      // In a real app, validate token with backend
-      // For demo, we just verify the token exists
-      setLoading(false)
-    } else {
-      setLoading(false)
+    let cancelled = false
+    clearAuthCache()
+
+    const validate = async () => {
+      const local = loadAuth()
+      if (!local?.token) {
+        if (!cancelled) setLoading(false)
+        return
+      }
+
+      try {
+        const result = await getSessionApi()
+        if (cancelled) return
+        const session = normalizeSession(result)
+        if (session) {
+          setAuth(session)
+          setBackendAvailable(true)
+        } else {
+          setAuth(local)
+        }
+      } catch {
+        if (cancelled) return
+        setAuth(local)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }
-  }, [auth])
+
+    validate()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const register = useCallback(async (email, password, name) => {
     const trimmedEmail = email.trim().toLowerCase()
     const trimmedName = name.trim()
-    
+
     if (!trimmedEmail || !password || !trimmedName) {
       return { success: false, error: 'All fields are required' }
     }
@@ -98,74 +110,47 @@ export function AuthProvider({ children }) {
       return { success: false, error: 'Password must be at least 8 characters' }
     }
 
-    const users = loadUsers()
-    const existing = users.find(u => u.email === trimmedEmail)
-    if (existing) {
-      return { success: false, error: 'An account with this email already exists' }
+    try {
+      const result = await registerApi(trimmedEmail, password, trimmedName)
+      const session = normalizeSession(result)
+      if (session) {
+        setAuth(session)
+        setBackendAvailable(true)
+      }
+      return { success: true, user: session }
+    } catch (error) {
+      return { success: false, error: error.message }
     }
-
-    const salt = generateToken().slice(0, 16)
-    const hashedPassword = await hashPassword(password, salt)
-    
-    const newUser = {
-      id: 'usr-' + Date.now(),
-      email: trimmedEmail,
-      name: trimmedName,
-      passwordHash: hashedPassword,
-      salt,
-      createdAt: new Date().toISOString()
-    }
-
-    users.push(newUser)
-    saveUsers(users)
-
-    const token = generateToken()
-    const session = {
-      userId: newUser.id,
-      email: trimmedEmail,
-      name: trimmedName,
-      token,
-      createdAt: new Date().toISOString()
-    }
-
-    setAuth(session)
-    return { success: true, user: session }
   }, [])
 
   const login = useCallback(async (email, password) => {
     const trimmedEmail = email.trim().toLowerCase()
-    
+
     if (!trimmedEmail || !password) {
       return { success: false, error: 'Email and password are required' }
     }
 
-    const users = loadUsers()
-    const user = users.find(u => u.email === trimmedEmail)
-    
-    if (!user) {
-      return { success: false, error: 'Invalid email or password' }
+    try {
+      const result = await loginApi(trimmedEmail, password)
+      const session = normalizeSession(result)
+      if (session) {
+        setAuth(session)
+        setBackendAvailable(true)
+      }
+      return { success: true, user: session }
+    } catch (error) {
+      return { success: false, error: error.message }
     }
-
-    const hashedPassword = await hashPassword(password, user.salt)
-    if (hashedPassword !== user.passwordHash) {
-      return { success: false, error: 'Invalid email or password' }
-    }
-
-    const token = generateToken()
-    const session = {
-      userId: user.id,
-      email: user.email,
-      name: user.name,
-      token,
-      createdAt: new Date().toISOString()
-    }
-
-    setAuth(session)
-    return { success: true, user: session }
   }, [])
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await logoutApi()
+    } catch {
+      // ignore logout errors
+    }
     setAuth(null)
+    setBackendAvailable(false)
   }, [])
 
   const updateProfile = useCallback((updates) => {
@@ -174,8 +159,7 @@ export function AuthProvider({ children }) {
       const updated = { ...prev, ...updates }
       return updated
     })
-    
-    // Also update users list
+
     const users = loadUsers()
     const userIndex = users.findIndex(u => u.id === auth?.userId)
     if (userIndex >= 0) {
@@ -191,7 +175,8 @@ export function AuthProvider({ children }) {
     register,
     login,
     logout,
-    updateProfile
+    updateProfile,
+    backendAvailable,
   }
 
   return (

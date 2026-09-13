@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
-import productsData from '../data/products.json'
+import { fetchProducts } from '../services/productApi.js'
+import { fetchInventory, clearInventoryCache } from '../services/inventoryApi.js'
 
 export const LOW_STOCK_THRESHOLD = 5
 
@@ -11,7 +12,7 @@ export const STOCK_STATES = {
 
 const STORAGE_KEY = 'nexmart-inventory'
 
-function getInitialInventory() {
+function getLocalInventory() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
@@ -21,18 +22,9 @@ function getInitialInventory() {
       }
     }
   } catch {
-    // fall through to initialize from products
+    // fall through
   }
-
-  const initial = {}
-  for (const product of productsData) {
-    const stock = typeof product.stock === 'number' ? product.stock : 0
-    initial[product.id] = {
-      quantity: stock,
-      lastUpdated: new Date().toISOString()
-    }
-  }
-  return initial
+  return null
 }
 
 function saveInventory(inventory) {
@@ -52,9 +44,59 @@ function getStockState(quantity) {
 const InventoryContext = createContext(null)
 
 export function InventoryProvider({ children }) {
-  const [inventory, setInventory] = useState(() => getInitialInventory())
+  const [inventory, setInventory] = useState({})
+  const [backendAvailable, setBackendAvailable] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+    clearInventoryCache()
+
+    fetchInventory()
+      .then((apiInventory) => {
+        if (cancelled) return
+        const next = {}
+        for (const entry of apiInventory) {
+          next[entry.productId] = {
+            quantity: entry.stock,
+            lastUpdated: entry.updatedAt
+          }
+        }
+        setInventory(next)
+        setBackendAvailable(true)
+      })
+      .catch(() => {
+        if (cancelled) return
+        // Backend unavailable: fall back to localStorage, then products
+        const local = getLocalInventory()
+        if (local && Object.keys(local).length > 0) {
+          setInventory(local)
+        } else {
+          fetchProducts()
+            .then((apiProducts) => {
+              if (cancelled) return
+              const next = {}
+              for (const product of apiProducts) {
+                const stock = typeof product.stock === 'number' ? product.stock : 0
+                next[product.id] = {
+                  quantity: stock,
+                  lastUpdated: new Date().toISOString()
+                }
+              }
+              setInventory(next)
+            })
+            .catch(() => {
+              // keep empty inventory on complete failure
+            })
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (Object.keys(inventory).length === 0) return
     saveInventory(inventory)
   }, [inventory])
 
@@ -100,10 +142,11 @@ export function InventoryProvider({ children }) {
     setInventory(prev => {
       const current = prev[productId]
       const currentQty = current?.quantity || 0
+      const newQty = currentQty + quantity
       return {
         ...prev,
         [productId]: {
-          quantity: currentQty + quantity,
+          quantity: newQty,
           lastUpdated: new Date().toISOString()
         }
       }
@@ -178,7 +221,8 @@ export function InventoryProvider({ children }) {
     setStock,
     bulkDecreaseStock,
     bulkIncreaseStock,
-    validateCartStock
+    validateCartStock,
+    backendAvailable
   }
 
   return (
@@ -193,3 +237,4 @@ export function useInventory() {
   if (!context) throw new Error('useInventory must be used within an InventoryProvider')
   return context
 }
+

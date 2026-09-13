@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { searchProductsMultilingual, detectLanguage, normalizeToEnglish, extractMultilingualEntities } from './multilingualSearch.js'
+import productsData from '../data/products.json'
+import categoriesData from '../data/categories.json'
 
 describe('multilingualSearch', () => {
   describe('detectLanguage', () => {
@@ -73,34 +75,34 @@ describe('multilingualSearch', () => {
 
   describe('searchProductsMultilingual', () => {
     it('finds watch for English query', () => {
-      const results = searchProductsMultilingual('I want a watch')
+      const results = searchProductsMultilingual('I want a watch', productsData)
       expect(results.length).toBeGreaterThan(0)
       expect(results.some(p => p.name.toLowerCase().includes('watch'))).toBe(true)
     })
 
     it('finds watch for Roman Urdu query', () => {
-      const results = searchProductsMultilingual('Mujhe watch chahiye')
+      const results = searchProductsMultilingual('Mujhe watch chahiye', productsData)
       expect(results.length).toBeGreaterThan(0)
       expect(results.some(p => p.name.toLowerCase().includes('watch'))).toBe(true)
     })
 
     it('finds headphones under $80 for English query', () => {
-      const results = searchProductsMultilingual('I need wireless headphones under $80')
+      const results = searchProductsMultilingual('I need wireless headphones under $80', productsData)
       expect(results.length).toBeGreaterThan(0)
       expect(results.every(p => p.price <= 80)).toBe(true)
     })
 
     it('finds products for mixed query', () => {
-      const results = searchProductsMultilingual('Mujhe achi rating wali headphones show karo')
+      const results = searchProductsMultilingual('Mujhe achi rating wali headphones show karo', productsData)
       expect(results.length).toBeGreaterThan(0)
     })
 
     it('returns empty array for null query', () => {
-      expect(searchProductsMultilingual(null)).toEqual([])
+      expect(searchProductsMultilingual(null, productsData)).toEqual([])
     })
 
     it('returns empty array for empty string', () => {
-      expect(searchProductsMultilingual('')).toEqual([])
+      expect(searchProductsMultilingual('', productsData)).toEqual([])
     })
   })
 })

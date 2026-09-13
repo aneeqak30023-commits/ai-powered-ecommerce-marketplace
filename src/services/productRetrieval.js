@@ -16,7 +16,6 @@
  * Soft preferences: student, studying, work, gaming, travel, fitness, best, good, popular
  */
 
-import productsData from '../data/products.json'
 import { extractEntities } from './entityExtractor.js'
 import { PRODUCT_TYPE_MAP, KEYWORD_SYNONYMS, USE_CASE_PRODUCTS_KEYWORDS } from './multilingualSearch.js'
 
@@ -177,7 +176,7 @@ function scoreRelevance(product, entities, expandedKeywords) {
  * Retrieve products based on a query.
  * Returns { products: [], text: string, recommendations: [] }
  */
-export function retrieveProducts(query, products = productsData, maxResults = 5) {
+export function retrieveProducts(query, products = [], maxResults = 5) {
   if (!query || typeof query !== 'string' || !products || products.length === 0) {
     return {
       products: [],

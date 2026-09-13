@@ -27,11 +27,19 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Load cached node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
 
       - name: Build
         run: npm run build
+        env:
+          VITE_BACKEND_URL: ${{ vars.BACKEND_API_URL || 'http://localhost:3001' }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

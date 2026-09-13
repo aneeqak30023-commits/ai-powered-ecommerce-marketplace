@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { AuthProvider } from '../../context/AuthContext.jsx'
 import { CartProvider } from '../../context/CartContext.jsx'
 import { WishlistProvider } from '../../context/WishlistContext.jsx'
 import { InventoryProvider } from '../../context/InventoryContext.jsx'
@@ -26,13 +27,15 @@ const mockProduct = {
 function renderWithProviders(ui) {
   return render(
     <MemoryRouter>
-      <InventoryProvider>
-        <CartProvider>
-          <WishlistProvider>
-            {ui}
-          </WishlistProvider>
-        </CartProvider>
-      </InventoryProvider>
+      <AuthProvider>
+        <InventoryProvider>
+          <CartProvider>
+            <WishlistProvider>
+              {ui}
+            </WishlistProvider>
+          </CartProvider>
+        </InventoryProvider>
+      </AuthProvider>
     </MemoryRouter>
   )
 }

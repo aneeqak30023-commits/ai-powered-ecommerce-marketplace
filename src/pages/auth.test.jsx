@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { AuthProvider } from '../context/AuthContext.jsx'
 import LoginPage from '../pages/LoginPage.jsx'
 import SignupPage from '../pages/SignupPage.jsx'
+import * as authApi from '../services/authApi.js'
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -42,6 +43,17 @@ describe('LoginPage', () => {
   beforeEach(() => {
     localStorageMock.clear()
     vi.clearAllMocks()
+    vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
+    vi.spyOn(authApi, 'login').mockImplementation((email, password) => {
+      if (email === 'test@example.com' && password === 'wrongpassword') {
+        return Promise.reject(new Error('Invalid email or password'))
+      }
+      return Promise.resolve({
+        success: true,
+        user: { id: 'usr-1', email, name: 'Test User' },
+        session: { userId: 'usr-1', email, name: 'Test User', token: 'token', createdAt: new Date().toISOString() }
+      })
+    })
   })
 
   it('renders login form', () => {

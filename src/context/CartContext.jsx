@@ -1,5 +1,7 @@
-import { useCallback, useEffect, createContext, useContext, useReducer } from 'react'
+import { useState, useCallback, useEffect, createContext, useContext, useReducer } from 'react'
 import { useInventory } from './InventoryContext.jsx'
+import { useAuth } from './AuthContext.jsx'
+import { getCart, addToCart as addToCartApi, updateCartItem, removeFromCart as removeFromCartApi, clearCart as clearCartApi, clearCartCache } from '../services/cartApi.js'
 
 const STORAGE_KEY = 'nexmart-cart'
 
@@ -14,18 +16,79 @@ function loadCart() {
 }
 
 function saveCart(items) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  } catch {
+    // storage full or unavailable
+  }
 }
 
 const CartContext = createContext(null)
 
 export function CartProvider({ children }) {
   const [items, dispatch] = useReducer(cartReducer, loadCart())
+  const [backendAvailable, setBackendAvailable] = useState(false)
   const { canAddToCart } = useInventory()
+  const { user, loading: authLoading, backendAvailable: authBackendAvailable } = useAuth()
 
   useEffect(() => {
+    if (Object.keys(items).length === 0) return
     saveCart(items)
   }, [items])
+
+  useEffect(() => {
+    let cancelled = false
+    clearCartCache()
+
+    const syncCart = async () => {
+      if (!user?.id || !authBackendAvailable) {
+        if (!cancelled) setBackendAvailable(false)
+        return
+      }
+
+      try {
+        const backendItems = await getCart()
+        if (cancelled) return
+        const next = backendItems.map(item => ({
+          id: item.productId,
+          name: item.product?.name || '',
+          price: item.product?.price || 0,
+          image: item.product?.images?.[0] || item.product?.image || '',
+          quantity: item.quantity,
+        }))
+        dispatch({ type: 'HYDRATE', payload: next })
+        setBackendAvailable(true)
+      } catch {
+        if (cancelled) return
+        setBackendAvailable(false)
+      }
+    }
+
+    if (!authLoading) {
+      syncCart()
+    }
+
+    return () => {
+      cancelled = true
+    }
+  }, [user?.id, authLoading, authBackendAvailable])
+
+  const syncToBackend = useCallback(async (productId, quantity, action = 'update') => {
+    if (!backendAvailable) return
+    try {
+      if (action === 'add') {
+        await addToCartApi(productId, quantity)
+      } else if (action === 'update') {
+        await updateCartItem(productId, quantity)
+      } else if (action === 'remove') {
+        await removeFromCartApi(productId)
+      } else if (action === 'clear') {
+        await clearCartApi()
+      }
+    } catch {
+      // ignore backend sync errors; frontend state remains valid
+    }
+  }, [backendAvailable])
 
   const addToCart = useCallback((product, quantity = 1) => {
     const stockCheck = canAddToCart(product.id, quantity)
@@ -42,16 +105,19 @@ export function CartProvider({ children }) {
         quantity
       }
     })
+    syncToBackend(product.id, quantity, 'add')
     return { success: true, available: stockCheck.available }
-  }, [canAddToCart])
+  }, [canAddToCart, syncToBackend])
 
   const removeFromCart = useCallback((id) => {
     dispatch({ type: 'REMOVE_ITEM', payload: id })
-  }, [])
+    syncToBackend(id, 0, 'remove')
+  }, [syncToBackend])
 
   const updateQuantity = useCallback((id, quantity) => {
     if (quantity <= 0) {
       dispatch({ type: 'REMOVE_ITEM', payload: id })
+      syncToBackend(id, 0, 'remove')
       return { success: true }
     }
     const stockCheck = canAddToCart(id, quantity)
@@ -59,18 +125,20 @@ export function CartProvider({ children }) {
       return { success: false, reason: stockCheck.reason, available: stockCheck.available, requested: quantity }
     }
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } })
+    syncToBackend(id, quantity, 'update')
     return { success: true, available: stockCheck.available }
-  }, [canAddToCart])
+  }, [canAddToCart, syncToBackend])
 
   const clearCart = useCallback(() => {
     dispatch({ type: 'CLEAR_CART' })
-  }, [])
+    syncToBackend(null, 0, 'clear')
+  }, [syncToBackend])
 
   const cartCount = items.reduce((sum, i) => sum + (i.quantity || 0), 0)
   const cartTotal = items.reduce((sum, i) => sum + Number(i.price) * (i.quantity || 0), 0)
 
   return (
-    <CartContext.Provider value={{ cartItems: items, cartCount, cartTotal, addToCart, removeFromCart, updateQuantity, clearCart }}>
+    <CartContext.Provider value={{ cartItems: items, cartCount, cartTotal, addToCart, removeFromCart, updateQuantity, clearCart, backendAvailable }}>
       {children}
     </CartContext.Provider>
   )
@@ -107,6 +175,8 @@ function cartReducer(state, action) {
     }
     case 'CLEAR_CART':
       return []
+    case 'HYDRATE':
+      return action.payload
     default:
       return state
   }

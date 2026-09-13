@@ -331,19 +331,15 @@ export default function Header() {
 
           <nav className="nx-nav nx-hide-mobile">
             {NAV_LINKS.map((l) => (
-              <Link key={l.label} to={l.to} className={`nx-nav-link${l.highlight ? ' nx-ai-link' : ''}`} onClick={() => setMenuOpen(false)}>
+              <Link key={l.label} to={l.to} className={`nx-nav-link${l.highlight ? ' nx-ai-link' : ''}`}>
                 {l.highlight && <SparkleIcon size={14} />}
                 {l.label}
               </Link>
             ))}
             {isAuthenticated ? (
-              <Link to="/account" className="nx-nav-link" onClick={() => setMenuOpen(false)}>
-                Account
-              </Link>
+              <Link to="/account" className="nx-nav-link">Account</Link>
             ) : (
-              <Link to="/login" className="nx-nav-link" onClick={() => setMenuOpen(false)}>
-                Sign in
-              </Link>
+              <Link to="/login" className="nx-nav-link">Sign in</Link>
             )}
           </nav>
 
