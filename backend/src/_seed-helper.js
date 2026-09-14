@@ -12,15 +12,15 @@ async function hashPassword(password) {
 }
 
 function loadJson(relativePath) {
-  const absolutePath = join(__dirname, '..', '..', relativePath)
+  const absolutePath = join(__dirname, 'data', relativePath)
   return JSON.parse(readFileSync(absolutePath, 'utf8'))
 }
 
 export async function seedDatabase() {
-  const categories = loadJson('src/data/categories.json')
-  const products = loadJson('src/data/products.json')
-  const reviews = loadJson('src/data/reviews.json')
-  const knowledgeBase = loadJson('src/data/knowledgeBase.json')
+  const categories = loadJson('categories.json')
+  const products = loadJson('products.json')
+  const reviews = loadJson('reviews.json')
+  const knowledgeBase = loadJson('knowledgeBase.json')
 
   try {
     await prisma.$connect()
