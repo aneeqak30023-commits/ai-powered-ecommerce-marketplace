@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_BACKEND_URL: ${{ vars.BACKEND_API_URL || 'https://nexmart-backend-production.up.railway.app' }}
+          VITE_BACKEND_URL: https://nexmart-backend-production.up.railway.app
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
