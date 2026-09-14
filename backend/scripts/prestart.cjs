@@ -50,22 +50,12 @@ try {
   }
 }
 
-console.log('[prestart] Checking if database needs seeding...')
+console.log('[prestart] Running production seed...')
 try {
-  const checkResult = execSync(
-    `node -e "const{PrismaClient}=require('@prisma/client');const p=new PrismaClient();p.category.count().then(c=>{console.log(c);process.exit(0)}).catch(()=>process.exit(1)).finally(async()=>{await p.\\$disconnect()})"`,
-    { encoding: 'utf8', timeout: 60000 }
-  )
-  const categoryCount = parseInt(checkResult.trim())
-  if (categoryCount === 0) {
-    console.log('[prestart] Database is empty. Running production seed...')
-    execSync('node src/scripts/seed-production.js', { stdio: 'inherit' })
-    console.log('[prestart] Seeding complete')
-  } else {
-    console.log('[prestart] Database has ' + categoryCount + ' categories. Skipping seed.')
-  }
-} catch (checkError) {
-  console.warn('[prestart] Could not verify database state. Skipping seed to avoid data loss.')
+  execSync('node src/scripts/seed-production.js', { stdio: 'inherit' })
+  console.log('[prestart] Seeding complete')
+} catch (seedError) {
+  console.error('[prestart] Seeding failed:', seedError.message)
 }
 
 console.log('[prestart] Production setup complete')
