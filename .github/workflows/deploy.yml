@@ -42,6 +42,9 @@ jobs:
         env:
           VITE_BACKEND_URL: https://nexmart-backend-production.up.railway.app
 
+      - name: Create SPA fallback
+        run: cp dist/index.html dist/404.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
