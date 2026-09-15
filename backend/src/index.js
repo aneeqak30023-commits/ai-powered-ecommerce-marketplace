@@ -33,6 +33,7 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 const allowedOrigins = [
   CLIENT_ORIGIN,
   "http://localhost:5173",
+  "http://localhost:5176",
   "http://localhost:3001",
   "https://aneeqak30023-commits.github.io",
 ];
