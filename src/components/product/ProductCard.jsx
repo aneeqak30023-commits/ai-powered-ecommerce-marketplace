@@ -76,7 +76,7 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
         transform: hovered ? 'translateY(-6px)' : 'none'
       }}
     >
-      <Link to={`/products/${product.id}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+      <Link to={`/products/${product.id}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', flex: 1 }}>
         <div style={{ position: 'relative', zIndex: 1, aspectRatio: '1 / 1', overflow: 'hidden', background: '#F8FAFC' }}>
           {categoryName && (
             <span
@@ -237,8 +237,6 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
             )}
           </div>
         </div>
-      </Link>
-
       <div style={{ padding: '0 20px 20px', display: 'flex', gap: 8 }}>
         <button
           type="button"
@@ -248,7 +246,6 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
             if (!outOfStock && onAddToCart) {
               const result = onAddToCart(product)
               if (result && !result.success) {
-                // Parent component should handle the error
               }
             }
           }}
@@ -296,6 +293,7 @@ export default function ProductCard({ product, onAddToCart, aiReason, aiScore, s
           </button>
         )}
       </div>
+      </Link>
     </div>
   )
 }
