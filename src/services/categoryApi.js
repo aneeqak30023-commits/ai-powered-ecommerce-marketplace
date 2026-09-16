@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+const API_BASE =  import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
 
 let categoriesCache = null
 let categoriesCacheTime = 0

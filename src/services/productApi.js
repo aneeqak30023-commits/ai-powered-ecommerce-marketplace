@@ -1,15 +1,44 @@
-const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+const API_BASE =  import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
 
 let productsCache = null
 let productsCacheTime = 0
 const CACHE_TTL = 60_000
 
 function parseJsonFields(product) {
+  const parseArrayField = (value) => {
+    if (!value) return []
+    if (Array.isArray(value)) return value
+
+    try {
+      const parsed = JSON.parse(value)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [value]
+    }
+  }
+
+  const parseObjectField = (value) => {
+    if (!value) return {}
+
+    if (typeof value === 'object') {
+      return value
+    }
+
+    try {
+      const parsed = JSON.parse(value)
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+        ? parsed
+        : {}
+    } catch {
+      return {}
+    }
+  }
+
   return {
     ...product,
-    images: product.images ? JSON.parse(product.images) : [],
-    tags: product.tags ? JSON.parse(product.tags) : [],
-    specifications: product.specifications ? JSON.parse(product.specifications) : {},
+    images: parseArrayField(product.images),
+    tags: parseArrayField(product.tags),
+    specifications: parseObjectField(product.specifications),
   }
 }
 
