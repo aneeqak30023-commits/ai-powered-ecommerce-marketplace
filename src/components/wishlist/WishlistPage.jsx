@@ -14,15 +14,11 @@ const C = {
   border: '#E2E8F0'
 }
 
-export default function WishlistPage({ products = [] }) {
+export default function WishlistPage() {
   const { addToCart } = useCart()
   const { wishlistItems, removeFromWishlist } = useWishlist()
 
-  const wishlistProducts = useMemo(() => {
-    return wishlistItems
-      .map(item => products.find(p => p.id === item.id))
-      .filter(Boolean)
-  }, [wishlistItems, products])
+  const wishlistProducts = useMemo(() => wishlistItems, [wishlistItems])
 
   const handleAddToCart = (product) => {
     addToCart(product)
