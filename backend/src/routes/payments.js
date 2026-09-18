@@ -151,7 +151,7 @@ router.post('/', authMiddleware, async (req, res) => {
 
         const { token: authToken } = await createSafepayAuthToken()
 
-        const checkoutUrl = buildSafepayCheckoutUrl(
+        const checkoutUrl = await buildSafepayCheckoutUrl(
           token,
           authToken,
           order.orderNumber,
@@ -182,7 +182,11 @@ router.post('/', authMiddleware, async (req, res) => {
           checkoutUrl,
         })
       } catch (safepayError) {
-        console.error('Safepay checkout creation failed:', safepayError.message)
+        console.error('Safepay checkout creation failed:', safepayError.constructor.name, '-', safepayError.message)
+        if (safepayError.response) {
+          console.error('Safepay API error status:', safepayError.response.status)
+        }
+        console.error(safepayError.stack)
         return res.status(201).json({
           ...serializePayment(payment),
           checkoutUrl: null,

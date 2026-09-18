@@ -50,12 +50,6 @@ try {
   }
 }
 
-console.log('[prestart] Running production seed...')
-try {
-  execSync('node src/scripts/seed-production.js', { stdio: 'inherit' })
-  console.log('[prestart] Seeding complete')
-} catch (seedError) {
-  console.error('[prestart] Seeding failed:', seedError.message)
-}
+console.log('[prestart] Skipping automatic production seed to preserve existing database data.')
 
 console.log('[prestart] Production setup complete')

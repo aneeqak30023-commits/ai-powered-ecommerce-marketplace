@@ -40,8 +40,8 @@ export function getSafepayApiBaseUrl() {
 }
 
 export function isSafepayConfigured() {
-  const { apiKey, webhookSecret } = getSafepayEnv()
-  if (!apiKey || !webhookSecret) {
+  const { apiKey } = getSafepayEnv()
+  if (!apiKey) {
     return false
   }
   if (safepayClient) {
@@ -81,7 +81,7 @@ export async function createSafepayPayment(amount, currency, orderId) {
 export async function createSafepayAuthToken() {
   const client = await getOrCreateSafepayClient()
 
-  const response = await client.auth.passport.create()
+  const response = await client.client.passport.create()
   const token = response?.data
   if (!token) {
     throw new Error('Safepay response missing auth token')
@@ -90,18 +90,14 @@ export async function createSafepayAuthToken() {
   return { token }
 }
 
-export function buildSafepayCheckoutUrl(trackerToken, authToken, orderId, redirectUrl, cancelUrl) {
-  const client = safepayClient
+export async function buildSafepayCheckoutUrl(trackerToken, authToken, orderId, redirectUrl, cancelUrl) {
+  const client = await getOrCreateSafepayClient()
   const { environment } = getSafepayEnv()
 
-  if (!client) {
-    throw new Error('Safepay client is not initialized')
-  }
-
-  return client.checkouts.payment.create({
+  return client.checkout.createCheckoutUrl({
+    env: environment,
     tracker: trackerToken,
     tbt: authToken,
-    environment,
     source: 'hosted',
     redirect_url: redirectUrl,
     cancel_url: cancelUrl,
