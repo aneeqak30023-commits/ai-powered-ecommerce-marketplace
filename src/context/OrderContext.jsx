@@ -54,10 +54,10 @@ export function OrderProvider({ children }) {
       }
 
       try {
+        setBackendAvailable(true)
         const backendOrders = await getOrders()
         if (cancelled) return
         setOrders(backendOrders)
-        setBackendAvailable(true)
       } catch {
         if (!cancelled) setBackendAvailable(false)
       }
