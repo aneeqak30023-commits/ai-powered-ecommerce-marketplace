@@ -79,7 +79,7 @@ export function AuthProvider({ children }) {
         if (cancelled) return
         const session = normalizeSession(result)
         if (session) {
-          setAuth(session)
+          setAuth({ ...session, token: session.token || local.token })
           setBackendAvailable(true)
         } else {
           setAuth(local)
