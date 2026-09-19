@@ -144,10 +144,11 @@ export default function CheckoutForm() {
           window.location.href = payment.checkoutUrl
           return
         }
+        navigate('/confirmation', { state: { order: created } })
       } catch (paymentError) {
         console.error('Payment creation failed:', paymentError)
+        setErrors({ submit: 'Payment initialization failed. Please try again or use Cash on Delivery.' })
       }
-      navigate('/confirmation', { state: { order: created } })
     } catch (error) {
       setErrors({ submit: error.message || 'Failed to place order. Please try again.' })
     }
