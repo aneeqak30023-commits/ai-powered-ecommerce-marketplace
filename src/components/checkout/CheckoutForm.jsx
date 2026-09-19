@@ -48,7 +48,7 @@ export default function CheckoutForm() {
   const isMobile = useMediaQuery('(max-width: 900px)')
   const navigate = useNavigate()
   const { cartItems = [], updateQuantity: _updateQuantity, removeFromCart: _removeFromCart } = useCart()
-  const { placeOrder } = useOrders()
+  const { placeOrder, backendAvailable } = useOrders()
   const { user } = useAuth()
   const { validateCartStock } = useInventory()
   const { subtotal, shipping, tax, total } = calcTotals(cartItems)
@@ -121,6 +121,11 @@ export default function CheckoutForm() {
         ? `${issue.name} is out of stock. Please remove it from your cart.`
         : `${issue.name} only has ${issue.available} left in stock. Please adjust the quantity.`
       setErrors({ submit: errorMsg })
+      return
+    }
+
+    if (paymentMethod === 'online' && !backendAvailable) {
+      setErrors({ submit: 'Online payment requires a connection to the server. Please try again or use Cash on Delivery.' })
       return
     }
 
@@ -247,6 +252,8 @@ export default function CheckoutForm() {
               <span style={{ fontSize: 14, color: C.text, fontWeight: 500 }}>Online Payment (Demo)</span>
             </label>
           </Section>
+
+          {errors.submit && <p style={errStyle}>{errors.submit}</p>}
 
           <button
             type="submit"
