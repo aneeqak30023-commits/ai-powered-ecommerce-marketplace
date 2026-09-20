@@ -174,13 +174,6 @@ export default function CheckoutForm() {
 
   const labelStyle = { display: 'block', fontSize: 13, fontWeight: 600, color: C.textSecondary, marginBottom: 6 }
 
-  const Section = ({ title, children }) => (
-    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, marginBottom: 20, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
-      <h3 style={{ margin: '0 0 18px', fontSize: 16, fontWeight: 700, color: C.text }}>{title}</h3>
-      {children}
-    </div>
-  )
-
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 20px' }}>
       <h1 style={{ fontSize: 30, fontWeight: 700, color: C.text, margin: '0 0 28px', letterSpacing: '-0.02em' }}>Checkout</h1>
@@ -307,3 +300,12 @@ export default function CheckoutForm() {
 }
 
 const errStyle = { margin: '6px 0 0', fontSize: 12, color: C.danger }
+
+function Section({ title, children }) {
+  return (
+    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, marginBottom: 20, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
+      <h3 style={{ margin: '0 0 18px', fontSize: 16, fontWeight: 700, color: C.text }}>{title}</h3>
+      {children}
+    </div>
+  )
+}
