@@ -46,13 +46,17 @@ async function request(url, options = {}) {
   return data
 }
 
-export async function getOrders() {
+export async function getOrders(authToken) {
   const now = Date.now()
   if (ordersCache && now - ordersCacheTime < CACHE_TTL) {
     return ordersCache
   }
 
-  const data = await request('/api/orders')
+  const headers = authToken
+    ? { Authorization: `Bearer ${authToken}` }
+    : {}
+
+  const data = await request('/api/orders', { headers })
   ordersCache = data
   ordersCacheTime = now
   return data
