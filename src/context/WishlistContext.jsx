@@ -39,7 +39,7 @@ export function WishlistProvider({ children }) {
     clearWishlistCache()
 
     const syncWishlist = async () => {
-      if (!user?.id || !authBackendAvailable) {
+      if (!user?.userId || !authBackendAvailable) {
         if (!cancelled) setBackendAvailable(false)
         return
       }
@@ -73,7 +73,7 @@ export function WishlistProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [user?.id, authLoading, authBackendAvailable])
+  }, [user?.userId, authLoading, authBackendAvailable])
 
   const syncToBackend = useCallback(async (productId, action = 'add') => {
     if (!backendAvailable) return

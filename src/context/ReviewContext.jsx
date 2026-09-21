@@ -81,7 +81,7 @@ export function ReviewProvider({ children }) {
     clearReviewsCache()
 
     const syncReviews = async () => {
-      if (!user?.id || !authBackendAvailable) {
+      if (!user?.userId || !authBackendAvailable) {
         if (!cancelled) setBackendAvailable(false)
         return
       }
@@ -116,7 +116,7 @@ export function ReviewProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [user?.id, authLoading, authBackendAvailable])
+  }, [user?.userId, authLoading, authBackendAvailable])
 
   const getReviewsForProduct = useCallback((productId) => {
     if (!productId) return []

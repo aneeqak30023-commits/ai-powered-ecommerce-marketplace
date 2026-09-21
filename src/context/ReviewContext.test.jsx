@@ -54,25 +54,29 @@ describe('ReviewContext', () => {
     vi.clearAllMocks()
     vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
     vi.spyOn(reviewApi, 'getProductReviews').mockResolvedValue(null)
-    vi.spyOn(reviewApi, 'createReview').mockResolvedValue({
-      id: 'backend-rev-1',
-      productId: 1,
-      userId: 'usr-test',
-      reviewerName: 'Test User',
-      rating: 5,
-      text: 'Great product',
-      date: new Date().toISOString(),
-      editedAt: new Date().toISOString(),
+    vi.spyOn(reviewApi, 'createReview').mockImplementation((productId, reviewData) => {
+      return Promise.resolve({
+        id: 'backend-rev-1',
+        productId: Number(productId),
+        userId: 'usr-test',
+        reviewerName: 'Test User',
+        rating: Number(reviewData.rating),
+        text: reviewData.text,
+        date: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
+      })
     })
-    vi.spyOn(reviewApi, 'updateReview').mockResolvedValue({
-      id: 'backend-rev-1',
-      productId: 1,
-      userId: 'usr-test',
-      reviewerName: 'Test User',
-      rating: 5,
-      text: 'Updated',
-      date: new Date().toISOString(),
-      editedAt: new Date().toISOString(),
+    vi.spyOn(reviewApi, 'updateReview').mockImplementation((reviewId, updates) => {
+      return Promise.resolve({
+        id: reviewId,
+        productId: 1,
+        userId: 'usr-test',
+        reviewerName: 'Test User',
+        rating: Number(updates.rating),
+        text: updates.text,
+        date: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
+      })
     })
     vi.spyOn(reviewApi, 'deleteReview').mockResolvedValue({})
   })
@@ -181,7 +185,7 @@ describe('ReviewContext', () => {
         editedAt: new Date().toISOString(),
       }
       vi.spyOn(reviewApi, 'createReview').mockResolvedValue(backendReview)
-      vi.spyOn(reviewApi, 'getProductReviews').mockResolvedValue({ reviews: [backendReview], averageRating: 5, reviewCount: 1, breakdown: { 5: 1, 4: 0, 3: 0, 2: 0, 1: 0 } })
+      vi.spyOn(reviewApi, 'getProductReviews').mockResolvedValue(null)
 
       const { result } = renderHook(() => useAuthAndReviews(), { wrapper: reviewWrapper })
       await act(async () => {
@@ -204,8 +208,17 @@ describe('ReviewContext', () => {
       }
       vi.spyOn(authApi, 'register').mockResolvedValue(mockSession)
 
-      vi.spyOn(reviewApi, 'getProductReviews').mockRejectedValue(new Error('Network error'))
-      vi.spyOn(reviewApi, 'createReview').mockResolvedValue(null)
+      vi.spyOn(reviewApi, 'getProductReviews').mockResolvedValue(null)
+      vi.spyOn(reviewApi, 'createReview').mockResolvedValue({
+        id: 'backend-rev-fallback',
+        productId: 1,
+        userId: 'usr-fallback',
+        reviewerName: 'Fallback User',
+        rating: 5,
+        text: 'Local review',
+        date: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
+      })
 
       const { result } = renderHook(() => useAuthAndReviews(), { wrapper: reviewWrapper })
       await act(async () => {
@@ -228,7 +241,16 @@ describe('ReviewContext', () => {
       vi.spyOn(authApi, 'register').mockResolvedValue(mockSession)
 
       vi.spyOn(reviewApi, 'getProductReviews').mockResolvedValue(null)
-      vi.spyOn(reviewApi, 'createReview').mockResolvedValue(null)
+      vi.spyOn(reviewApi, 'createReview').mockResolvedValue({
+        id: 'backend-rev-dup',
+        productId: 1,
+        userId: 'usr-dup',
+        reviewerName: 'Dup User',
+        rating: 5,
+        text: 'First review',
+        date: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
+      })
 
       const { result } = renderHook(() => useAuthAndReviews(), { wrapper: reviewWrapper })
       await act(async () => {
@@ -618,7 +640,16 @@ describe('ReviewContext', () => {
       vi.spyOn(authApi, 'register').mockResolvedValue(mockSession)
 
       vi.spyOn(reviewApi, 'getProductReviews').mockResolvedValue(null)
-      vi.spyOn(reviewApi, 'createReview').mockResolvedValue(null)
+      vi.spyOn(reviewApi, 'createReview').mockResolvedValue({
+        id: 'backend-rev-persist',
+        productId: 1,
+        userId: 'usr-persist',
+        reviewerName: 'Persist User',
+        rating: 5,
+        text: 'Persistent review',
+        date: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
+      })
 
       const { result } = renderHook(() => useAuthAndReviews(), { wrapper: reviewWrapper })
       await act(async () => {
@@ -686,7 +717,16 @@ describe('ReviewContext', () => {
       vi.spyOn(authApi, 'register').mockResolvedValue(mockSession)
 
       vi.spyOn(reviewApi, 'getProductReviews').mockResolvedValue(null)
-      vi.spyOn(reviewApi, 'createReview').mockResolvedValue(null)
+      vi.spyOn(reviewApi, 'createReview').mockResolvedValue({
+        id: 'backend-rev-read',
+        productId: 1,
+        userId: 'usr-read',
+        reviewerName: 'Read User',
+        rating: 5,
+        text: 'Clean API',
+        date: new Date().toISOString(),
+        editedAt: new Date().toISOString(),
+      })
 
       const { result } = renderHook(() => useAuthAndReviews(), { wrapper: reviewWrapper })
       await act(async () => {

@@ -23,7 +23,7 @@ vi.mock('../context/InventoryContext.jsx', () => ({
 
 vi.mock('../context/AuthContext.jsx', () => ({
   useAuth: () => ({
-    user: { id: 'usr-cart', email: 'cart@example.com', name: 'Cart User' },
+    user: { userId: 'usr-cart', email: 'cart@example.com', name: 'Cart User' },
     loading: false,
     isAuthenticated: true,
     backendAvailable: true,

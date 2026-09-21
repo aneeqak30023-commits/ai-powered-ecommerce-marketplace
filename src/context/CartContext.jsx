@@ -41,7 +41,7 @@ export function CartProvider({ children }) {
     clearCartCache()
 
     const syncCart = async () => {
-      if (!user?.id || !authBackendAvailable) {
+      if (!user?.userId || !authBackendAvailable) {
         if (!cancelled) setBackendAvailable(false)
         return
       }
@@ -71,7 +71,7 @@ export function CartProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [user?.id, authLoading, authBackendAvailable])
+  }, [user?.userId, authLoading, authBackendAvailable])
 
   const syncToBackend = useCallback(async (productId, quantity, action = 'update') => {
     if (!backendAvailable) return

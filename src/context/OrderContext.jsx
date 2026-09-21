@@ -48,7 +48,7 @@ export function OrderProvider({ children }) {
     clearOrdersCache()
 
     const syncOrders = async () => {
-      if (!user?.id || !authBackendAvailable) {
+      if (!user?.userId || !authBackendAvailable) {
         if (!cancelled) setBackendAvailable(false)
         return
       }
@@ -70,7 +70,7 @@ export function OrderProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [user?.id, authLoading, authBackendAvailable])
+  }, [user?.userId, authLoading, authBackendAvailable])
 
   const placeOrder = useCallback(async (orderData) => {
     if (backendAvailable) {
