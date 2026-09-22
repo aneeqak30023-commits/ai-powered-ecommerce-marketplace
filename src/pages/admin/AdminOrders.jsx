@@ -134,9 +134,14 @@ export default function AdminOrders() {
                   </td>
                   <td style={{ padding: '14px 16px', color: C.textSecondary, fontSize: 13 }}>{new Date(order.date).toLocaleDateString()}</td>
                   <td style={{ padding: '14px 16px', textAlign: 'center' }}>
-                    <Link to={`/orders/${order.id}`} style={{ padding: '6px 14px', background: C.primaryLight, color: C.primary, textDecoration: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13 }}>
-                      View
-                    </Link>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                      <Link to={`/orders/${order.id}`} style={{ padding: '6px 14px', background: C.primaryLight, color: C.primary, textDecoration: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13 }}>
+                        View
+                      </Link>
+                      <Link to={`/admin/returns?search=${encodeURIComponent(order.orderNumber || order.id)}`} style={{ padding: '6px 14px', background: `${C.warning}15`, color: C.warning, textDecoration: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13 }}>
+                        Returns
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

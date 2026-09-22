@@ -494,4 +494,111 @@ router.get('/support', authMiddleware, adminMiddleware, async (req, res) => {
   }
 })
 
+router.get('/returns', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { range = '30d' } = req.query
+    const { start, end } = getRangeDates(range)
+
+    const [returnsByStatus, returnsOverTime, totalRefundAmount, totalReturns] = await Promise.all([
+      prisma.return.groupBy({
+        by: ['status'],
+        where: { createdAt: { gte: start, lte: end } },
+        _count: { id: true },
+        _sum: { totalAmount: true },
+      }),
+      prisma.return.findMany({
+        where: { createdAt: { gte: start, lte: end } },
+        select: { createdAt: true },
+      }),
+      prisma.refund.aggregate({
+        _sum: { amount: true },
+        where: { createdAt: { gte: start, lte: end } },
+      }),
+      prisma.return.count({ where: { createdAt: { gte: start, lte: end } } }),
+    ])
+
+    const dateMap = new Map()
+    for (const ret of returnsOverTime) {
+      const key = formatDateKey(new Date(ret.createdAt))
+      dateMap.set(key, (dateMap.get(key) || 0) + 1)
+    }
+
+    const returnsOverTimeData = Array.from(dateMap.entries())
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+
+    res.json({
+      totalReturns,
+      totalRefundAmount: totalRefundAmount._sum.amount || 0,
+      byStatus: returnsByStatus.map(item => ({
+        status: item.status,
+        count: item._count.id,
+        amount: item._sum.totalAmount || 0,
+      })),
+      overTime: returnsOverTimeData,
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch returns analytics', message: safeError(error) })
+  }
+})
+
+router.get('/refunds', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { range = '30d' } = req.query
+    const { start, end } = getRangeDates(range)
+
+    const [refundsByStatus, refundsByMethod, refundsOverTime, totalAmount, totalRefunds] = await Promise.all([
+      prisma.refund.groupBy({
+        by: ['status'],
+        where: { createdAt: { gte: start, lte: end } },
+        _count: { id: true },
+        _sum: { amount: true },
+      }),
+      prisma.refund.groupBy({
+        by: ['method'],
+        where: { createdAt: { gte: start, lte: end } },
+        _count: { id: true },
+        _sum: { amount: true },
+      }),
+      prisma.refund.findMany({
+        where: { createdAt: { gte: start, lte: end } },
+        select: { createdAt: true },
+      }),
+      prisma.refund.aggregate({
+        _sum: { amount: true },
+        where: { createdAt: { gte: start, lte: end } },
+      }),
+      prisma.refund.count({ where: { createdAt: { gte: start, lte: end } } }),
+    ])
+
+    const dateMap = new Map()
+    for (const refund of refundsOverTime) {
+      const key = formatDateKey(new Date(refund.createdAt))
+      dateMap.set(key, (dateMap.get(key) || 0) + 1)
+    }
+
+    const refundsOverTimeData = Array.from(dateMap.entries())
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+
+    res.json({
+      totalRefunds,
+      totalAmount: totalAmount._sum.amount || 0,
+      byStatus: refundsByStatus.map(item => ({
+        status: item.status,
+        count: item._count.id,
+        amount: item._sum.amount || 0,
+      })),
+      byMethod: refundsByMethod.map(item => ({
+        method: item.method,
+        count: item._count.id,
+        amount: item._sum.amount || 0,
+      })),
+      overTime: refundsOverTimeData,
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch refund analytics', message: safeError(error) })
+  }
+})
+
 export default router

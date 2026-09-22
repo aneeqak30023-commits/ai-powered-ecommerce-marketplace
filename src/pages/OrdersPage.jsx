@@ -4,7 +4,7 @@ import { useOrders } from '../context/OrderContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { ORDER_STATUSES } from '../context/OrderContext.jsx'
 
-const C = {
+  const C = {
   primary: '#6366F1',
   primaryDark: '#4F46E5',
   text: '#0F172A',
@@ -12,7 +12,9 @@ const C = {
   background: '#F8FAFC',
   surface: '#FFFFFF',
   border: '#E2E8F0',
-  success: '#16A34A'
+  success: '#16A45A',
+  warning: '#D97706',
+  danger: '#DC2626'
 }
 
 const STATUS_COLORS = {
@@ -65,6 +67,12 @@ export default function OrdersPage() {
           >
             Start Shopping
           </Link>
+          <Link
+            to="/returns"
+            style={{ display: 'inline-block', padding: '12px 24px', border: `1px solid ${C.border}`, color: C.textSecondary, textDecoration: 'none', borderRadius: 10, fontWeight: 600, marginLeft: 12 }}
+          >
+            View My Returns
+          </Link>
         </div>
       </div>
     )
@@ -93,16 +101,28 @@ export default function OrdersPage() {
                         {new Date(order.date).toLocaleDateString()} · {order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}
                       </p>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                       <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 9999, fontSize: 12, fontWeight: 600, background: statusColor.bg, color: statusColor.text }}>
                         {order.status || ORDER_STATUSES.CONFIRMED}
                       </span>
                       <span style={{ fontWeight: 700, color: C.text, fontSize: 16 }}>{formatPrice(order.total)}</span>
                     </div>
+                    <div style={{ padding: '0 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Link to={order.status === 'shipped' || order.status === 'delivered' ? `/returns/request/${order.id}` : '#'}
+                        style={{ fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 16px', borderRadius: 8,
+                                  background: (order.status === 'shipped' || order.status === 'delivered') ? `${C.warning}15` : C.background,
+                                  color: (order.status === 'shipped' || order.status === 'delivered') ? C.warning : C.textSecondary,
+                                  cursor: (order.status === 'shipped' || order.status === 'delivered') ? 'pointer' : 'not-allowed' }}>
+                        Request Return
+                      </Link>
+                      <Link to="/returns" style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary, textDecoration: 'none' }}>
+                        My Returns
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </Link>
-            )
+              )
           })}
         </div>
       </div>

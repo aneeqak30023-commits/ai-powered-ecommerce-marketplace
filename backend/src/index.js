@@ -17,6 +17,7 @@ import supportRoutes from "./routes/support.js";
 import paymentsRoutes from "./routes/payments.js";
 import adminRoutes from "./routes/admin.js";
 import analyticsRoutes from "./routes/analytics.js";
+import returnsRoutes from "./routes/returns.js";
 import { validateEnv } from "./config/env.js";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
@@ -115,6 +116,7 @@ app.use("/api/support", generalLimiter, supportRoutes);
 app.use("/api/payments", generalLimiter, paymentsRoutes);
 app.use("/api/admin", generalLimiter, adminRoutes);
 app.use("/api/admin/analytics", generalLimiter, analyticsRoutes);
+app.use("/api/returns", generalLimiter, returnsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });

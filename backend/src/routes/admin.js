@@ -768,4 +768,574 @@ router.patch('/inventory/:productId', authMiddleware, adminMiddleware, async (re
   }
 })
 
+const VALID_RETURN_STATUSES = ['requested', 'approved', 'rejected', 'returned', 'refunded', 'cancelled']
+const VALID_RETURN_REASONS = ['defective', 'wrong_item', 'not_as_described', 'changed_mind', 'damaged_in_shipping', 'other']
+const VALID_REFUND_STATUSES = ['pending', 'processing', 'paid', 'failed', 'cancelled']
+const REFUND_METHODS = ['manual', 'online']
+const RESTOCKABLE_CONDITIONS = ['new_with_tags', 'like_new', 'good']
+
+function serializeAdminReturn(ret) {
+  return {
+    id: ret.id,
+    orderId: ret.orderId,
+    orderNumber: ret.order?.orderNumber || null,
+    userId: ret.userId,
+    userName: ret.user?.name || null,
+    userEmail: ret.user?.email || null,
+    status: ret.status,
+    reason: ret.reason,
+    description: ret.description,
+    totalAmount: ret.totalAmount,
+    currency: ret.currency,
+    returnShippingCost: ret.returnShippingCost,
+    approvedAt: ret.approvedAt,
+    rejectedAt: ret.rejectedAt,
+    receivedAt: ret.receivedAt,
+    createdAt: ret.createdAt,
+    updatedAt: ret.updatedAt,
+    items: (ret.items || []).map((item) => ({
+      id: item.id,
+      orderItemId: item.orderItemId,
+      productId: item.productId,
+      productName: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      condition: item.condition,
+      reason: item.reason,
+    })),
+    refunds: (ret.refunds || []).map((refund) => ({
+      id: refund.id,
+      amount: refund.amount,
+      currency: refund.currency,
+      status: refund.status,
+      method: refund.method,
+      processedBy: refund.processedBy,
+      processedAt: refund.processedAt,
+      createdAt: refund.createdAt,
+    })),
+  }
+}
+
+function serializeAdminRefund(refund) {
+  return {
+    id: refund.id,
+    paymentId: refund.paymentId,
+    returnId: refund.returnId,
+    orderId: refund.orderId,
+    orderNumber: refund.order?.orderNumber || null,
+    userId: refund.payment?.userId || refund.order?.userId || null,
+    userName: refund.user?.name || refund.order?.user?.name || null,
+    userEmail: refund.user?.email || refund.order?.user?.email || null,
+    amount: refund.amount,
+    currency: refund.currency,
+    status: refund.status,
+    method: refund.method,
+    notes: refund.notes,
+    processedBy: refund.processedBy,
+    processedAt: refund.processedAt,
+    createdAt: refund.createdAt,
+    updatedAt: refund.updatedAt,
+  }
+}
+
+router.get('/returns', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { status, reason, search, page = '1', limit = '20' } = req.query
+    const pageNum = Math.max(1, Number(page))
+    const limitNum = Math.min(100, Math.max(1, Number(limit)))
+    const skip = (pageNum - 1) * limitNum
+
+    const where = {}
+    if (status && typeof status === 'string' && VALID_RETURN_STATUSES.includes(status)) {
+      where.status = status
+    }
+    if (reason && typeof reason === 'string' && VALID_RETURN_REASONS.includes(reason)) {
+      where.reason = reason
+    }
+    if (search && typeof search === 'string') {
+      const term = search.trim().toLowerCase()
+      where.OR = [
+        { id: { contains: term } },
+        { order: { orderNumber: { contains: term } } },
+        { user: { email: { contains: term } } },
+        { user: { name: { contains: term } } },
+      ]
+    }
+
+    const [returns, total] = await Promise.all([
+      prisma.return.findMany({
+        where,
+        include: {
+          items: true,
+          refunds: true,
+          order: { select: { orderNumber: true, customerName: true, total: true } },
+          user: { select: { id: true, email: true, name: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limitNum,
+      }),
+      prisma.return.count({ where }),
+    ])
+
+    res.json({
+      returns: returns.map(serializeAdminReturn),
+      pagination: { page: pageNum, limit: limitNum, total, pages: Math.ceil(total / limitNum) },
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch returns', message: safeError(error) })
+  }
+})
+
+router.get('/returns/:id', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const returnRecord = await prisma.return.findUnique({
+      where: { id },
+      include: {
+        items: true,
+        refunds: {
+          include: { auditLogs: true },
+        },
+        order: { select: { orderNumber: true, customerName: true, customerEmail: true, total: true, shippingAddress: true } },
+        user: { select: { id: true, email: true, name: true } },
+        auditLogs: true,
+      },
+    })
+
+    if (!returnRecord) {
+      return res.status(404).json({ error: 'Return not found' })
+    }
+
+    res.json(serializeAdminReturn(returnRecord))
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch return', message: safeError(error) })
+  }
+})
+
+router.patch('/returns/:id/status', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params
+    const { status, notes } = req.body
+
+    if (!status || !VALID_RETURN_STATUSES.includes(status)) {
+      return res.status(400).json({ error: `Status must be one of: ${VALID_RETURN_STATUSES.join(', ')}` })
+    }
+
+    const existingReturn = await prisma.return.findUnique({
+      where: { id },
+      include: { items: true, order: { include: { items: true, inventory: true } }, refunds: true },
+    })
+
+    if (!existingReturn) {
+      return res.status(404).json({ error: 'Return not found' })
+    }
+
+    const currentStatus = existingReturn.status
+
+    if (status === 'approved' && currentStatus !== 'requested') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to approved` })
+    }
+    if (status === 'rejected' && currentStatus !== 'requested' && currentStatus !== 'approved') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to rejected` })
+    }
+    if (status === 'returned' && currentStatus !== 'approved') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to returned` })
+    }
+    if (status === 'refunded' && currentStatus !== 'returned') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to refunded` })
+    }
+    if (status === 'cancelled' && !['requested', 'approved'].includes(currentStatus)) {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to cancelled` })
+    }
+
+    const updateData = {}
+    if (status === 'approved') {
+      updateData.approvedAt = new Date()
+    } else if (status === 'rejected') {
+      updateData.rejectedAt = new Date()
+    } else if (status === 'returned') {
+      updateData.receivedAt = new Date()
+
+      const restockPromises = []
+      for (const item of existingReturn.items) {
+        if (RESTOCKABLE_CONDITIONS.includes(item.condition)) {
+          const orderItem = existingReturn.order?.items?.find((oi) => oi.id === item.orderItemId)
+          if (orderItem?.productId) {
+            restockPromises.push(
+              prisma.inventory.update({
+                where: { productId: orderItem.productId },
+                data: { stock: { increment: item.quantity } },
+              })
+            )
+          }
+        }
+      }
+      await Promise.all(restockPromises)
+    }
+
+    updateData.status = status
+
+    const updated = await prisma.return.update({
+      where: { id },
+      data: updateData,
+    })
+
+    await prisma.returnAuditLog.create({
+      data: {
+        returnId: id,
+        fromStatus: currentStatus,
+        toStatus: status,
+        changedBy: req.userId,
+        notes,
+      },
+    })
+
+    if (status === 'returned') {
+      for (const refund of existingReturn.refunds) {
+        if (refund.status === 'pending') {
+          await prisma.refund.update({
+            where: { id: refund.id },
+            data: { status: 'processing' },
+          })
+          await prisma.refundAuditLog.create({
+            data: {
+              refundId: refund.id,
+              fromStatus: 'pending',
+              toStatus: 'processing',
+              changedBy: req.userId,
+              notes: 'Auto-updated on return receipt',
+            },
+          })
+        }
+      }
+    }
+
+    res.json(serializeAdminReturn(await prisma.return.findUnique({
+      where: { id },
+      include: { items: true, refunds: true, order: { select: { orderNumber: true, total: true } }, user: true },
+    })))
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update return status', message: safeError(error) })
+  }
+})
+
+router.get('/refunds', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { status, method, search, page = '1', limit = '20' } = req.query
+    const pageNum = Math.max(1, Number(page))
+    const limitNum = Math.min(100, Math.max(1, Number(limit)))
+    const skip = (pageNum - 1) * limitNum
+
+    const where = {}
+    if (status && typeof status === 'string' && VALID_REFUND_STATUSES.includes(status)) {
+      where.status = status
+    }
+    if (method && typeof method === 'string' && REFUND_METHODS.includes(method)) {
+      where.method = method
+    }
+    if (search && typeof search === 'string') {
+      const term = search.trim().toLowerCase()
+      where.OR = [
+        { id: { contains: term } },
+        { return: { id: { contains: term } } },
+        { order: { orderNumber: { contains: term } } },
+        { payment: { providerReference: { contains: term } } },
+      ]
+    }
+
+    const [refunds, total] = await Promise.all([
+      prisma.refund.findMany({
+        where,
+        include: {
+          payment: { select: { id: true, orderId: true, amount: true, currency: true, provider: true, providerReference: true, user: { select: { id: true, email: true, name: true } } } },
+          return: { select: { id: true, order: { select: { orderNumber: true } } } },
+          order: { select: { orderNumber: true } },
+          auditLogs: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limitNum,
+      }),
+      prisma.refund.count({ where }),
+    ])
+
+    res.json({
+      refunds: refunds.map((refund) => ({
+        id: refund.id,
+        paymentId: refund.paymentId,
+        returnId: refund.returnId,
+        orderNumber: refund.return?.order?.orderNumber || refund.order?.orderNumber || null,
+        userId: refund.payment?.user?.id || refund.payment?.userId || null,
+        userName: refund.payment?.user?.name || null,
+        userEmail: refund.payment?.user?.email || null,
+        amount: refund.amount,
+        currency: refund.currency,
+        status: refund.status,
+        method: refund.method,
+        notes: refund.notes,
+        processedBy: refund.processedBy,
+        processedAt: refund.processedAt,
+        createdAt: refund.createdAt,
+        updatedAt: refund.updatedAt,
+        auditLogs: (refund.auditLogs || []).map((log) => ({
+          id: log.id,
+          fromStatus: log.fromStatus,
+          toStatus: log.toStatus,
+          changedBy: log.changedBy,
+          notes: log.notes,
+          createdAt: log.createdAt,
+        })),
+      })),
+      pagination: { page: pageNum, limit: limitNum, total, pages: Math.ceil(total / limitNum) },
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch refunds', message: safeError(error) })
+  }
+})
+
+router.get('/refunds/:id', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const refund = await prisma.refund.findUnique({
+      where: { id },
+      include: {
+        payment: { select: { id: true, orderId: true, amount: true, currency: true, provider: true, providerReference: true, status: true, user: { select: { id: true, email: true, name: true } } } },
+        return: { select: { id: true, order: { select: { orderNumber: true } } } },
+        order: { select: { orderNumber: true } },
+        auditLogs: true,
+      },
+    })
+
+    if (!refund) {
+      return res.status(404).json({ error: 'Refund not found' })
+    }
+
+    res.json({
+      id: refund.id,
+      paymentId: refund.paymentId,
+      returnId: refund.returnId,
+      orderId: refund.orderId,
+      orderNumber: refund.return?.order?.orderNumber || refund.order?.orderNumber || null,
+      userId: refund.payment?.userId || null,
+      userName: refund.payment?.user?.name || null,
+      userEmail: refund.payment?.user?.email || null,
+      amount: refund.amount,
+      currency: refund.currency,
+      status: refund.status,
+      method: refund.method,
+      notes: refund.notes,
+      processedBy: refund.processedBy,
+      processedAt: refund.processedAt,
+      createdAt: refund.createdAt,
+      updatedAt: refund.updatedAt,
+      auditLogs: (refund.auditLogs || []).map((log) => ({
+        id: log.id,
+        fromStatus: log.fromStatus,
+        toStatus: log.toStatus,
+        changedBy: log.changedBy,
+        notes: log.notes,
+        createdAt: log.createdAt,
+      })),
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch refund', message: safeError(error) })
+  }
+})
+
+router.post('/refunds', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { paymentId, amount, method, notes } = req.body
+
+    if (!paymentId || amount === undefined || amount === null || amount === '') {
+      return res.status(400).json({ error: 'Payment ID and amount are required' }
+      )
+    }
+
+    if (!REFUND_METHODS.includes(method)) {
+      return res.status(400).json({ error: `Method must be one of: ${REFUND_METHODS.join(', ')}` })
+    }
+
+    const numAmount = Number(amount)
+    if (!Number.isFinite(numAmount) || numAmount <= 0) {
+      return res.status(400).json({ error: 'Amount must be a positive number' })
+    }
+
+    const payment = await prisma.payment.findUnique({
+      where: { id: paymentId },
+      include: { order: true },
+    })
+
+    if (!payment) {
+      return res.status(404).json({ error: 'Payment not found' })
+    }
+
+    const refundedResult = await prisma.refund.aggregate({
+      where: { paymentId },
+      _sum: { amount: true },
+    })
+    const alreadyRefunded = refundedResult._sum.amount || 0
+
+    const remainingRefundable = Number(payment.amount) - alreadyRefunded
+    if (numAmount > remainingRefundable) {
+      return res.status(400).json({
+        error: `Refund amount (${numAmount}) exceeds remaining refundable amount (${remainingRefundable})`,
+        remainingRefundable,
+      })
+    }
+
+    const refund = await prisma.$transaction(async (tx) => {
+      const newRefund = await tx.refund.create({
+        data: {
+          paymentId: payment.id,
+          returnId: null,
+          orderId: payment.orderId,
+          amount: numAmount,
+          currency: payment.currency,
+          status: 'pending',
+          method,
+          notes,
+          processedBy: req.userId,
+        },
+      })
+
+      const newRefundedTotal = alreadyRefunded + numAmount
+      let paymentStatus = payment.status
+      if (newRefundedTotal >= Number(payment.amount) && payment.amount > 0) {
+        paymentStatus = 'refunded'
+      } else if (newRefundedTotal > 0) {
+        paymentStatus = 'partially_refunded'
+      }
+
+      if (paymentStatus !== payment.status) {
+        await tx.payment.update({
+          where: { id: payment.id },
+          data: { status: paymentStatus },
+        })
+      }
+
+      await tx.refundAuditLog.create({
+        data: {
+          refundId: newRefund.id,
+          fromStatus: undefined,
+          toStatus: 'pending',
+          changedBy: req.userId,
+          notes: 'Refund created',
+        },
+      })
+
+      return newRefund
+    })
+
+    res.status(201).json({
+      id: refund.id,
+      paymentId: refund.paymentId,
+      returnId: refund.returnId,
+      orderId: refund.orderId,
+      orderNumber: payment.order?.orderNumber || null,
+      amount: refund.amount,
+      currency: refund.currency,
+      status: refund.status,
+      method: refund.method,
+      notes: refund.notes,
+      processedBy: refund.processedBy,
+      processedAt: refund.processedAt,
+      createdAt: refund.createdAt,
+      updatedAt: refund.updatedAt,
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create refund', message: safeError(error) })
+  }
+})
+
+router.patch('/refunds/:id/status', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params
+    const { status, notes } = req.body
+
+    if (!status || !VALID_REFUND_STATUSES.includes(status)) {
+      return res.status(400).json({ error: `Status must be one of: ${VALID_REFUND_STATUSES.join(', ')}` })
+    }
+
+    const existingRefund = await prisma.refund.findUnique({
+      where: { id },
+      include: { payment: true, return: true },
+    })
+
+    if (!existingRefund) {
+      return res.status(404).json({ error: 'Refund not found' })
+    }
+
+    const currentStatus = existingRefund.status
+
+    if (status === 'processing' && currentStatus !== 'pending') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to processing` })
+    }
+    if (status === 'paid' && currentStatus !== 'processing') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to paid` })
+    }
+    if (status === 'failed' && currentStatus !== 'processing') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to failed` })
+    }
+    if (status === 'cancelled' && currentStatus !== 'pending') {
+      return res.status(400).json({ error: `Cannot transition from ${currentStatus} to cancelled` })
+    }
+
+    const updateData = { status }
+    if (status === 'paid' || status === 'processing' || status === 'failed') {
+      updateData.processedAt = new Date()
+    }
+
+    const updated = await prisma.refund.update({
+      where: { id },
+      data: updateData,
+    })
+
+    await prisma.refundAuditLog.create({
+      data: {
+        refundId: id,
+        fromStatus: currentStatus,
+        toStatus: status,
+        changedBy: req.userId,
+        notes,
+      },
+    })
+
+    if (status === 'paid' && existingRefund.returnId) {
+      await prisma.return.update({
+        where: { id: existingRefund.returnId },
+        data: { status: 'refunded' },
+      })
+      await prisma.returnAuditLog.create({
+        data: {
+          returnId: existingRefund.returnId,
+          fromStatus: 'returned',
+          toStatus: 'refunded',
+          changedBy: req.userId,
+        },
+      })
+    }
+
+    res.json({
+      id: updated.id,
+      paymentId: updated.paymentId,
+      returnId: updated.returnId,
+      orderId: updated.orderId,
+      amount: updated.amount,
+      currency: updated.currency,
+      status: updated.status,
+      method: updated.method,
+      notes: updated.notes,
+      processedBy: updated.processedBy,
+      processedAt: updated.processedAt,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update refund status', message: safeError(error) })
+  }
+})
+
 export default router

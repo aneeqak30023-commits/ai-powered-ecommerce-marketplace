@@ -88,3 +88,17 @@ export async function getAnalyticsSupport(range = '30d') {
   const qs = params.toString()
   return request(`/api/admin/analytics/support${qs ? `?${qs}` : ''}`)
 }
+
+export async function getAnalyticsReturns(range = '30d') {
+  const params = new URLSearchParams()
+  if (range) params.set('range', range)
+  const qs = params.toString()
+  return request(`/api/admin/analytics/returns${qs ? `?${qs}` : ''}`)
+}
+
+export async function getAnalyticsRefunds(range = '30d') {
+  const params = new URLSearchParams()
+  if (range) params.set('range', range)
+  const qs = params.toString()
+  return request(`/api/admin/analytics/refunds${qs ? `?${qs}` : ''}`)
+}

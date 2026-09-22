@@ -89,6 +89,7 @@ export default function OrderDetailsPage() {
 
   const statusColor = STATUS_COLORS[order.status] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED]
   const canCancel = [ORDER_STATUSES.PENDING, ORDER_STATUSES.CONFIRMED].includes(order.status)
+  const canReturn = order.status === ORDER_STATUSES.DELIVERED || order.status === ORDER_STATUSES.SHIPPED
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
@@ -179,6 +180,19 @@ export default function OrderDetailsPage() {
             >
               Cancel Order
             </button>
+          )}
+          {canReturn && order.deliveredAt && (
+            <Link
+              to={`/returns/request/${order.id}`}
+              style={{ padding: '12px 24px', border: 'none', background: C.warning, color: '#fff', borderRadius: 12, fontWeight: 600, fontSize: 15, textDecoration: 'none' }}
+            >
+              Request Return
+            </Link>
+          )}
+          {canReturn && !order.deliveredAt && (
+            <span style={{ fontSize: 13, color: C.textSecondary, padding: '12px 0' }}>
+              Return eligibility pending delivery confirmation.
+            </span>
           )}
         </div>
       </div>

@@ -17,12 +17,13 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  orders        Order[]
+   orders        Order[]
   reviews       Review[]
   cartItems     CartItem[]
   wishlistItems Wishlist[]
   supportTickets SupportTicket[]
   payments      Payment[]
+  returns       Return[]
 }
 
 model Category {
@@ -101,6 +102,9 @@ model Order {
   user      User        @relation(fields: [userId], references: [id])
   items     OrderItem[]
   payment   Payment?
+  returns   Return[]
+  refunds   Refund[]
+  deliveredAt DateTime?
 }
 
 model OrderItem {
@@ -115,6 +119,7 @@ model OrderItem {
 
   order   Order    @relation(fields: [orderId], references: [id])
   product Product @relation(fields: [productId], references: [id])
+  returnItems ReturnItem[]
 }
 
 model CartItem {
@@ -205,6 +210,144 @@ model Payment {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  order   Order @relation(fields: [orderId], references: [id])
+  order   Order    @relation(fields: [orderId], references: [id])
   user    User  @relation(fields: [userId], references: [id])
+  refunds   Refund[]
+}
+
+enum ReturnStatus {
+  requested
+  approved
+  rejected
+  returned
+  refunded
+  cancelled
+}
+
+enum RefundStatus {
+  pending
+  processing
+  paid
+  failed
+  cancelled
+}
+
+enum ReturnReason {
+  defective
+  wrong_item
+  not_as_described
+  changed_mind
+  damaged_in_shipping
+  other
+}
+
+enum RefundMethod {
+  manual
+  online
+}
+
+enum ItemCondition {
+  new_with_tags
+  like_new
+  good
+  fair
+  damaged
+  defective
+}
+
+model Return {
+  id                String        @id @default(uuid())
+  orderId           String
+  userId            String
+  status            ReturnStatus  @default(requested)
+  reason            ReturnReason
+  description       String?
+  totalAmount       Float
+  currency          String        @default("USD")
+  returnShippingCost Float?
+  approvedAt        DateTime?
+  rejectedAt        DateTime?
+  receivedAt        DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  order             Order         @relation(fields: [orderId], references: [id])
+  user              User          @relation(fields: [userId], references: [id])
+  items             ReturnItem[]
+  refunds           Refund[]
+  auditLogs         ReturnAuditLog[]
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ReturnItem {
+  id            String         @id @default(uuid())
+  returnId      String
+  orderItemId   String?
+  productId     Int?
+  name          String
+  price         Float
+  quantity      Int
+  condition     ItemCondition
+  reason        ReturnReason?
+  createdAt     DateTime       @default(now())
+
+  return        Return         @relation(fields: [returnId], references: [id], onDelete: Cascade)
+  orderItem     OrderItem?     @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+
+  @@index([returnId])
+  @@index([orderItemId])
+}
+
+model Refund {
+  id            String      @id @default(uuid())
+  paymentId     String
+  returnId      String?
+  orderId       String?
+  amount        Float
+  currency      String
+  status        RefundStatus @default(pending)
+  method        RefundMethod
+  notes         String?
+  processedBy   String?
+  processedAt   DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  payment       Payment     @relation(fields: [paymentId], references: [id])
+  return        Return?     @relation(fields: [returnId], references: [id])
+  order         Order?      @relation(fields: [orderId], references: [id])
+  auditLogs     RefundAuditLog[]
+
+  @@index([paymentId])
+  @@index([returnId])
+  @@index([status])
+  @@index([processedAt])
+}
+
+model ReturnAuditLog {
+  id         String        @id @default(uuid())
+  returnId   String
+  fromStatus ReturnStatus?
+  toStatus   ReturnStatus
+  changedBy  String?
+  notes      String?
+  createdAt  DateTime      @default(now())
+
+  return     Return        @relation(fields: [returnId], references: [id])
+}
+
+model RefundAuditLog {
+  id         String      @id @default(uuid())
+  refundId   String
+  fromStatus RefundStatus?
+  toStatus   RefundStatus
+  changedBy  String?
+  notes      String?
+  createdAt  DateTime    @default(now())
+
+  refund     Refund      @relation(fields: [refundId], references: [id])
 }

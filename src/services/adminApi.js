@@ -146,3 +146,54 @@ export async function getAdminPayments(params = {}) {
   const qs = query.toString()
   return request(`/api/admin/payments${qs ? `?${qs}` : ''}`)
 }
+
+export async function getAdminReturns(params = {}) {
+  const query = new URLSearchParams()
+  if (params.status) query.set('status', params.status)
+  if (params.reason) query.set('reason', params.reason)
+  if (params.search) query.set('search', params.search)
+  if (params.page) query.set('page', params.page)
+  if (params.limit) query.set('limit', params.limit)
+  const qs = query.toString()
+  return request(`/api/admin/returns${qs ? `?${qs}` : ''}`)
+}
+
+export async function getAdminReturn(id) {
+  return request(`/api/admin/returns/${encodeURIComponent(id)}`)
+}
+
+export async function updateAdminReturnStatus(id, status, notes) {
+  return request(`/api/admin/returns/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, notes }),
+  })
+}
+
+export async function getAdminRefunds(params = {}) {
+  const query = new URLSearchParams()
+  if (params.status) query.set('status', params.status)
+  if (params.method) query.set('method', params.method)
+  if (params.search) query.set('search', params.search)
+  if (params.page) query.set('page', params.page)
+  if (params.limit) query.set('limit', params.limit)
+  const qs = query.toString()
+  return request(`/api/admin/refunds${qs ? `?${qs}` : ''}`)
+}
+
+export async function getAdminRefund(id) {
+  return request(`/api/admin/refunds/${encodeURIComponent(id)}`)
+}
+
+export async function createAdminRefund(data) {
+  return request('/api/admin/refunds', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+export async function updateAdminRefundStatus(id, status, notes) {
+  return request(`/api/admin/refunds/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, notes }),
+  })
+}

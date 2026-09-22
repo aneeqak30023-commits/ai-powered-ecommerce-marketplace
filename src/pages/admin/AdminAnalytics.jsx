@@ -8,6 +8,8 @@ import {
   getAnalyticsOrders,
   getAnalyticsPayments,
   getAnalyticsSupport,
+  getAnalyticsReturns,
+  getAnalyticsRefunds,
 } from '../../services/analyticsApi.js'
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -72,6 +74,8 @@ export default function AdminAnalytics() {
   const [orders, setOrders] = useState(null)
   const [payments, setPayments] = useState(null)
   const [support, setSupport] = useState(null)
+  const [returns, setReturns] = useState(null)
+  const [refunds, setRefunds] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -79,7 +83,7 @@ export default function AdminAnalytics() {
     setLoading(true)
     setError(null)
     try {
-      const [overviewData, salesData, productsData, customersData, ordersData, paymentsData, supportData] = await Promise.all([
+      const [overviewData, salesData, productsData, customersData, ordersData, paymentsData, supportData, returnsData, refundsData] = await Promise.all([
         getAnalyticsOverview(range),
         getAnalyticsSales(range),
         getAnalyticsProducts(),
@@ -87,6 +91,8 @@ export default function AdminAnalytics() {
         getAnalyticsOrders(range),
         getAnalyticsPayments(range),
         getAnalyticsSupport(range),
+        getAnalyticsReturns(range),
+        getAnalyticsRefunds(range),
       ])
       setOverview(overviewData)
       setSales(salesData)
@@ -95,6 +101,8 @@ export default function AdminAnalytics() {
       setOrders(ordersData)
       setPayments(paymentsData)
       setSupport(supportData)
+      setReturns(returnsData)
+      setRefunds(refundsData)
     } catch (err) {
       setError(err.message || 'Failed to load analytics')
     } finally {
@@ -500,6 +508,74 @@ export default function AdminAnalytics() {
           <p style={{ color: C.textSecondary, fontSize: 14, textAlign: 'center', padding: 40 }}>No customer data available.</p>
         )}
       </Card>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 24 }}>
+      <Card title="Return Analytics" subtitle="Returns by status and volume">
+        {returns && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary, margin: '0 0 8px', textTransform: 'uppercase' }}>Total Returns</p>
+              <p style={{ fontSize: 24, fontWeight: 800, color: C.text, margin: 0 }}>{returns.totalReturns || 0}</p>
+            </div>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary, margin: '0 0 8px', textTransform: 'uppercase' }}>Total Refunded</p>
+              <p style={{ fontSize: 24, fontWeight: 800, color: C.text, margin: 0 }}>${(returns.totalRefundAmount || 0).toFixed(2)}</p>
+            </div>
+            {returns.byStatus && returns.byStatus.length > 0 && (
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 600, color: C.textSecondary, margin: '0 0 8px', textTransform: 'uppercase' }}>By Status</p>
+                {returns.byStatus.map(item => (
+                  <div key={item.status} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${C.border}`, fontSize: 13 }}>
+                    <span style={{ color: C.text, textTransform: 'capitalize' }}>{item.status}</span>
+                    <span style={{ fontWeight: 600, color: C.text }}>{item.count} (${(item.amount || 0).toFixed(2)})</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {!returns && (
+          <p style={{ color: C.textSecondary, fontSize: 14, textAlign: 'center', padding: 40 }}>No return data available.</p>
+        )}
+      </Card>
+
+      <Card title="Refund Analytics" subtitle="Refunds by status and method">
+        {refunds && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary, margin: '0 0 8px', textTransform: 'uppercase' }}>Total Refunds</p>
+              <p style={{ fontSize: 24, fontWeight: 800, color: C.text, margin: 0 }}>{refunds.totalRefunds || 0}</p>
+              <p style={{ fontSize: 14, color: C.textSecondary, margin: '2px 0 0' }}>Total amount: ${(refunds.totalAmount || 0).toFixed(2)}</p>
+            </div>
+            {refunds.byStatus && refunds.byStatus.length > 0 && (
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 600, color: C.textSecondary, margin: '0 0 8px', textTransform: 'uppercase' }}>By Status</p>
+                {refunds.byStatus.map(item => (
+                  <div key={item.status} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${C.border}`, fontSize: 13 }}>
+                    <span style={{ color: C.text, textTransform: 'capitalize' }}>{item.status}</span>
+                    <span style={{ fontWeight: 600, color: C.text }}>{item.count} (${(item.amount || 0).toFixed(2)})</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {refunds.byMethod && refunds.byMethod.length > 0 && (
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 600, color: C.textSecondary, margin: '0 0 8px', textTransform: 'uppercase' }}>By Method</p>
+                {refunds.byMethod.map(item => (
+                  <div key={item.method} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${C.border}`, fontSize: 13 }}>
+                    <span style={{ color: C.text, textTransform: 'capitalize' }}>{item.method}</span>
+                    <span style={{ fontWeight: 600, color: C.text }}>{item.count} (${(item.amount || 0).toFixed(2)})</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {!refunds && (
+          <p style={{ color: C.textSecondary, fontSize: 14, textAlign: 'center', padding: 40 }}>No refund data available.</p>
+        )}
+      </Card>
     </div>
-  )
+  </div>
+)
 }

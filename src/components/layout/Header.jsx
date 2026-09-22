@@ -336,11 +336,14 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
-            {isAuthenticated ? (
-              <Link to="/account" className="nx-nav-link">Account</Link>
-            ) : (
-              <Link to="/login" className="nx-nav-link">Sign in</Link>
-            )}
+{isAuthenticated ? (
+  <>
+    <Link to="/returns" className="nx-nav-link">Returns</Link>
+    <Link to="/account" className="nx-nav-link">Account</Link>
+  </>
+) : (
+  <Link to="/login" className="nx-nav-link">Sign in</Link>
+)}
           </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -435,10 +438,11 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
-            {isAuthenticated ? (
-              <>
-                <Link to="/account" className="nx-mobile-link" onClick={() => setMenuOpen(false)}>Account</Link>
-                <button
+{isAuthenticated ? (
+  <>
+    <Link to="/account" className="nx-mobile-link" onClick={() => setMenuOpen(false)}>Account</Link>
+    <Link to="/returns" className="nx-mobile-link" onClick={() => setMenuOpen(false)}>Returns</Link>
+    <button
                   type="button"
                   className="nx-mobile-link"
                   onClick={() => { logout(); setMenuOpen(false); navigate('/') }}

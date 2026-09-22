@@ -11,6 +11,7 @@ import { WishlistProvider } from './context/WishlistContext.jsx'
 import { RecentlyViewedProvider } from './context/RecentlyViewedContext.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { InventoryProvider } from './context/InventoryContext.jsx'
+import { ReturnProvider } from './context/ReturnContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -23,7 +24,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <ReviewProvider>
                   <WishlistProvider>
                     <RecentlyViewedProvider>
-                      <App />
+                      <ReturnProvider>
+                        <App />
+                      </ReturnProvider>
                     </RecentlyViewedProvider>
                   </WishlistProvider>
                 </ReviewProvider>

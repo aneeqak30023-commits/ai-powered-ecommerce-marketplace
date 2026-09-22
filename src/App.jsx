@@ -8,6 +8,8 @@ import CheckoutPage from './pages/CheckoutPage'
 import ConfirmationPage from './pages/ConfirmationPage'
 import OrdersPage from './pages/OrdersPage'
 import OrderDetailsPage from './pages/OrderDetailsPage'
+import ReturnRequestPage from './pages/ReturnRequestPage'
+import ReturnsPage from './pages/ReturnsPage'
 import WishlistPage from './pages/WishlistPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
@@ -26,6 +28,8 @@ import AdminReviews from './pages/admin/AdminReviews.jsx'
 import AdminSupport from './pages/admin/AdminSupport.jsx'
 import AdminInventory from './pages/admin/AdminInventory.jsx'
 import AdminPayments from './pages/admin/AdminPayments.jsx'
+import AdminReturns from './pages/admin/AdminReturns.jsx'
+import AdminRefunds from './pages/admin/AdminRefunds.jsx'
 import AdminAnalytics from './pages/admin/AdminAnalytics.jsx'
 
 export default function App() {
@@ -41,6 +45,9 @@ export default function App() {
         <Route path="/payment/return" element={<PaymentReturnPage />} />
         <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
         <Route path="/orders/:orderId" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
+        <Route path="/returns" element={<ProtectedRoute><ReturnsPage /></ProtectedRoute>} />
+        <Route path="/returns/request/:orderNumber" element={<ProtectedRoute><ReturnRequestPage /></ProtectedRoute>} />
+        <Route path="/returns/:id" element={<ProtectedRoute><ReturnRequestPage /></ProtectedRoute>} />
         <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
@@ -54,6 +61,8 @@ export default function App() {
           <Route path="support" element={<AdminSupport />} />
           <Route path="inventory" element={<AdminInventory />} />
           <Route path="payments" element={<AdminPayments />} />
+          <Route path="returns" element={<AdminReturns />} />
+          <Route path="refunds" element={<AdminRefunds />} />
           <Route path="analytics" element={<AdminAnalytics />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
