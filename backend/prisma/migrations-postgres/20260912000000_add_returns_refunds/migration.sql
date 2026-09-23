@@ -31,7 +31,8 @@ CREATE TABLE "Return" (
     "rejectedAt" TIMESTAMP(3),
     "receivedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable: ReturnItem
@@ -45,7 +46,8 @@ CREATE TABLE "ReturnItem" (
     "quantity" INTEGER NOT NULL,
     "condition" "ItemCondition" NOT NULL,
     "reason" "ReturnReason",
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable: Refund
@@ -62,7 +64,8 @@ CREATE TABLE "Refund" (
     "processedBy" TEXT,
     "processedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable: ReturnAuditLog
@@ -73,7 +76,8 @@ CREATE TABLE "ReturnAuditLog" (
     "toStatus" "ReturnStatus" NOT NULL,
     "changedBy" TEXT,
     "notes" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable: RefundAuditLog
@@ -84,7 +88,8 @@ CREATE TABLE "RefundAuditLog" (
     "toStatus" "RefundStatus" NOT NULL,
     "changedBy" TEXT,
     "notes" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id")
 );
 
 -- CreateIndex
