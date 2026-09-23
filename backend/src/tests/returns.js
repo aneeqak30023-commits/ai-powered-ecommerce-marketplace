@@ -347,4 +347,40 @@ describe('Admin Returns API', () => {
       adminData.server.unref()
     }
   })
+
+  it('admin marking order as delivered sets deliveredAt and makes order eligible for return', async () => {
+    const { app } = await import('../../src/index.js')
+    const userTokenData = await getAuthToken(app, 'deliveredtest@example.com', 'password123')
+    const adminData = await getAdminAuth(app, 'admin@nexmart.example.com', 'admin123')
+
+    try {
+      const orderData = await createOrderWithPayment(userTokenData.token, userTokenData.base, 49.99)
+
+      const statusRes = await request(`${adminData.base}/api/admin/orders/${orderData.orderNumber}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminData.token}`,
+        },
+        body: JSON.stringify({ status: 'delivered' }),
+      })
+
+      assert.strictEqual(statusRes.status, 200)
+      assert.ok(statusRes.body.deliveredAt, 'deliveredAt should be set when order is marked delivered')
+
+      const eligibilityRes = await request(`${userTokenData.base}/api/returns/eligibility/${orderData.orderNumber}`, {
+        headers: { Authorization: `Bearer ${userTokenData.token}` },
+      })
+
+      assert.strictEqual(eligibilityRes.status, 200)
+      assert.strictEqual(eligibilityRes.body.eligible, true)
+      assert.ok(Array.isArray(eligibilityRes.body.returnableItems))
+      assert.strictEqual(eligibilityRes.body.returnableItems.length, 2)
+    } finally {
+      userTokenData.server.close()
+      userTokenData.server.unref()
+      adminData.server.close()
+      adminData.server.unref()
+    }
+  })
 })

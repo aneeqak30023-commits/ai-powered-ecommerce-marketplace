@@ -296,9 +296,14 @@ router.patch('/orders/:orderId/status', authMiddleware, adminMiddleware, async (
       return res.status(404).json({ error: 'Order not found' })
     }
 
+    const updateData = { status }
+    if (status === 'delivered') {
+      updateData.deliveredAt = new Date()
+    }
+
     const updated = await prisma.order.update({
       where: { id: order.id },
-      data: { status },
+      data: updateData,
       include: { items: true, payment: true, user: { select: { id: true, email: true, name: true } } },
     })
 
@@ -308,6 +313,7 @@ router.patch('/orders/:orderId/status', authMiddleware, adminMiddleware, async (
       userId: updated.userId,
       user: updated.user,
       status: updated.status,
+      deliveredAt: updated.deliveredAt,
       customer: {
         name: updated.customerName,
         email: updated.customerEmail,
