@@ -383,4 +383,86 @@ describe('Admin Returns API', () => {
       adminData.server.unref()
     }
   })
+
+  it('admin can update return status: requested -> approved -> returned', async () => {
+    const { app } = await import('../../src/index.js')
+    const userTokenData = await getAuthToken(app, 'statusflow@example.com', 'password123')
+    const adminData = await getAdminAuth(app, 'admin@nexmart.example.com', 'admin123')
+    let orderData, returnId
+
+    try {
+      orderData = await createOrderWithPayment(userTokenData.token, userTokenData.base, 49.99)
+
+      await request(`${adminData.base}/api/admin/orders/${orderData.orderNumber}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminData.token}`,
+        },
+        body: JSON.stringify({ status: 'delivered' }),
+      })
+
+      const orderItems = await prisma.orderItem.findMany({
+        where: { orderId: orderData.orderId },
+      })
+      const orderItemId = orderItems[0].id
+
+      const createRes = await request(`${userTokenData.base}/api/returns`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userTokenData.token}`,
+        },
+        body: JSON.stringify({
+          orderNumber: orderData.orderNumber,
+          items: [{ orderItemId, quantity: 1, condition: 'like_new' }],
+          reason: 'defective',
+        }),
+      })
+      assert.strictEqual(createRes.status, 201)
+      returnId = createRes.body.id
+
+      const approveRes = await request(`${adminData.base}/api/admin/returns/${returnId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminData.token}`,
+        },
+        body: JSON.stringify({ status: 'approved' }),
+      })
+      assert.strictEqual(approveRes.status, 200)
+      assert.strictEqual(approveRes.body.status, 'approved')
+      assert.ok(approveRes.body.approvedAt, 'approvedAt should be populated')
+
+      const detailAfterApprove = await request(`${adminData.base}/api/admin/returns/${returnId}`, {
+        headers: { Authorization: `Bearer ${adminData.token}` },
+      })
+      assert.strictEqual(detailAfterApprove.status, 200)
+      assert.strictEqual(detailAfterApprove.body.status, 'approved')
+      assert.ok(detailAfterApprove.body.auditLogs.length >= 1, 'audit log should have an entry for approved transition')
+
+      const returnRes = await request(`${adminData.base}/api/admin/returns/${returnId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminData.token}`,
+        },
+        body: JSON.stringify({ status: 'returned' }),
+      })
+      assert.strictEqual(returnRes.status, 200)
+      assert.strictEqual(returnRes.body.status, 'returned')
+      assert.ok(returnRes.body.receivedAt, 'receivedAt should be populated')
+
+      const detailAfterReturned = await request(`${adminData.base}/api/admin/returns/${returnId}`, {
+        headers: { Authorization: `Bearer ${adminData.token}` },
+      })
+      assert.strictEqual(detailAfterReturned.body.status, 'returned')
+      assert.ok(detailAfterReturned.body.auditLogs.length >= 2, 'audit log should have entries for approved and returned transitions')
+    } finally {
+      userTokenData.server.close()
+      userTokenData.server.unref()
+      adminData.server.close()
+      adminData.server.unref()
+    }
+  })
 })

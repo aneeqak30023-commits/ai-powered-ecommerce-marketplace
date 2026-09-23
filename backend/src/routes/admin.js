@@ -819,6 +819,15 @@ function serializeAdminReturn(ret) {
       processedAt: refund.processedAt,
       createdAt: refund.createdAt,
     })),
+    auditLogs: (ret.auditLogs || []).map((log) => ({
+      id: log.id,
+      returnId: log.returnId,
+      fromStatus: log.fromStatus,
+      toStatus: log.toStatus,
+      changedBy: log.changedBy,
+      notes: log.notes,
+      createdAt: log.createdAt,
+    })),
   }
 }
 
@@ -931,7 +940,7 @@ router.patch('/returns/:id/status', authMiddleware, adminMiddleware, async (req,
 
     const existingReturn = await prisma.return.findUnique({
       where: { id },
-      include: { items: true, order: { include: { items: true, inventory: true } }, refunds: true },
+      include: { items: true, order: { include: { items: true } }, refunds: true },
     })
 
     if (!existingReturn) {
