@@ -145,7 +145,7 @@ async function getReturnableItems(order) {
       include: { product: { select: { id: true, name: true, image: true, price: true } } },
     }),
     prisma.return.findMany({
-      where: { orderId: order.id },
+      where: { orderId: order.id, status: { in: ACTIVE_RETURN_STATUSES } },
       include: { items: { select: { orderItemId: true, quantity: true } } },
     }),
   ])
@@ -255,7 +255,10 @@ router.post('/', authMiddleware, async (req, res) => {
         }
 
         const returnedResult = await tx.returnItem.aggregate({
-          where: { orderItemId },
+          where: {
+            orderItemId,
+            return: { status: { in: ACTIVE_RETURN_STATUSES } },
+          },
           _sum: { quantity: true },
         })
         const alreadyReturned = returnedResult._sum.quantity || 0
