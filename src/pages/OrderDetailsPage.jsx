@@ -89,7 +89,7 @@ export default function OrderDetailsPage() {
 
   const statusColor = STATUS_COLORS[order.status] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED]
   const canCancel = [ORDER_STATUSES.PENDING, ORDER_STATUSES.CONFIRMED].includes(order.status)
-  const canReturn = order.status === ORDER_STATUSES.DELIVERED || order.status === ORDER_STATUSES.SHIPPED
+  const canReturn = order.status?.toLowerCase() === 'delivered' || order.status?.toLowerCase() === 'shipped'
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
