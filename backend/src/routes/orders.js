@@ -29,6 +29,7 @@ function serializeOrder(order) {
     tax: order.tax,
     total: order.total,
     date: order.createdAt,
+    deliveredAt: order.deliveredAt,
     items: order.items.map(item => ({
       id: item.productId,
       productId: item.productId,
