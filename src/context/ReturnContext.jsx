@@ -42,6 +42,8 @@ export const REFUND_METHODS = [
   { value: 'online', label: 'Online (Safepay Dashboard)' },
 ]
 
+const ACTIVE_RETURN_STATUSES = [RETURN_STATUSES.REQUESTED, RETURN_STATUSES.APPROVED, RETURN_STATUSES.RETURNED]
+
 const STORAGE_KEY = 'nexmart-returns'
 
 function loadReturns() {
@@ -140,7 +142,7 @@ export function ReturnProvider({ children }) {
   }, [returns])
 
   const getReturnByOrderId = useCallback((orderNumber) => {
-    return returns.find(r => r.orderNumber === orderNumber) || null
+    return returns.find(r => r.orderNumber === orderNumber && ACTIVE_RETURN_STATUSES.includes(r.status)) || null
   }, [returns])
 
   const getReturnsByUserId = useCallback((userId) => {
