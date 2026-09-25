@@ -18,15 +18,15 @@ import { ORDER_STATUSES } from '../context/OrderContext.jsx'
 }
 
 const STATUS_COLORS = {
-  [ORDER_STATUSES.PENDING]: { bg: '#FEF3C7', text: '#92400E' },
-  [ORDER_STATUSES.CONFIRMED]: { bg: '#DBEAFE', text: '#1E40AF' },
-  [ORDER_STATUSES.SHIPPED]: { bg: '#E0E7FF', text: '#3730A3' },
-  [ORDER_STATUSES.DELIVERED]: { bg: '#D1FAE5', text: '#065F46' },
-  [ORDER_STATUSES.CANCELLED]: { bg: '#FEE2E2', text: '#991B1B' }
+  pending: { bg: '#FEF3C7', text: '#92400E' },
+  confirmed: { bg: '#DBEAFE', text: '#1E40AF' },
+  shipped: { bg: '#E0E7FF', text: '#3730A3' },
+  delivered: { bg: '#D1FAE5', text: '#065F46' },
+  cancelled: { bg: '#FEE2E2', text: '#991B1B' }
 }
 
 export default function OrdersPage() {
-  const { getOrdersByUserId } = useOrders()
+  const { getOrdersByUserId, cancelOrder } = useOrders()
   const { isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
   const [orders, setOrders] = useState([])
@@ -84,7 +84,8 @@ export default function OrdersPage() {
         <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 24px' }}>My Orders</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {orders.map(order => {
-            const statusColor = STATUS_COLORS[order.status] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED]
+            const statusColor = STATUS_COLORS[order.status?.toLowerCase()] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED.toLowerCase()]
+            const canCancel = order.status?.toLowerCase() === 'pending' || order.status?.toLowerCase() === 'confirmed'
             return (
               <Link
                 key={order.id}
@@ -108,11 +109,25 @@ export default function OrdersPage() {
                       <span style={{ fontWeight: 700, color: C.text, fontSize: 16 }}>{formatPrice(order.total)}</span>
                     </div>
                     <div style={{ padding: '0 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Link to={order.status === 'shipped' || order.status === 'delivered' ? `/returns/request/${order.id}` : '#'}
+                      {canCancel && (
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            cancelOrder(order.id, user?.userId)
+                          }}
+                          style={{ fontSize: 13, fontWeight: 600, padding: '8px 16px', borderRadius: 8,
+                                    background: `${C.danger}10`, color: C.danger, border: `1px solid ${C.danger}30`,
+                                    cursor: 'pointer' }}
+                        >
+                          Cancel Order
+                        </button>
+                      )}
+                      <Link to={order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered' ? `/returns/request/${order.id}` : '#'}
                         style={{ fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 16px', borderRadius: 8,
-                                  background: (order.status === 'shipped' || order.status === 'delivered') ? `${C.warning}15` : C.background,
-                                  color: (order.status === 'shipped' || order.status === 'delivered') ? C.warning : C.textSecondary,
-                                  cursor: (order.status === 'shipped' || order.status === 'delivered') ? 'pointer' : 'not-allowed' }}>
+                                  background: (order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered') ? `${C.warning}15` : C.background,
+                                  color: (order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered') ? C.warning : C.textSecondary,
+                                  cursor: (order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered') ? 'pointer' : 'not-allowed' }}>
                         Request Return
                       </Link>
                       <Link to="/returns" style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary, textDecoration: 'none' }}>

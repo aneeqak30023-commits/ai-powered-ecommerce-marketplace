@@ -19,11 +19,11 @@ const C = {
 }
 
 const STATUS_COLORS = {
-  [ORDER_STATUSES.PENDING]: { bg: '#FEF3C7', text: '#92400E' },
-  [ORDER_STATUSES.CONFIRMED]: { bg: '#DBEAFE', text: '#1E40AF' },
-  [ORDER_STATUSES.SHIPPED]: { bg: '#E0E7FF', text: '#3730A3' },
-  [ORDER_STATUSES.DELIVERED]: { bg: '#D1FAE5', text: '#065F46' },
-  [ORDER_STATUSES.CANCELLED]: { bg: '#FEE2E2', text: '#991B1B' }
+  pending: { bg: '#FEF3C7', text: '#92400E' },
+  confirmed: { bg: '#DBEAFE', text: '#1E40AF' },
+  shipped: { bg: '#E0E7FF', text: '#3730A3' },
+  delivered: { bg: '#D1FAE5', text: '#065F46' },
+  cancelled: { bg: '#FEE2E2', text: '#991B1B' }
 }
 
 function formatPrice(value) {
@@ -87,8 +87,8 @@ export default function OrderDetailsPage() {
     )
   }
 
-  const statusColor = STATUS_COLORS[order.status] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED]
-  const canCancel = [ORDER_STATUSES.PENDING, ORDER_STATUSES.CONFIRMED].includes(order.status)
+  const statusColor = STATUS_COLORS[order.status?.toLowerCase()] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED.toLowerCase()]
+  const canCancel = order.status?.toLowerCase() === 'pending' || order.status?.toLowerCase() === 'confirmed'
   const canReturn = order.status?.toLowerCase() === 'delivered' || order.status?.toLowerCase() === 'shipped'
 
   return (
@@ -174,7 +174,7 @@ export default function OrderDetailsPage() {
             <button
               onClick={() => {
                 cancelOrder(order.id, user?.userId)
-                setOrder(prev => ({ ...prev, status: ORDER_STATUSES.CANCELLED }))
+                setOrder(prev => ({ ...prev, status: 'cancelled' }))
               }}
               style={{ padding: '12px 24px', border: 'none', background: C.danger, color: '#fff', borderRadius: 12, fontWeight: 600, fontSize: 15, cursor: 'pointer' }}
             >
