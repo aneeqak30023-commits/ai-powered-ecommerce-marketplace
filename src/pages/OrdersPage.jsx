@@ -124,13 +124,15 @@ export default function OrdersPage() {
                         </button>
                       )}
                       <Link to={order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered' ? `/returns/request/${order.id}` : '#'}
+                        onClick={(e) => e.stopPropagation()}
                         style={{ fontSize: 13, fontWeight: 600, textDecoration: 'none', padding: '8px 16px', borderRadius: 8,
                                   background: (order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered') ? `${C.warning}15` : C.background,
                                   color: (order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered') ? C.warning : C.textSecondary,
                                   cursor: (order.status?.toLowerCase() === 'shipped' || order.status?.toLowerCase() === 'delivered') ? 'pointer' : 'not-allowed' }}>
                         Request Return
                       </Link>
-                      <Link to="/returns" style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary, textDecoration: 'none' }}>
+                      <Link to="/returns" onClick={(e) => e.stopPropagation()}
+                        style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary, textDecoration: 'none' }}>
                         My Returns
                       </Link>
                     </div>

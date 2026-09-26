@@ -6,6 +6,16 @@ import { safeError } from '../utils/errors.js'
 const router = express.Router()
 const prisma = new PrismaClient()
 
+function parseJsonField(value) {
+  if (!value) return null
+  if (Array.isArray(value)) return value
+  try {
+    return JSON.parse(value)
+  } catch {
+    return value
+  }
+}
+
 function serializeCartItem(cartItem) {
   return {
     id: cartItem.id,
@@ -18,7 +28,7 @@ function serializeCartItem(cartItem) {
       name: cartItem.product.name,
       price: cartItem.product.price,
       image: cartItem.product.image,
-      images: cartItem.product.images,
+      images: parseJsonField(cartItem.product.images),
       stock: cartItem.product.stock,
     } : null,
   }
