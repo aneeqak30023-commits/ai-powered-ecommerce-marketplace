@@ -83,14 +83,17 @@ export default function OrdersPage() {
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 20px' }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: C.text, margin: '0 0 24px' }}>My Orders</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {orders.map(order => {
+            {orders.map(order => {
             const statusColor = STATUS_COLORS[order.status?.toLowerCase()] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED.toLowerCase()]
             const canCancel = order.status?.toLowerCase() === 'pending' || order.status?.toLowerCase() === 'confirmed'
             return (
-              <Link
+              <div
                 key={order.id}
-                to={`/orders/${order.id}`}
-                style={{ display: 'block', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, overflow: 'hidden', textDecoration: 'none', color: 'inherit', transition: 'box-shadow 0.2s ease' }}
+                onClick={() => navigate(`/orders/${order.id}`)}
+                role="link"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/orders/${order.id}`) }}
+                style={{ display: 'block', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, overflow: 'hidden', textDecoration: 'none', color: 'inherit', transition: 'box-shadow 0.2s ease', cursor: 'pointer' }}
                 onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none' }}
               >
@@ -138,7 +141,7 @@ export default function OrdersPage() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
               )
           })}
         </div>
