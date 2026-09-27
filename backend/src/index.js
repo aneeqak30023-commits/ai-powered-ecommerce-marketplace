@@ -38,6 +38,7 @@ const allowedOrigins = [
   "http://localhost:5177",
   "http://localhost:3001",
   "https://aneeqak30023-commits.github.io",
+"https://ai-powered-ecommerce-marketplace.vercel.app",
 ];
 
 app.use(
