@@ -90,6 +90,12 @@ export default function OrderDetailsPage() {
   const statusColor = STATUS_COLORS[order.status?.toLowerCase()] || STATUS_COLORS[ORDER_STATUSES.CONFIRMED.toLowerCase()]
   const canCancel = order.status?.toLowerCase() === 'pending' || order.status?.toLowerCase() === 'confirmed'
   const canReturn = order.status?.toLowerCase() === 'delivered' || order.status?.toLowerCase() === 'shipped'
+  console.log('RETURN DEBUG:', {
+  status: order.status,
+  deliveredAt: order.deliveredAt,
+  canReturn,
+  orderNumber: order.orderNumber,
+})
 
   return (
     <div style={{ minHeight: '100vh', background: C.background }}>
@@ -181,14 +187,25 @@ export default function OrderDetailsPage() {
               Cancel Order
             </button>
           )}
-          {canReturn && order.deliveredAt && (
-            <Link
-              to={`/returns/request/${order.id}`}
-              style={{ padding: '12px 24px', border: 'none', background: C.warning, color: '#fff', borderRadius: 12, fontWeight: 600, fontSize: 15, textDecoration: 'none' }}
-            >
-              Request Return
-            </Link>
-          )}
+          {canReturn && (
+            <button
+    type="button"
+    onClick={() => navigate('/returns/request/${order.orderNumber}')}
+    style={{
+      padding: '12px 24px',
+      border: 'none',
+      background: C.warning,
+      color: '#fff',
+      borderRadius: 12,
+      fontWeight: 600,
+      fontSize: 15,
+      cursor: 'pointer',
+    }}
+  >
+    Request Return
+  </button>
+)}
+            
           {canReturn && !order.deliveredAt && (
             <span style={{ fontSize: 13, color: C.textSecondary, padding: '12px 0' }}>
               Return eligibility pending delivery confirmation.
