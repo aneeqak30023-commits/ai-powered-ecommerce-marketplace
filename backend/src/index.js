@@ -75,7 +75,7 @@ app.use((req, res, next) => {
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 50,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -99,25 +99,35 @@ const aiLimiter = rateLimit({
   message: { error: "AI service rate limit exceeded. Please try again later." },
 });
 
-app.use("/api/auth", authLimiter);
 app.use("/api/ai", aiLimiter);
 app.use(generalLimiter);
 
+// Credential endpoints keep a dedicated, stricter bucket for brute-force
+// protection. Passive reads such as GET /api/auth/session are intentionally
+// left to the global generalLimiter so ordinary session checks on page load
+// never consume the sign-in budget.
+// Mounted after generalLimiter so the binding limit is the one reported in
+// the RateLimit-* response headers.
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/forgot-password", authLimiter);
+app.use("/api/auth/reset-password", authLimiter);
+
 app.use("/health", healthRoutes);
-app.use("/api/products", generalLimiter, productsRoutes);
-app.use("/api/categories", generalLimiter, categoriesRoutes);
-app.use("/api/inventory", generalLimiter, inventoryRoutes);
+app.use("/api/products", productsRoutes);
+app.use("/api/categories", categoriesRoutes);
+app.use("/api/inventory", inventoryRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/cart", generalLimiter, cartRoutes);
-app.use("/api/wishlist", generalLimiter, wishlistRoutes);
-app.use("/api/orders", generalLimiter, ordersRoutes);
-app.use("/api/reviews", generalLimiter, reviewsRoutes);
-app.use("/api/knowledge-base", generalLimiter, knowledgeBaseRoutes);
-app.use("/api/support", generalLimiter, supportRoutes);
-app.use("/api/payments", generalLimiter, paymentsRoutes);
-app.use("/api/admin", generalLimiter, adminRoutes);
-app.use("/api/admin/analytics", generalLimiter, analyticsRoutes);
-app.use("/api/returns", generalLimiter, returnsRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/orders", ordersRoutes);
+app.use("/api/reviews", reviewsRoutes);
+app.use("/api/knowledge-base", knowledgeBaseRoutes);
+app.use("/api/support", supportRoutes);
+app.use("/api/payments", paymentsRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/admin/analytics", analyticsRoutes);
+app.use("/api/returns", returnsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });
