@@ -21,6 +21,14 @@ function saveAuth(auth) {
   }
 }
 
+function clearStoredAuth() {
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // storage unavailable
+  }
+}
+
 function loadUsers() {
   try {
     const raw = localStorage.getItem(USERS_KEY)
@@ -59,7 +67,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (Object.keys(auth || {}).length === 0) return
+    if (Object.keys(auth || {}).length === 0) {
+      // auth was cleared (e.g. logout) - drop the persisted token so a page
+      // refresh does not restore the previous session.
+      clearStoredAuth()
+      return
+    }
     saveAuth(auth)
   }, [auth])
 

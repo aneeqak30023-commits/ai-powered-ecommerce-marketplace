@@ -240,6 +240,120 @@ describe('AuthContext', () => {
     expect(result.current.user).toBeNull()
   })
 
+  it('removes the stored JWT from localStorage on logout', async () => {
+    vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
+    vi.spyOn(authApi, 'login').mockResolvedValue(mockSession)
+    vi.spyOn(authApi, 'logout').mockResolvedValue({ success: true })
+
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
+
+    // login persists the token
+    await act(async () => {
+      await result.current.login('test@example.com', 'password123')
+    })
+
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(true))
+    expect(localStorageMock.getItem('nexmart-auth')).not.toBeNull()
+    expect(JSON.parse(localStorageMock.getItem('nexmart-auth')).token).toBe('mock-jwt-token')
+
+    // logout must wipe it
+    await act(async () => {
+      await result.current.logout()
+    })
+
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(false))
+    expect(localStorageMock.getItem('nexmart-auth')).toBeNull()
+  })
+
+  it('keeps the user logged out after a page refresh following logout', async () => {
+    const getSessionSpy = vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
+    vi.spyOn(authApi, 'login').mockResolvedValue(mockSession)
+    vi.spyOn(authApi, 'logout').mockResolvedValue({ success: true })
+
+    const first = renderHook(() => useAuth(), { wrapper })
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
+
+    await act(async () => {
+      await first.result.current.login('test@example.com', 'password123')
+    })
+    await waitFor(() => expect(first.result.current.isAuthenticated).toBe(true))
+
+    await act(async () => {
+      await first.result.current.logout()
+    })
+    await waitFor(() => expect(first.result.current.isAuthenticated).toBe(false))
+
+    // simulate a full page refresh: tear down the provider and mount a new one
+    first.unmount()
+    getSessionSpy.mockClear()
+
+    const second = renderHook(() => useAuth(), { wrapper })
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
+
+    expect(second.result.current.isAuthenticated).toBe(false)
+    expect(second.result.current.user).toBeNull()
+    expect(localStorageMock.getItem('nexmart-auth')).toBeNull()
+    // with no stored token the provider must not attempt to restore a session
+    expect(getSessionSpy).not.toHaveBeenCalled()
+  })
+
+  it('removes the stored JWT even when the logout request fails', async () => {
+    localStorageMock.setItem('nexmart-auth', JSON.stringify({
+      token: 'stored-token',
+      userId: mockUser.id,
+      email: mockUser.email,
+      name: mockUser.name,
+      createdAt: mockUser.createdAt,
+    }))
+
+    vi.spyOn(authApi, 'getSession').mockResolvedValue(mockSession)
+    vi.spyOn(authApi, 'logout').mockRejectedValue(new Error('Network error'))
+
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
+
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(true))
+
+    await act(async () => {
+      await result.current.logout()
+    })
+
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(false))
+    expect(localStorageMock.getItem('nexmart-auth')).toBeNull()
+  })
+
+  it('persists the JWT to localStorage on login', async () => {
+    vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
+    vi.spyOn(authApi, 'login').mockResolvedValue(mockSession)
+
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
+
+    await act(async () => {
+      await result.current.login('test@example.com', 'password123')
+    })
+
+    await waitFor(() => {
+      const stored = localStorageMock.getItem('nexmart-auth')
+      expect(stored).not.toBeNull()
+      const parsed = JSON.parse(stored)
+      expect(parsed.token).toBe('mock-jwt-token')
+      expect(parsed.userId).toBe(mockUser.id)
+      expect(parsed.email).toBe('test@example.com')
+    })
+  })
+
   it('updates profile locally', async () => {
     vi.spyOn(authApi, 'getSession').mockResolvedValue({ success: false })
     vi.spyOn(authApi, 'register').mockResolvedValue(mockSession)
